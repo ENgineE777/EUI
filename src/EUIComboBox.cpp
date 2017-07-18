@@ -1,0 +1,47 @@
+
+#include "EUIComboBox.h"
+#include "native/win/WinComboBox.h"
+
+EUIComboBox::EUIComboBox(int set_id, EUIWidget* prnt, float set_x, float set_y, float w, float h) : EUIWidget(set_id, prnt, "")
+{
+	x = set_x;
+	y = set_y;
+	width = w;
+	height = h;
+
+	nativeWidget = new WinComboBox(this);
+}
+
+EUIComboBox::~EUIComboBox()
+{
+}
+
+NativeComboBox* EUIComboBox::Native()
+{
+	return (NativeComboBox*)nativeWidget;
+}
+
+void EUIComboBox::ClearList()
+{
+	Native()->ClearList();
+}
+
+void EUIComboBox::AddItem(const char* str)
+{
+	Native()->AddItem(str);
+}
+
+void EUIComboBox::SetCurString(int index)
+{
+	Native()->SetCurString(index);
+}
+
+void EUIComboBox::SetCurString(const char* str)
+{
+	Native()->SetCurString(str);
+}
+
+int EUIComboBox::GetCurString()
+{
+	return Native()->GetCurString();
+}
