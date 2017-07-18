@@ -15,9 +15,9 @@ EUIWidget::EUIWidget(int set_id, EUIWidget* prnt, const char* txt)
 	enabled = true;
 
 	nativeWidget = NULL;
-	listiner = NULL;
+	listener = NULL;
 
-	listinerFlag = 0;
+	listenerFlag = 0;
 
 	if (parent)
 	{
@@ -46,10 +46,10 @@ int EUIWidget::GetID()
 	return id;
 }
 
-void EUIWidget::SetListiner(Listiner* set_listiner, uint32_t flag)
+void EUIWidget::SetListener(Listener* set_listener, uint32_t flag)
 {
-	listiner = set_listiner;
-	listinerFlag = flag;
+	listener = set_listener;
+	listenerFlag = flag;
 }
 
 void EUIWidget::Show(bool set)
@@ -149,9 +149,9 @@ void EUIWidget::DelChild(EUIWidget* child)
 
 void EUIWidget::Update()
 {
-	if (listiner && (listinerFlag & listinerFlag))
+	if (listener && (listenerFlag & listenerFlag))
 	{
-		listiner->OnUpdate(this);
+		listener->OnUpdate(this);
 	}
 
 	for (int i = 0; i < childs.size(); i++)

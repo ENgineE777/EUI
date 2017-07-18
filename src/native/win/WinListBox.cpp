@@ -31,17 +31,17 @@ bool WinListBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
  
 	if (msg == 513)
 	{
-		if (Owner()->listiner)
+		if (Owner()->listener)
 		{
-			Owner()->listiner->OnListBoxChange(Owner(), ListBox_GetCurSel(handle));
+			Owner()->listener->OnListBoxChange(Owner(), ListBox_GetCurSel(handle));
 		}
 	}
 	else
 	if (msg == 515)
 	{
-		if (Owner()->listiner)
+		if (Owner()->listener)
 		{
-			Owner()->listiner->OnListBoxDblClick(Owner(), ListBox_GetCurSel(handle));
+			Owner()->listener->OnListBoxDblClick(Owner(), ListBox_GetCurSel(handle));
 		}
 	}
 

@@ -33,7 +33,7 @@ public:
 		OnResize = 2,
 	};
 
-	class Listiner
+	class Listener
 	{
 	public:
 
@@ -82,9 +82,9 @@ protected:
 
 	NativeWidget* nativeWidget;
 
-	Listiner* listiner;
+	Listener* listener;
 
-	uint32_t listinerFlag;
+	uint32_t listenerFlag;
 
 public:
 
@@ -94,7 +94,7 @@ public:
 
 	virtual int GetID();
 
-	virtual void SetListiner(Listiner* listiner, uint32_t flag);
+	virtual void SetListener(Listener* listener, uint32_t flag);
 
 	virtual void Show(bool set);
 	virtual bool IsVisible();

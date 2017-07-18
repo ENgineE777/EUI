@@ -83,41 +83,41 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		break;
 		case WM_LBUTTONDOWN:
 		{
-			if (owner->listiner)
+			if (owner->listener)
 			{
-				owner->listiner->OnLeftMouseDown(owner, xPos, yPos);
+				owner->listener->OnLeftMouseDown(owner, xPos, yPos);
 			}
 		}
 		break;
 		case WM_LBUTTONUP:
 		{
-			if (owner->listiner)
+			if (owner->listener)
 			{
-				owner->listiner->OnLeftMouseUp(owner, xPos, yPos);
+				owner->listener->OnLeftMouseUp(owner, xPos, yPos);
 			}
 		}
 		break;
 		case WM_LBUTTONDBLCLK:
 		{
-			if (owner->listiner)
+			if (owner->listener)
 			{
-				owner->listiner->OnLeftDoubliClick(owner, xPos, yPos);
+				owner->listener->OnLeftDoubliClick(owner, xPos, yPos);
 			}
 		}
 		break;
 		case WM_RBUTTONDOWN:
 		{
-			if (owner->listiner)
+			if (owner->listener)
 			{
-				owner->listiner->OnRightMouseDown(owner, xPos, yPos);
+				owner->listener->OnRightMouseDown(owner, xPos, yPos);
 			}
 		}
 		break;
 		case WM_RBUTTONUP:
 		{
-			if (owner->listiner)
+			if (owner->listener)
 			{
-				owner->listiner->OnRightMouseUp(owner, xPos, yPos);
+				owner->listener->OnRightMouseUp(owner, xPos, yPos);
 			}
 		}
 		break;
@@ -125,9 +125,9 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		{
 			NotifyMouseOver(this);
 
-			if (owner->listiner)
+			if (owner->listener)
 			{
-				owner->listiner->OnMouseMove(owner, xPos, yPos);
+				owner->listener->OnMouseMove(owner, xPos, yPos);
 			}
 		}
 		break;
@@ -166,9 +166,9 @@ void WinWidget::Redraw()
 
 void WinWidget::Resize()
 {
-	if (owner->listiner && (owner->listinerFlag & EUIWidget::OnResize))
+	if (owner->listener && (owner->listenerFlag & EUIWidget::OnResize))
 	{
-		owner->listiner->OnResize(owner);
+		owner->listener->OnResize(owner);
 	}
 
 	for (int i = 0; i<owner->childs.size(); i++)

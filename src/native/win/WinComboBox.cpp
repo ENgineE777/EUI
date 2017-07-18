@@ -33,9 +33,9 @@ bool WinComboBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (HIWORD(wParam) == CBN_SELCHANGE)
 		{
-			if (Owner()->listiner)
+			if (Owner()->listener)
 			{
-				Owner()->listiner->OnComboBoxChange(Owner(), ComboBox_GetCurSel(handle));
+				Owner()->listener->OnComboBoxChange(Owner(), ComboBox_GetCurSel(handle));
 			}
 		}
 	}

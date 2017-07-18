@@ -25,9 +25,9 @@ bool WinMenu::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 {
 	if (msg == WM_COMMAND)
 	{
-		if (Owner()->listiner)
+		if (Owner()->listener)
 		{
-			Owner()->listiner->OnMenuItem(Owner(), LOWORD(wParam));
+			Owner()->listener->OnMenuItem(Owner(), LOWORD(wParam));
 		}
 	}
 

@@ -133,17 +133,17 @@ LRESULT WinWindow::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 		break;
 		case WM_CLOSE:
 		{
-			if (owner->listiner)
+			if (owner->listener)
 			{
-				owner->listiner->OnWinClose(owner);
+				owner->listener->OnWinClose(owner);
 			}
 		}
 		break;
 		case WM_SHOWWINDOW:
 		{
-			if (owner->listiner)
+			if (owner->listener)
 			{
-				owner->listiner->OnWinShow(owner);
+				owner->listener->OnWinShow(owner);
 			}
 		}
 		break;

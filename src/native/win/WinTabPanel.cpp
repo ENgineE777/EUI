@@ -34,9 +34,9 @@ bool WinTabPanel::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	{
 		SetCurrentTab(TabCtrl_GetCurSel(handle));
 
-		if (Owner()->listiner)
+		if (Owner()->listener)
 		{
-			Owner()->listiner->OnTabChange(Owner(), curTab);
+			Owner()->listener->OnTabChange(Owner(), curTab);
 		}
 	}
 

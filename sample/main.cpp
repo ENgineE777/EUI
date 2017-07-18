@@ -1,7 +1,7 @@
 
 #include <EUI.h>
 
-class Listiner : public EUIWidget::Listiner
+class Listener : public EUIWidget::Listener
 {
 public:
 	virtual void OnMouseMove(EUIWidget* sender, int mx, int my)
@@ -29,7 +29,7 @@ public:
 	}
 };
 
-Listiner listiner;
+Listener listiner;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -40,7 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	EUILayout* lt = new EUILayout(wnd, true);
 
 	EUIMenu* menu = new EUIMenu(wnd);
-	menu->SetListiner(&listiner, 0);
+	menu->SetListener(&listiner, 0);
 
 	menu->StartSubMenu("File");
 
@@ -56,7 +56,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 	EUITabPanel* tabPanel = new EUITabPanel(1002, lt, 30, 50, 100, 30);
-	tabPanel->SetListiner(&listiner, 0);
+	tabPanel->SetListener(&listiner, 0);
 
 	tabPanel->AddTab("TAb1");
 	tabPanel->AddTab("TAb2");
@@ -64,7 +64,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	{
 		EUIButton* btn = new EUIButton(1001, tabPanel, false, "<a>Just</a> <b>Button</b>", 10, 20, 100, 30);
-		btn->SetListiner(&listiner, 0);
+		btn->SetListener(&listiner, 0);
 
 		EUICheckBox* chk = new EUICheckBox(1002, tabPanel, "Selected RadioButton", 10, 60, 100, 30);
 
@@ -73,7 +73,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		cbx->AddItem("itejl ljl");
 		cbx->AddItem("jgkjhkkjh kj");
 
-		cbx->SetListiner(&listiner, 0);
+		cbx->SetListener(&listiner, 0);
 
 		tabPanel->AddWidget2Tab(0, btn);
 		tabPanel->AddWidget2Tab(0, chk);
@@ -92,7 +92,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		tabPanel->AddWidget2Tab(1, ebx);
 
 		EUIPanel* pn = new EUIPanel(1002, tabPanel, 10, 10, 100, 30);
-		pn->SetListiner(&listiner, EUIWidget::OnResize | EUIWidget::OnUpdate);
+		pn->SetListener(&listiner, EUIWidget::OnResize | EUIWidget::OnUpdate);
 
 		tabPanel->AddWidget2Tab(2, pn);
 	}

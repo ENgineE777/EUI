@@ -36,9 +36,9 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == VK_RETURN)
 		{
-			if (Owner()->listiner)
+			if (Owner()->listener)
 			{
-				Owner()->listiner->OnEditBoxEnterPressed(Owner());
+				Owner()->listener->OnEditBoxEnterPressed(Owner());
 			}
 		}
 		else
@@ -66,9 +66,9 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 
-		if (Owner()->listiner)
+		if (Owner()->listener)
 		{
-			Owner()->listiner->OnEditBoxChange(Owner());
+			Owner()->listener->OnEditBoxChange(Owner());
 		}
 	}
 
