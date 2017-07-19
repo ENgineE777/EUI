@@ -15,8 +15,6 @@ WinButton::WinButton(EUIWidget* owner) : NativeButton(owner)
 							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
 							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), NULL, NULL, NULL);
 
-	SetWindowLong(handle, GWL_ID, Owner()->id);
-
 	MakeSubClassing();
 
 	CreateTooltip();

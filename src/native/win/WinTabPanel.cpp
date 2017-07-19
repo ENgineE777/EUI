@@ -8,8 +8,6 @@ WinTabPanel::WinTabPanel(EUIWidget* owner) : NativeTabPanel(owner)
 							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
 							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), NULL, NULL, NULL);
 
-	SetWindowLong(handle, GWL_ID, Owner()->id);
-
 	MakeSubClassing();
 
 	SendMessage(handle, WM_SETFONT, (WPARAM)theme->GetFont("FONT_NORMAL"), MAKELPARAM(TRUE, 0));
@@ -58,8 +56,6 @@ void WinTabPanel::AddTab(const char* txt)
 	HWND hnd = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | SS_OWNERDRAW | SS_NOTIFY,
 							5, 30, Owner()->width - 8, Owner()->height - 35,
 							handle, NULL, NULL, NULL);
-
-	SetWindowLong(hnd, GWL_ID, Owner()->id);
 
 	SetWindowSubclass(hnd, &WinWidgetProc, 0, (DWORD_PTR)this);
 

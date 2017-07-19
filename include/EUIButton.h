@@ -25,7 +25,7 @@ public:
 		Disabled = 3
 	};
 
-	EUIButton(int id, EUIWidget* parent, const char* txt, float x, float y, float w, float h);
+	EUIButton(EUIWidget* parent, const char* txt, float x, float y, float w, float h);
 	virtual ~EUIButton();
 
 	virtual void SetImage(Image img, const char* image_name);

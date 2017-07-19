@@ -2,7 +2,7 @@
 #include "EUIWindow.h"
 #include "native/win/WinWindow.h"
 
-EUIWindow::EUIWindow(int set_id, const char* txt, bool popup, bool adjust, float set_x, float set_y, float w, float h) : EUIWidget(set_id, NULL, txt)
+EUIWindow::EUIWindow(const char* txt, bool popup, bool adjust, float set_x, float set_y, float w, float h) : EUIWidget(NULL, txt)
 {
 	need_strict_size = false;
 

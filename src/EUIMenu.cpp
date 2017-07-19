@@ -2,7 +2,7 @@
 #include "EUIMenu.h"
 #include "native/win/WinMenu.h"
 
-EUIMenu::EUIMenu(EUIWidget* prnt) : EUIWidget(0, prnt, "")
+EUIMenu::EUIMenu(EUIWidget* prnt) : EUIWidget(prnt, "")
 {
 	nativeWidget = new WinMenu(this);
 }

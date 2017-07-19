@@ -29,7 +29,7 @@ class EUICategories : public EUIWidget
 
 public:
 
-	EUICategories(int id, EUIWidget* parent, float x, float y, float w, float h);
+	EUICategories(EUIWidget* parent, float x, float y, float w, float h);
 	virtual ~EUICategories();
 
 	virtual void RegisterChildInCategory(const char* name, EUIWidget* widget);

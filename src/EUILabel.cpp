@@ -2,7 +2,7 @@
 #include "EUILabel.h"
 #include "native/win/WinLabel.h"
 
-EUILabel::EUILabel(int set_id, EUIWidget* prnt, const char* txt, float set_x, float set_y, float set_w, float set_h) : EUIWidget(set_id, prnt, txt)
+EUILabel::EUILabel(EUIWidget* prnt, const char* txt, float set_x, float set_y, float set_w, float set_h) : EUIWidget(prnt, txt)
 {
 	bck_use = false;
 	x = set_x;

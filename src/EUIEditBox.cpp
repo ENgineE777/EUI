@@ -2,7 +2,7 @@
 #include "EUIEditBox.h"
 #include "native/win/WinEditBox.h"
 
-EUIEditBox::EUIEditBox(int set_id, EUIWidget* prnt, const char* txt, float set_x, float set_y, float w, float h, InputType type): EUIWidget(set_id, prnt, txt)
+EUIEditBox::EUIEditBox(EUIWidget* prnt, const char* txt, float set_x, float set_y, float w, float h, InputType type): EUIWidget(prnt, txt)
 {
 	x = set_x;
 	y = set_y;

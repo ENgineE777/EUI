@@ -7,8 +7,6 @@ WinCheckBox::WinCheckBox(EUIWidget* owner) : NativeCheckBox(owner)
 							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
 							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), NULL, NULL, NULL);
 
-	SetWindowLong(handle, GWL_ID, Owner()->id);
-
 	MakeSubClassing();
 
 	SendMessage(handle, WM_SETFONT, (WPARAM)theme->GetFont("FONT_NORMAL"), MAKELPARAM(TRUE, 0));

@@ -12,6 +12,6 @@ class EUIPanel : public EUIWidget
 
 public:
 
-	EUIPanel(int id, EUIWidget* parent, float x, float y, float w, float h);
+	EUIPanel(EUIWidget* parent, float x, float y, float w, float h);
 	virtual ~EUIPanel();
 };

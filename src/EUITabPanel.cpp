@@ -2,7 +2,7 @@
 #include "EUITabPanel.h"
 #include "native/win/WinTabPanel.h"
 
-EUITabPanel::EUITabPanel(int set_id, EUIWidget* prnt, float set_x, float set_y, float set_w, float set_h) : EUIWidget(set_id, prnt, "")
+EUITabPanel::EUITabPanel(EUIWidget* prnt, float set_x, float set_y, float set_w, float set_h) : EUIWidget(prnt, "")
 {
 	x = set_x;
 	y = set_y;

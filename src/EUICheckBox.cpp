@@ -2,7 +2,7 @@
 #include "EUICheckBox.h"
 #include "native/win/WinCheckBox.h"
 
-EUICheckBox::EUICheckBox(int set_id, EUIWidget* prnt, const char* txt, float set_x, float set_y, float w, float h) : EUIWidget(set_id, prnt, txt)
+EUICheckBox::EUICheckBox(EUIWidget* prnt, const char* txt, float set_x, float set_y, float w, float h) : EUIWidget(prnt, txt)
 {	
 	x = set_x;
 	y = set_y;

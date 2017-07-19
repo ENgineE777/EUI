@@ -79,7 +79,6 @@ WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(o
 							rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
 							NULL, NULL, NULL, NULL );
 
-	SetWindowLong(handle, GWL_ID, Owner()->id);
 	SetWindowLong(handle, GWL_USERDATA, (LONG)this);
 
 	if (!adjust)

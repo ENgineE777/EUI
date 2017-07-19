@@ -14,8 +14,7 @@ public:
 	virtual void Enable(bool set) = 0;
 	virtual void SetPos(float set_x, float set_y) = 0;
 
-	virtual float GetXOffset() = 0;
-	virtual float GetYOffset() = 0;
+	virtual void SetID(int id) = 0;
 
 	virtual void SetSize(float w, float h) = 0;
 

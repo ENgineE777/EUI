@@ -2,7 +2,7 @@
 #include "EUIButton.h"
 #include "native/win/WinButton.h"
 
-EUIButton::EUIButton(int set_id, EUIWidget* prnt, const char* txt, float set_x, float set_y, float w, float h) : EUIWidget(set_id, prnt, txt)
+EUIButton::EUIButton(EUIWidget* prnt, const char* txt, float set_x, float set_y, float w, float h) : EUIWidget(prnt, txt)
 {
 	x = set_x;
 	y = set_y;

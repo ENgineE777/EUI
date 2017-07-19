@@ -13,7 +13,7 @@ class EUIComboBox : public EUIWidget
 
 public:
 
-	EUIComboBox(int id, EUIWidget* parent, float x, float y, float w, float h);
+	EUIComboBox(EUIWidget* parent, float x, float y, float w, float h);
 	virtual ~EUIComboBox();
 
 	virtual void ClearList();

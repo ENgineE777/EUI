@@ -2,7 +2,7 @@
 #include "EUICategories.h"
 #include "native/win/WinCategories.h"
 
-EUICategories::EUICategories(int set_id, EUIWidget* prnt, float set_x, float set_y, float w, float h) : EUIWidget(set_id, prnt, "")
+EUICategories::EUICategories(EUIWidget* prnt, float set_x, float set_y, float w, float h) : EUIWidget(prnt, "")
 {
 	x = set_x;
 	y = set_y;

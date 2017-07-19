@@ -13,7 +13,7 @@ class EUICheckBox : public EUIWidget
 
 public:
 	
-	EUICheckBox(int id, EUIWidget* parent, const char* txt, float x, float y, float w, float h);
+	EUICheckBox(EUIWidget* parent, const char* txt, float x, float y, float w, float h);
 	virtual ~EUICheckBox();
 
 	virtual void SetText(const char* txt);

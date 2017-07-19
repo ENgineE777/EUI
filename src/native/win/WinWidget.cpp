@@ -42,14 +42,9 @@ void WinWidget::SetPos(float set_x, float set_y)
 	SetWindowPos(handle, 0, set_x, set_y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
-float WinWidget::GetXOffset()
+void WinWidget::SetID(int id)
 {
-	return 0.0f;
-}
-
-float WinWidget::GetYOffset()
-{
-	return 0.0f;
+	SetWindowLong(handle, GWL_ID, id);
 }
 
 void WinWidget::SetSize(float w, float h)

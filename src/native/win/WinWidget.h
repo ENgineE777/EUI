@@ -35,8 +35,7 @@ public:
 	virtual void Enable(bool set);
 	virtual void SetPos(float set_x, float set_y);
 
-	virtual float GetXOffset();
-	virtual float GetYOffset();
+	virtual void SetID(int id);
 
 	virtual void SetSize(float w, float h);
 

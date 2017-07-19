@@ -2,7 +2,7 @@
 #include "EUIListBox.h"
 #include "native/win/WinListBox.h"
 
-EUIListBox::EUIListBox(int set_id, EUIWidget* prnt, float set_x, float set_y, float set_w, float set_h) : EUIWidget(set_id, prnt, "")
+EUIListBox::EUIListBox(EUIWidget* prnt, float set_x, float set_y, float set_w, float set_h) : EUIWidget(prnt, "")
 {
 	x = set_x;
 	y = set_y;

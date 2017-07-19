@@ -2,7 +2,7 @@
 #include "EUILayout.h"
 #include "native/win/WinLayout.h"
 
-EUILayout::EUILayout(EUIWidget* prnt, bool set_vertical) : EUIWidget(0, prnt, "")
+EUILayout::EUILayout(EUIWidget* prnt, bool set_vertical) : EUIWidget(prnt, "")
 {
 	x = 0;
 	y = 0;

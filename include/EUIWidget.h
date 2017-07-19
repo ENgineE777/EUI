@@ -88,11 +88,12 @@ protected:
 
 public:
 
-	EUIWidget(int id, EUIWidget* prnt, const char* txt);
+	EUIWidget(EUIWidget* prnt, const char* txt);
 
 	virtual ~EUIWidget();
 
-	virtual int GetID();
+	virtual void SetID(int id);
+	virtual int  GetID();
 
 	virtual void SetListener(Listener* listener, uint32_t flag);
 

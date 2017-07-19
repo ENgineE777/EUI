@@ -1,14 +1,14 @@
 
 #include "EUIWidget.h"
 
-EUIWidget::EUIWidget(int set_id, EUIWidget* prnt, const char* txt)
+EUIWidget::EUIWidget(EUIWidget* prnt, const char* txt)
 {
 	x = 0;
 	y = 0;
 	width = 1;
 	height = 1;
 	visible = true;
-	id = set_id;
+	id = 0;
 	parent = prnt;
 	text = txt;
 	focused = NULL;
@@ -39,6 +39,12 @@ EUIWidget::~EUIWidget()
 		childs[i]->Release();
 		i--;
 	}
+}
+
+void EUIWidget::SetID(int set_id)
+{
+	id = set_id;
+	nativeWidget->SetID(id);
 }
 
 int EUIWidget::GetID()

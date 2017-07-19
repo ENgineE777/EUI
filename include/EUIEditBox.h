@@ -24,7 +24,7 @@ protected:
 	InputType inputType;
 public:
 
-	EUIEditBox(int id, EUIWidget* parent, const char* name, float x, float y, float w, float h, InputType type);
+	EUIEditBox(EUIWidget* parent, const char* name, float x, float y, float w, float h, InputType type);
 	virtual ~EUIEditBox();
 
 	virtual void SetText(const char* txt);
