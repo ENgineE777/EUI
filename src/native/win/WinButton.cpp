@@ -71,65 +71,49 @@ void WinButton::SetImage(int img, const char* image_name)
 
 void WinButton::Draw()
 {
-	if (!Owner()->use_image)
-	{
-		UINT uState = EUITheme::UISTATE_NORMAL;
-
-		if (!Owner()->IsEnabled())
-		{
-			uState = EUITheme::UISTATE_DISABLED;
-		}
-		else
-		{
-			if (is_howered)
-			{
-				uState = EUITheme::UISTATE_HOWERED;
-			}
-
-			if (Owner()->is_pushed)
-			{
-				uState = EUITheme::UISTATE_PUSHED;
-			}
-
-			if (IsFocused())
-			{
-				uState |= EUITheme::UISTATE_FOCUSED;
-			}
-		}
-
-		RECT rcItem = { 0, 0, Owner()->width, Owner()->height };
-		theme->DrawButton(GetDC(handle), rcItem, Owner()->text.c_str(), uState, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-		return;
-	}
-
-	HDC hDC = GetDC(handle);
-
-	HDC MemDCExercising = CreateCompatibleDC(hDC);
-	
+	UINT uState = EUITheme::UISTATE_NORMAL;
 	EUIButton::Image img = EUIButton::Normal;
 
 	if (!Owner()->IsEnabled())
 	{
+		uState = EUITheme::UISTATE_DISABLED;
 		img = EUIButton::Disabled;
 	}
 	else
 	{
 		if (is_howered)
 		{
+			uState = EUITheme::UISTATE_HOWERED;
 			img = EUIButton::Howered;
 		}
 
 		if (Owner()->is_pushed)
 		{
+			uState = EUITheme::UISTATE_PUSHED;
 			img = EUIButton::Pushed;
+		}
+
+		if (IsFocused())
+		{
+			uState |= EUITheme::UISTATE_FOCUSED;
 		}
 	}
 
-	SelectObject(MemDCExercising, images[img]);
-	BitBlt(hDC, 0, 0, Owner()->width, Owner()->height, MemDCExercising, 0, 0, SRCCOPY);
+	if (images[img])
+	{
+		HDC hDC = GetDC(handle);
+		HDC memDC = CreateCompatibleDC(hDC);
 
-	DeleteDC(MemDCExercising);
+		SelectObject(memDC, images[img]);
+		BitBlt(hDC, 0, 0, Owner()->width, Owner()->height, memDC, 0, 0, SRCCOPY);
+
+		DeleteDC(memDC);
+	}
+	else
+	{
+		RECT rcItem = { 0, 0, Owner()->width, Owner()->height };
+		theme->DrawButton(GetDC(handle), rcItem, Owner()->text.c_str(), uState, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+	}
 }
 
 void WinButton::NotifyMouseOver(WinWidget* widget)

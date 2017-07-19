@@ -63,7 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	tabPanel->AddTab("TAb3");
 
 	{
-		EUIButton* btn = new EUIButton(1001, tabPanel, false, "<a>Just</a> <b>Button</b>", 10, 20, 100, 30);
+		EUIButton* btn = new EUIButton(1001, tabPanel, "<a>Just</a> <b>Button</b>", 10, 20, 100, 30);
 		btn->SetListener(&listiner, 0);
 
 		EUICheckBox* chk = new EUICheckBox(1002, tabPanel, "Selected RadioButton", 10, 60, 100, 30);

@@ -8,8 +8,6 @@ class EUIButton : public EUIWidget
 {
 	friend class WinButton;
 
-	bool use_image;
-
 	bool is_pushed;
 	bool is_pushable;
 
@@ -27,7 +25,7 @@ public:
 		Disabled = 3
 	};
 
-	EUIButton(int id, EUIWidget* parent, bool use_image, const char* txt, float x, float y, float w, float h);
+	EUIButton(int id, EUIWidget* parent, const char* txt, float x, float y, float w, float h);
 	virtual ~EUIButton();
 
 	virtual void SetImage(Image img, const char* image_name);
