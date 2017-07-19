@@ -83,7 +83,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		lbx->AddItem("Tset1", NULL);
 		lbx->AddItem("Tset2", NULL);
 
-		EUILabel* lbl = new EUILabel(1002, tabPanel, "<a>Just</a> <b>Button</b>", false, 10, 120, 100, 30);
+		EUILabel* lbl = new EUILabel(1002, tabPanel, "<a>Just</a> <b>Button</b>", 10, 120, 100, 30);
 
 		EUIEditBox* ebx = new EUIEditBox(1003, tabPanel, "0", 10, 160, 100, 30, EUIEditBox::InputInteger);
 

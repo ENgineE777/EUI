@@ -10,13 +10,14 @@ class EUILabel : public EUIWidget
 
 	NativeLabel* Native();
 
+	bool bck_use;
+	int  bck_color[3];
+
 public:
 
-	bool color_box;
-	int  color[3];
-
-	EUILabel(int id, EUIWidget* parent, const char* txt, bool color_box, float x, float y, float w, float h);
+	EUILabel(int id, EUIWidget* parent, const char* txt, float x, float y, float w, float h);
 	virtual ~EUILabel();
 
 	virtual void SetText(const char* txt);
+	virtual void SetBackgroundColor(bool use, int* color);
 };
