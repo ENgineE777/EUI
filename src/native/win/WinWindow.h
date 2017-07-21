@@ -8,6 +8,8 @@ class EUIWindow;
 
 class WinWindow : public NativeWindow
 {
+	friend class WinMenu;
+
 	static bool wndClassReg;
 	bool active;
 	int flag;
@@ -17,6 +19,8 @@ class WinWindow : public NativeWindow
 
 	bool need_strict_size;
 	bool is_minimazed;
+
+	WinWidget* menu_widget;
 
 public:
 	WinWindow(EUIWidget* owner, bool popup, bool adjust);

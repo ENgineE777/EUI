@@ -1,11 +1,14 @@
 
 #include "EUIMenu.h"
 #include "WinMenu.h"
+#include "WinWindow.h"
 
 WinMenu::WinMenu(EUIWidget* owner) : NativeMenu(owner)
 {
 	menu = CreateMenu();
 	SetMenu(((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), menu );
+
+	((WinWindow*)Owner()->parent->nativeWidget)->menu_widget = this;
 
 	cur_depth = 0;
 	depth_menu[cur_depth] = menu;
