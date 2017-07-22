@@ -19,5 +19,10 @@ public:
 
 	virtual void ClearList();
 	virtual void AddItem(const char* str, void* data);
-	virtual int  GetSelectedIndex();
+	virtual int   GetSelectedItemIndex();
+	virtual void* GetSelectedItemData();
+	virtual void  SelectItemByIndex(int index);
+	virtual void  SelectItemByData(void* data);
+	virtual void  DeleteItemByIndex(int index);
+	virtual void  DeleteItemByData(void* data);
 };

@@ -29,9 +29,34 @@ void EUIListBox::ClearList()
 void EUIListBox::AddItem(const char* str, void* data)
 {
 	Native()->AddItem(str, data);
+};
+
+int EUIListBox::GetSelectedItemIndex()
+{
+	return Native()->GetSelectedItemIndex();
 }
 
-int EUIListBox::GetSelectedIndex()
+void* EUIListBox::GetSelectedItemData()
 {
-	return Native()->GetSelectedIndex();
+	return Native()->GetSelectedItemData();
+}
+
+void EUIListBox::SelectItemByIndex(int index)
+{
+	Native()->SelectItemByIndex(index);
+}
+
+void EUIListBox::SelectItemByData(void* data)
+{
+	Native()->SelectItemByData(data);
+}
+
+void EUIListBox::DeleteItemByIndex(int index)
+{
+	Native()->DeleteItemByIndex(index);
+}
+
+void EUIListBox::DeleteItemByData(void* data)
+{
+	Native()->DeleteItemByData(data);
 }

@@ -65,7 +65,40 @@ void WinListBox::AddItem(const char* str, void* data)
 	SendMessage(handle, LB_SETTOPINDEX ,(WPARAM) sel, 0);
 }
 
-int WinListBox::GetSelectedIndex()
+int WinListBox::GetSelectedItemIndex()
 {
 	return ListBox_GetCurSel(handle);
+}
+
+void* WinListBox::GetSelectedItemData()
+{
+	return (void*)ListBox_GetItemData(handle, GetSelectedItemIndex());
+}
+
+void WinListBox::SelectItemByIndex(int index)
+{
+	ListBox_SetCurSel(handle, index);
+}
+
+void WinListBox::SelectItemByData(void* data)
+{
+	ListBox_SelectItemData(handle, 0, data);
+}
+
+void WinListBox::DeleteItemByIndex(int index)
+{
+	ListBox_DeleteString(handle, index);
+}
+
+void WinListBox::DeleteItemByData(void* data)
+{
+	int count = ListBox_GetCount(handle);
+	for (int i = 0; i < count; i++)
+	{
+		if ((void*)ListBox_GetItemData(handle, i) == data)
+		{
+			ListBox_DeleteString(handle, i);
+			break;
+		}
+	}
 }
