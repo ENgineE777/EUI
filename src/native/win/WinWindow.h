@@ -20,8 +20,6 @@ class WinWindow : public NativeWindow
 	bool need_strict_size;
 	bool is_minimazed;
 
-	WinWidget* menu_widget;
-
 public:
 	WinWindow(EUIWidget* owner, bool popup, bool adjust);
 	virtual ~WinWindow();

@@ -7,7 +7,8 @@ WinListBox::WinListBox(EUIWidget* owner) : NativeListBox(owner)
 {
 	handle = CreateWindowW(L"ListBox", L"", WS_CHILD | WS_VSCROLL | WS_VISIBLE | LBS_NOTIFY | WS_BORDER,
 							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), NULL, NULL, NULL);
+							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), (HMENU)win_id, NULL, NULL);
+	win_id++;
 
 	MakeSubClassing();
 
@@ -27,19 +28,22 @@ bool WinListBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 {
 	NativeListBox::ProcessWidget(msg, wParam, lParam);
  
-	if (msg == 513)
+	if (msg == WM_COMMAND)
 	{
-		if (Owner()->listener)
+		if (HIWORD(wParam) == LBN_SELCHANGE)
 		{
-			Owner()->listener->OnListBoxChange(Owner(), ListBox_GetCurSel(handle));
+			if (Owner()->listener)
+			{
+				Owner()->listener->OnListBoxChange(Owner(), ListBox_GetCurSel(handle));
+			}
 		}
-	}
-	else
-	if (msg == 515)
-	{
-		if (Owner()->listener)
+		else
+		if (HIWORD(wParam) == msg == LBN_DBLCLK)
 		{
-			Owner()->listener->OnListBoxDblClick(Owner(), ListBox_GetCurSel(handle));
+			if (Owner()->listener)
+			{
+				Owner()->listener->OnListBoxDblClick(Owner(), ListBox_GetCurSel(handle));
+			}
 		}
 	}
 

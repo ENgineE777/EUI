@@ -44,7 +44,6 @@ EUIWidget::~EUIWidget()
 void EUIWidget::SetID(int set_id)
 {
 	id = set_id;
-	nativeWidget->SetID(id);
 }
 
 int EUIWidget::GetID()

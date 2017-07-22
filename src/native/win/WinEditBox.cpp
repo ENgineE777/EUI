@@ -10,7 +10,8 @@ WinEditBox::WinEditBox(EUIWidget* owner) : NativeEditBox(owner)
 
 	handle = CreateWindowW(L"EDIT", wtext.c_str(), ES_AUTOHSCROLL | WS_CHILD | WS_BORDER | WS_VISIBLE | WS_TABSTOP,
 							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), NULL, NULL, NULL );
+							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), (HMENU)win_id, NULL, NULL );
+	win_id++;
 
 	MakeSubClassing();
 

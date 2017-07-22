@@ -6,7 +6,8 @@ WinPanel::WinPanel(EUIWidget* owner) : NativePanel(owner)
 {
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
 							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), NULL, NULL, NULL);
+							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), (HMENU)win_id, NULL, NULL);
+	win_id++;
 
 	MakeSubClassing();
 }

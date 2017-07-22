@@ -91,8 +91,6 @@ WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(o
 	}
 
 	is_minimazed = false;
-
-	menu_widget = NULL;
 }
 
 WinWindow::~WinWindow()
@@ -105,17 +103,11 @@ EUIWindow* WinWindow::Owner()
 }
 
 LRESULT WinWindow::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
-{	
+{
+	NativeWindow::ProcessWidget(msg, wParam, lParam);
+
 	switch( msg )
 	{
-		case WM_COMMAND:
-		{
-			if (menu_widget)
-			{
-				menu_widget->ProcessWidget(msg, wParam, lParam);
-			}
-		}
-		break;
 		case WM_SYSCOMMAND:
 		{
 			if ((wParam & 0xFFF0) == SC_MINIMIZE)

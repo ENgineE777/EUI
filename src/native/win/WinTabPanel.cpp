@@ -6,7 +6,8 @@ WinTabPanel::WinTabPanel(EUIWidget* owner) : NativeTabPanel(owner)
 {
 	handle = CreateWindow(WC_TABCONTROL, "", WS_CHILD | WS_VISIBLE,
 							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), NULL, NULL, NULL);
+							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), (HMENU)win_id, NULL, NULL);
+	win_id++;
 
 	MakeSubClassing();
 
@@ -28,13 +29,16 @@ bool WinTabPanel::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 {
 	NativeTabPanel::ProcessWidget(msg, wParam, lParam);
 
-	if (msg == 15)
+	if (msg == WM_NOTIFY)
 	{
-		SetCurrentTab(TabCtrl_GetCurSel(handle));
-
-		if (Owner()->listener)
+		if (((LPNMHDR)lParam)->code == TCN_SELCHANGE)
 		{
-			Owner()->listener->OnTabChange(Owner(), curTab);
+			SetCurrentTab(TabCtrl_GetCurSel(handle));
+
+			if (Owner()->listener)
+			{
+				Owner()->listener->OnTabChange(Owner(), curTab);
+			}
 		}
 	}
 

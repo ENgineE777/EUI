@@ -3,6 +3,7 @@
 #include "WinWidget.h"
 
 WinWidget* WinWidget::mouse_over = NULL;
+int WinWidget::win_id = 500;
 
 WinWidget::WinWidget(EUIWidget* set_owner) : NativeWidget(set_owner)
 {
@@ -42,11 +43,6 @@ void WinWidget::SetPos(float set_x, float set_y)
 	SetWindowPos(handle, 0, set_x, set_y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void WinWidget::SetID(int id)
-{
-	SetWindowLong(handle, GWL_ID, id);
-}
-
 void WinWidget::SetSize(float w, float h)
 {
 	SetWindowPos(handle, 0, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
@@ -67,10 +63,32 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	int xPos = GET_X_LPARAM(lParam);
 	int yPos = GET_Y_LPARAM(lParam);
 
-	static HBRUSH hbrBkgnd = NULL;
-
 	switch (msg)
 	{
+		case WM_NOTIFY:
+		case WM_COMMAND:
+		{
+			HWND sender = (HWND)lParam;
+			
+			if (msg == WM_NOTIFY)
+			{
+				sender = ((LPNMHDR)lParam)->hwndFrom;
+			}
+
+			if (sender != handle)
+			{
+				for (int i = 0; i < owner->childs.size(); i++)
+				{
+					WinWidget* win_wgt = (WinWidget*)owner->childs[i]->nativeWidget;
+
+					if (win_wgt->handle == sender)
+					{
+						((WinWidget*)owner->childs[i]->nativeWidget)->ProcessWidget(msg, wParam, lParam);
+					}
+				}
+			}
+		}
+		break;
 		case WM_PAINT:
 		{
 			Draw();

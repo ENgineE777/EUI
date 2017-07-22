@@ -23,6 +23,7 @@ protected:
 
 	int    processRes;
 	static WinWidget* mouse_over;
+	static int win_id;
 
 public:
 	WinWidget(EUIWidget* owner);
@@ -34,8 +35,6 @@ public:
 	virtual void Show(bool set);
 	virtual void Enable(bool set);
 	virtual void SetPos(float set_x, float set_y);
-
-	virtual void SetID(int id);
 
 	virtual void SetSize(float w, float h);
 
