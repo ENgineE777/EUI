@@ -29,7 +29,17 @@ void EUIListBox::ClearList()
 void EUIListBox::AddItem(const char* str, void* data)
 {
 	Native()->AddItem(str, data);
-};
+}
+
+void EUIListBox::ChangeItemNameByIndex(const char* str, int index)
+{
+	Native()->ChangeItemNameByIndex(str, index);
+}
+
+void EUIListBox::ChangeItemNameByData(const char* str, void* data)
+{
+	Native()->ChangeItemNameByData(str, data);
+}
 
 int EUIListBox::GetSelectedItemIndex()
 {

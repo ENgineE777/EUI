@@ -50,6 +50,20 @@ bool WinListBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	return true;
 }
 
+int WinListBox::FindIndexByData(void* data)
+{
+	int count = ListBox_GetCount(handle);
+	for (int i = 0; i < count; i++)
+	{
+		if ((void*)ListBox_GetItemData(handle, i) == data)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 void WinListBox::ClearList()
 {
 	while (SendMessage(handle, LB_GETCOUNT, 0, 0) != 0)
@@ -66,7 +80,26 @@ void WinListBox::AddItem(const char* str, void* data)
 	int sel = SendMessageW(handle, LB_ADDSTRING, 0, (LPARAM)wtext.c_str()); 
 
 	SendMessage(handle, LB_SETITEMDATA ,(WPARAM) sel, (LPARAM)data);
-	SendMessage(handle, LB_SETTOPINDEX ,(WPARAM) sel, 0);
+}
+
+void WinListBox::ChangeItemNameByIndex(const char* str, int index)
+{
+	bool needReselect = (index == GetSelectedItemIndex());
+	void* data = (void*)ListBox_GetItemData(handle, index);
+	DeleteItemByIndex(index);
+
+	ListBox_InsertString(handle, index, (LPCSTR)str);
+	SendMessage(handle, LB_SETITEMDATA, (WPARAM)index, (LPARAM)data);
+
+	if (needReselect)
+	{
+		SelectItemByIndex(index);
+	}
+}
+
+void WinListBox::ChangeItemNameByData(const char* str, void* data)
+{
+	ChangeItemNameByIndex(str, FindIndexByData(data));
 }
 
 int WinListBox::GetSelectedItemIndex()
@@ -96,13 +129,10 @@ void WinListBox::DeleteItemByIndex(int index)
 
 void WinListBox::DeleteItemByData(void* data)
 {
-	int count = ListBox_GetCount(handle);
-	for (int i = 0; i < count; i++)
+	int index = FindIndexByData(data);
+
+	if (index != -1)
 	{
-		if ((void*)ListBox_GetItemData(handle, i) == data)
-		{
-			ListBox_DeleteString(handle, i);
-			break;
-		}
+		ListBox_DeleteString(handle, index);
 	}
 }
