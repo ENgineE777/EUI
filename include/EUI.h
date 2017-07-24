@@ -22,4 +22,6 @@ public:
 	static void Init(const char* theme);
 	static void ReloadTheme(const char* theme);
 	static int  Run();
+	static const char* OpenOpenDialog(char* extName, const char* ext);
+	static const char* OpenSaveDialog(char* extName, const char* ext);
 };

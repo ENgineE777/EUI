@@ -7,6 +7,10 @@ std::vector<EUIWindow*> EUI::wnds;
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name = 'Microsoft.Windows.Common-Controls' version = '6.0.0.0' processorArchitecture = '*' publicKeyToken = '6595b64144ccf1df' language = '*'\"")
 
+#ifdef PLATFORM_WIN
+extern const char* FileDialog(void* data, char* extName, const char* ext, bool open);
+#endif
+
 void EUI::Init(const char* themeName)
 {
 	InitCommonControls();
@@ -41,4 +45,30 @@ int EUI::Run()
 	theme->Ulnload();
 
 	return 0;
+}
+
+const char* EUI::OpenOpenDialog(char* extName, const char* ext)
+{
+#ifdef PLATFORM_WIN
+	void* data = NULL;
+
+	if (wnds.size() > 0)
+	{
+		data = wnds[0]->GetNative();
+	}
+	return FileDialog(data, extName, ext, true);
+#endif
+}
+
+const char* EUI::OpenSaveDialog(char* extName, const char* ext)
+{
+#ifdef PLATFORM_WIN
+	void* data = NULL;
+
+	if (wnds.size() > 0)
+	{
+		data = wnds[0]->GetNative();
+	}
+	return FileDialog(data, extName, ext, false);
+#endif
 }
