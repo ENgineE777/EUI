@@ -59,7 +59,8 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 				return false;
 			}
 			else
-			if (wParam < '0' || wParam > '9')
+			if ((wParam < '0' || wParam > '9') &&
+				(Owner()->inputType != EUIEditBox::InputText))
 			{
 				return false;
 			}
