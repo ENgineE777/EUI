@@ -31,6 +31,17 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 {
 	NativeEditBox::ProcessWidget(msg, wParam, lParam);
 
+	if (msg == WM_COMMAND)
+	{
+		if (HIWORD(wParam) == EN_CHANGE)
+		{
+			if (Owner()->listener)
+			{
+				Owner()->listener->OnEditBoxChange(Owner());
+			}
+		}
+	}
+
 	if (msg == WM_CHAR)
 	{
 		if (wParam == VK_RETURN)
@@ -64,11 +75,6 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			{
 				return false;
 			}
-		}
-
-		if (Owner()->listener)
-		{
-			Owner()->listener->OnEditBoxChange(Owner());
 		}
 	}
 
