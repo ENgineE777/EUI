@@ -1,8 +1,9 @@
 
+#include "WinDialog.h"
 #include "windows.h"
 #include <string>
 
-const char* FileDialog(void* data, char* extName, const char* ext, bool open)
+const char* WinDialog::FileDialog(void* data, char* extName, const char* ext, bool open)
 {
 	char curDir[512];
 	GetCurrentDirectoryA(512, curDir);

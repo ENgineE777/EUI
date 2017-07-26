@@ -123,6 +123,9 @@
     <ClCompile Include="..\..\support\json\JSONReader.cpp">
       <Filter>support\json</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\native\win\WinDialog.cpp">
+      <Filter>Source\native\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\native\win\WinButton.h">
@@ -262,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="..\..\support\json\JSONReader.h">
       <Filter>support\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win\WinDialog.h">
+      <Filter>Source\native\win</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

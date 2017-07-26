@@ -38,6 +38,7 @@
     <ClCompile Include="..\..\src\native\win\WinCategories.cpp" />
     <ClCompile Include="..\..\src\native\win\WinCheckBox.cpp" />
     <ClCompile Include="..\..\src\native\win\WinComboBox.cpp" />
+    <ClCompile Include="..\..\src\native\win\WinDialog.cpp" />
     <ClCompile Include="..\..\src\native\win\WinEditBox.cpp" />
     <ClCompile Include="..\..\src\native\win\WinLabel.cpp" />
     <ClCompile Include="..\..\src\native\win\WinLayout.cpp" />
@@ -86,6 +87,7 @@
     <ClInclude Include="..\..\src\native\win\WinCategories.h" />
     <ClInclude Include="..\..\src\native\win\WinCheckBox.h" />
     <ClInclude Include="..\..\src\native\win\WinComboBox.h" />
+    <ClInclude Include="..\..\src\native\win\WinDialog.h" />
     <ClInclude Include="..\..\src\native\win\WinEditBox.h" />
     <ClInclude Include="..\..\src\native\win\WinLabel.h" />
     <ClInclude Include="..\..\src\native\win\WinLayout.h" />

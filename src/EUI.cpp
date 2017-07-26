@@ -2,14 +2,11 @@
 #include "EUI.h"
 #include <windows.h>
 #include "Native/win/WinTheme.h"
+#include "Native/win/WinDialog.h"
 
 std::vector<EUIWindow*> EUI::wnds;
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name = 'Microsoft.Windows.Common-Controls' version = '6.0.0.0' processorArchitecture = '*' publicKeyToken = '6595b64144ccf1df' language = '*'\"")
-
-#ifdef PLATFORM_WIN
-extern const char* FileDialog(void* data, char* extName, const char* ext, bool open);
-#endif
 
 void EUI::Init(const char* themeName)
 {
@@ -56,7 +53,7 @@ const char* EUI::OpenOpenDialog(char* extName, const char* ext)
 	{
 		data = wnds[0]->GetNative();
 	}
-	return FileDialog(data, extName, ext, true);
+	return WinDialog::FileDialog(data, extName, ext, true);
 #endif
 }
 
@@ -69,6 +66,6 @@ const char* EUI::OpenSaveDialog(char* extName, const char* ext)
 	{
 		data = wnds[0]->GetNative();
 	}
-	return FileDialog(data, extName, ext, false);
+	return WinDialog::FileDialog(data, extName, ext, false);
 #endif
 }
