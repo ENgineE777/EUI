@@ -86,7 +86,7 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 				{
 					WinWidget* win_wgt = (WinWidget*)owner->childs[i]->nativeWidget;
 
-					if (win_wgt->handle == sender)
+					if (win_wgt && win_wgt->handle == sender)
 					{
 						((WinWidget*)owner->childs[i]->nativeWidget)->ProcessWidget(msg, wParam, lParam);
 					}
