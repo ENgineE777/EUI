@@ -73,7 +73,7 @@ void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
 	}
 	
 	category->childs.push_back(widget);
-	category->childsVis.push_back(widget->IsVisible());
+	category->childsVis.push_back(widget->visible);
 	
 	Native()->UpdateChildPos();
 }

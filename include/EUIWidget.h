@@ -23,6 +23,7 @@ class EUIWidget
 	friend class WinListBox;
 	friend class WinComboBox;
 	friend class WinCategories;
+	friend class EUICategories;
 	friend class WinTabPanel;
 	friend class WinTabSheet;
 
