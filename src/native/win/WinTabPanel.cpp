@@ -47,41 +47,60 @@ bool WinTabPanel::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 void WinTabPanel::Resize()
 {
-	for (int i = 0; i < tabs.size(); i++)
+	for (int i = 0; i < owner->childs.size(); i++)
 	{
-		SetWindowPos(tabs[i], 0, 0, 0, Owner()->width - 8, Owner()->height - 35, SWP_NOMOVE | SWP_NOZORDER);
+		owner->childs[i]->SetSize(Owner()->width - 12, Owner()->height - 30);
 	}
 
 	NativeTabPanel::Resize();
 }
 
-void WinTabPanel::AddTab(const char* txt)
+void WinTabPanel::AddTab(const char* txt, HWND hnd)
 {
-	HWND hnd = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | SS_OWNERDRAW | SS_NOTIFY,
-							5, 30, Owner()->width - 8, Owner()->height - 35,
-							handle, NULL, NULL, NULL);
-
-	SetWindowSubclass(hnd, &WinWidgetProc, 0, (DWORD_PTR)this);
-
-	tabs.push_back(hnd);
-
-	if (tabs.size() == 1)
+	if (owner->childs.size() == 1)
 	{
 		curTab = 0;
-
-		ShowTab(0, true);
 	}
 
 	TCITEM tie; 
 	tie.mask = TCIF_TEXT; 
 	tie.iImage = -1; 
 	tie.pszText = (LPSTR)txt;
-	TabCtrl_InsertItem(handle, tabs.size()-1, &tie);
+	TabCtrl_InsertItem(handle, owner->childs.size()-1, &tie);
+}
+
+int WinTabPanel::GetCurrentTabIndex()
+{
+	return curTab;
+}
+
+void WinTabPanel::DeleteTab(int index)
+{
+	if (index < 0 || index >= owner->childs.size())
+	{
+		return;
+	}
+
+	//TODO:
+	//need delete child
+	owner->childs.erase(owner->childs.begin() + index);
+	TabCtrl_DeleteItem(handle, index);
+}
+
+void WinTabPanel::ClearTabs()
+{
+	//TODO:
+	//need delete childs
+
+	owner->childs.clear();
+
+	curTab = -1;
+	TabCtrl_DeleteAllItems(handle);
 }
 
 void WinTabPanel::SetTabName(int index, const char* name)
 {
-	if (index < tabs.size())
+	if (index < owner->childs.size())
 	{
 		TCITEM tie; 
 		tie.mask = TCIF_TEXT; 
@@ -91,39 +110,11 @@ void WinTabPanel::SetTabName(int index, const char* name)
 	}
 }
 
-void WinTabPanel::DelTab(int index)
-{
-	if (index < 0 || index >= tabs.size())
-	{
-		return;
-	}
-
-	TabCtrl_DeleteItem(handle, index);
-	tabs.erase(tabs.begin() + index);
-}
-
-void WinTabPanel::ClearTabs()
-{
-	tabs.clear();
-	curTab = -1;
-	TabCtrl_DeleteAllItems(handle);
-}
-
-void WinTabPanel::AddWidget2Tab(int index, EUIWidget* widget)
-{
-	if (index < 0 || index >= tabs.size())
-	{
-		return;
-	}
-
-	SetParent(((WinWidget*)widget->nativeWidget)->GetHandle(), tabs[index]);
-}
-
 void WinTabPanel::SetCurrentTab(int index)
 {
-	if(index >= 0)
+	if (index >= 0)
 	{
-		if (curTab == index || index < 0 || index >= tabs.size())
+		if (curTab == index || index < 0 || index >= owner->childs.size())
 		{
 			return;
 		}
@@ -135,14 +126,9 @@ void WinTabPanel::SetCurrentTab(int index)
 	}
 }
 
-int WinTabPanel::GetCurrentTab()
-{
-	return curTab;
-}
-
 void WinTabPanel::ShowTab(int index, bool show)
 {
-	if (index<0 || index>=tabs.size()) return;
+	if (index<0 || index>=owner->childs.size()) return;
 
-	ShowWindow(tabs[index], show);
+	owner->childs[index]->Show(show);
 }

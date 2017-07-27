@@ -152,6 +152,24 @@ void EUIWidget::DelChild(EUIWidget* child)
 	}
 }
 
+int EUIWidget::GetIndexAsChild()
+{
+	if (!parent)
+	{
+		return -1;
+	}
+
+	for (int i = 0; i < parent->childs.size(); i++)
+	{
+		if (parent->childs[i] == this)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 void EUIWidget::Update()
 {
 	if (listener && (listenerFlag & listenerFlag))

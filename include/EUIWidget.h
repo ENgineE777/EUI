@@ -24,6 +24,7 @@ class EUIWidget
 	friend class WinComboBox;
 	friend class WinCategories;
 	friend class WinTabPanel;
+	friend class WinTabSheet;
 
 public:
 
@@ -116,6 +117,7 @@ public:
 
 	virtual void AddChild(EUIWidget* child);
 	virtual void DelChild(EUIWidget* child);
+	virtual int  GetIndexAsChild();
 
 	virtual void Update();
 

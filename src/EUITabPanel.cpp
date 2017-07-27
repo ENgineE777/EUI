@@ -1,5 +1,6 @@
 
 #include "EUITabPanel.h"
+#include "EUITabSheet.h"
 #include "native/win/WinTabPanel.h"
 
 EUITabPanel::EUITabPanel(EUIWidget* prnt, float set_x, float set_y, float set_w, float set_h) : EUIWidget(prnt, "")
@@ -21,37 +22,34 @@ NativeTabPanel* EUITabPanel::Native()
 	return (NativeTabPanel*)nativeWidget;
 }
 
-void EUITabPanel::AddTab(const char* txt)
+EUITabSheet* EUITabPanel::AddTab(const char* txt)
 {
-	Native()->AddTab(txt);
+	EUITabSheet* sheet = new EUITabSheet(this, txt);
+
+	if (childs.size() == 1)
+	{
+		sheet->Show(true);
+	}
+
+	return sheet;
 }
 
-void EUITabPanel::SetTabName(int index, const char* name)
+EUITabSheet* EUITabPanel::GetTab(int index)
 {
-	Native()->SetTabName(index, name);
+	return (EUITabSheet*)childs[index];
 }
 
-void EUITabPanel::DelTab(int index)
+int EUITabPanel::GetCurrentTabIndex()
 {
-	Native()->DelTab(index);
+	return Native()->GetCurrentTabIndex();
+}
+
+void EUITabPanel::DeleteTab(int index)
+{
+	Native()->DeleteTab(index);
 }
 
 void EUITabPanel::ClearTabs()
 {
 	Native()->ClearTabs();
-}
-
-void EUITabPanel::AddWidget2Tab(int index, EUIWidget* widget)
-{
-	Native()->AddWidget2Tab(index, widget);
-}
-
-void EUITabPanel::SetCurrentTab(int index)
-{
-	Native()->SetCurrentTab(index);
-}
-
-int EUITabPanel::GetCurrentTab()
-{
-	return Native()->GetCurrentTab();
 }

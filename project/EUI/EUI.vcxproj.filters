@@ -4,17 +4,11 @@
     <Filter Include="Source">
       <UniqueIdentifier>{6bc8a758-8cde-4ba3-858b-ad31d352bd6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include">
-      <UniqueIdentifier>{02c7d021-4f7a-489f-a52c-0f34060b4ba1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\native">
       <UniqueIdentifier>{57b03906-4cc5-4c9e-9463-2c18ae8796bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\native\win">
       <UniqueIdentifier>{dd9cdd08-4d7e-42aa-8aa6-9d1baefe9d36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include\native">
-      <UniqueIdentifier>{5d01c060-8bac-4ac0-b98a-04865a4516f4}</UniqueIdentifier>
     </Filter>
     <Filter Include="support">
       <UniqueIdentifier>{760c06af-7821-4326-a774-bf56b643c949}</UniqueIdentifier>
@@ -126,6 +120,12 @@
     <ClCompile Include="..\..\src\native\win\WinDialog.cpp">
       <Filter>Source\native\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\native\win\WinTabSheet.cpp">
+      <Filter>Source\native\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\EUITabSheet.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\native\win\WinButton.h">
@@ -170,90 +170,6 @@
     <ClInclude Include="..\..\src\native\win\WinWindow.h">
       <Filter>Source\native\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\EUI.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUIButton.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUICategories.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUICheckBox.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUIComboBox.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUIEditBox.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUILabel.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUILayout.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUIListBox.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUIMenu.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUIPanel.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUITabPanel.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUITheme.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUIWidget.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\EUIWindow.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeButton.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeCategories.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeCheckBox.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeComboBox.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeEditBox.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeLabel.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeLayout.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeListBox.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeMenu.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativePanel.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeTabPanel.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeWidget.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\native\NativeWindow.h">
-      <Filter>Include\native</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\support\UTFConv.h">
       <Filter>support</Filter>
     </ClInclude>
@@ -268,6 +184,99 @@
     </ClInclude>
     <ClInclude Include="..\..\src\native\win\WinDialog.h">
       <Filter>Source\native\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win\WinTabSheet.h">
+      <Filter>Source\native\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeButton.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeCategories.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeCheckBox.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeComboBox.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeEditBox.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeLabel.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeLayout.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeListBox.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeMenu.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativePanel.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeTabPanel.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeTabSheet.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeWidget.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeWindow.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUI.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIButton.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUICategories.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUICheckBox.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIComboBox.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIEditBox.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUILabel.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUILayout.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIListBox.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIMenu.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIPanel.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUITabPanel.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUITabSheet.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUITheme.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIWidget.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIWindow.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -158,8 +158,8 @@ void WinWidget::Redraw()
 	RECT rc;
 	rc.left = 0;
 	rc.top = 0;
-	rc.right = owner->width + 40;
-	rc.bottom = owner->height + 40;
+	rc.right = owner->width;
+	rc.bottom = owner->height;
 
 	EUIWidget* wgt = owner;
 

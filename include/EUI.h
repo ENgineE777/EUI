@@ -13,6 +13,7 @@
 #include "EUIComboBox.h"
 #include "EUICategories.h"
 #include "EUITabPanel.h"
+#include "EUITabSheet.h"
 
 class EUI
 {
