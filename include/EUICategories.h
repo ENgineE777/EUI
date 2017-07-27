@@ -13,6 +13,7 @@ class EUICategories : public EUIWidget
 		bool  opened;
 		char  name[128];
 		std::vector<EUIWidget*> childs;
+		std::vector<bool> childsVis;
 		float y;
 
 		Category()
@@ -23,6 +24,7 @@ class EUICategories : public EUIWidget
 		};
 	};
 
+	bool allowCallOnChildShow;
 	std::vector<Category> categories;
 
 	NativeCategories* Native();
@@ -32,5 +34,6 @@ public:
 	EUICategories(EUIWidget* parent, float x, float y, float w, float h);
 	virtual ~EUICategories();
 
+	virtual void OnChildShow(int index, bool set);
 	virtual void RegisterChildInCategory(const char* name, EUIWidget* widget);
 };

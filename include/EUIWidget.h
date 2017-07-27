@@ -87,6 +87,8 @@ protected:
 
 	uint32_t listenerFlag;
 
+	virtual void OnChildShow(int index, bool set);
+
 public:
 
 	EUIWidget(EUIWidget* prnt, const char* txt);

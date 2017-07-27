@@ -31,6 +31,11 @@ void* WinWidget::GetNative()
 void WinWidget::Show(bool set)
 {
 	ShowWindow(handle, set);
+
+	if (set)
+	{
+		Redraw();
+	}
 }
 
 void WinWidget::Enable(bool set)
@@ -155,11 +160,13 @@ void WinWidget::Draw()
 
 void WinWidget::Redraw()
 {
-	InvalidateRect(handle, NULL, false);
-
 	if (owner->parent)
 	{
-		InvalidateRect(((WinWidget*)owner->parent->nativeWidget)->GetHandle(), NULL, false);
+		InvalidateRect(((WinWidget*)owner->parent->nativeWidget)->GetHandle(), NULL, true);
+	}
+	else
+	{
+		InvalidateRect(handle, NULL, true);
 	}
 
 	/*RECT rc;

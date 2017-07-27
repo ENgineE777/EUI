@@ -57,8 +57,18 @@ void EUIWidget::SetListener(Listener* set_listener, uint32_t flag)
 	listenerFlag = flag;
 }
 
+void EUIWidget::OnChildShow(int index, bool set)
+{
+
+}
+
 void EUIWidget::Show(bool set)
 {
+	if (parent)
+	{
+		parent->OnChildShow(GetIndexAsChild(), set);
+	}
+
 	visible = set;
 	nativeWidget->Show(set);
 }

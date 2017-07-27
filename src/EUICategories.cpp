@@ -9,6 +9,8 @@ EUICategories::EUICategories(EUIWidget* prnt, float set_x, float set_y, float w,
 	width = w;
 	height = h;
 
+	allowCallOnChildShow = true;
+
 	nativeWidget = new WinCategories(this);
 }
 
@@ -19,6 +21,33 @@ EUICategories::~EUICategories()
 NativeCategories* EUICategories::Native()
 {
 	return (NativeCategories*)nativeWidget;
+}
+
+void EUICategories::OnChildShow(int index, bool set)
+{
+	if (!allowCallOnChildShow)
+	{
+		return;
+	}
+
+	for (int i = 0; i < categories.size(); i++)
+	{
+		Category& category = categories[i];
+
+		for (int j = 0; j < category.childs.size(); j++)
+		{
+			if (category.childs[j] == childs[index])
+			{
+				int sz = category.childsVis.size();
+				sz = category.childsVis.size();
+
+				category.childsVis[j] = set;
+				break;
+			}
+		}
+	}
+
+	Native()->UpdateChildPos();
 }
 
 void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
@@ -44,6 +73,7 @@ void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
 	}
 	
 	category->childs.push_back(widget);
+	category->childsVis.push_back(widget->IsVisible());
 	
 	Native()->UpdateChildPos();
 }

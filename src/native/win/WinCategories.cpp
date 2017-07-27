@@ -198,6 +198,8 @@ void WinCategories::CalcThumb()
 
 void WinCategories::UpdateChildPos()
 {
+	Owner()->allowCallOnChildShow = false;
+
 	int pos = -thumbPos * thumbDelta;
 
 	for (int i = 0; i < Owner()->categories.size(); i++)
@@ -209,6 +211,11 @@ void WinCategories::UpdateChildPos()
 
 		for (int j = 0; j < category.childs.size(); j++)
 		{
+			if (!category.childsVis[j])
+			{
+				continue;
+			}
+
 			category.childs[j]->Show(category.opened);
 
 			if (category.opened)
@@ -218,6 +225,8 @@ void WinCategories::UpdateChildPos()
 			}
 		}
 	}
+
+	Owner()->allowCallOnChildShow = true;
 }
 
 void WinCategories::Resize()
