@@ -155,7 +155,14 @@ void WinWidget::Draw()
 
 void WinWidget::Redraw()
 {
-	RECT rc;
+	InvalidateRect(handle, NULL, false);
+
+	if (owner->parent)
+	{
+		InvalidateRect(((WinWidget*)owner->parent->nativeWidget)->GetHandle(), NULL, false);
+	}
+
+	/*RECT rc;
 	rc.left = 0;
 	rc.top = 0;
 	rc.right = owner->width;
@@ -174,7 +181,7 @@ void WinWidget::Redraw()
 		wgt = wgt->parent;
 	}
 
-	InvalidateRect(((WinWidget*)wgt->nativeWidget)->GetHandle(), &rc, false);
+	InvalidateRect(((WinWidget*)wgt->nativeWidget)->GetHandle(), &rc, false);*/
 }
 
 void WinWidget::Resize()

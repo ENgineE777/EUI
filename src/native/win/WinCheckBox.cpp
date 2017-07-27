@@ -37,12 +37,12 @@ bool WinCheckBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 void WinCheckBox::SetText(const char* txt)
 {
-	InvalidateRect(handle, NULL, false);
+	Redraw();
 }
 
 void WinCheckBox::SetChecked(bool set)
 {
-	InvalidateRect(handle, NULL, false);
+	Redraw();
 }
 
 void WinCheckBox::Draw()

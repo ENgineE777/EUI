@@ -25,7 +25,7 @@ void WinLabel::SetText(const char* txt)
 {
 	WinWidget::SetText(txt);
 	Static_SetText(handle, txt);
-	InvalidateRect(handle, NULL, false);
+	Redraw();
 }
 
 void WinLabel::Draw()
