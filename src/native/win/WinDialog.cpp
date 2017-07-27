@@ -11,8 +11,16 @@ const char* WinDialog::FileDialog(void* data, char* extName, const char* ext, bo
 	OPENFILENAME ofn;
 
 	static char fileName[512];
-	char filter[128];
-	sprintf(filter, "%s\0*.%s\0", extName, ext);
+
+	char filter[512];
+	strcpy(filter, extName);
+
+	int index = strlen(filter);
+
+	filter[index + 1] = '*';
+	filter[index + 2] = '.';
+
+	strcpy(&filter[index + 3], ext);
 
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
