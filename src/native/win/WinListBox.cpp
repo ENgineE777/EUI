@@ -119,7 +119,7 @@ void WinListBox::SelectItemByIndex(int index)
 
 void WinListBox::SelectItemByData(void* data)
 {
-	ListBox_SelectItemData(handle, 0, data);
+	SelectItemByIndex(FindIndexByData(data));
 }
 
 void WinListBox::DeleteItemByIndex(int index)
