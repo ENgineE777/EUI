@@ -20,7 +20,14 @@ const char* WinDialog::FileDialog(void* data, char* extName, const char* ext, bo
 	filter[index + 1] = '*';
 	filter[index + 2] = '.';
 
-	strcpy(&filter[index + 3], ext);
+	if (ext)
+	{
+		strcpy(&filter[index + 3], ext);
+	}
+	else
+	{
+		strcpy(&filter[index + 3], "*");
+	}
 
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
