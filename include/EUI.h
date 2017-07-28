@@ -25,4 +25,5 @@ public:
 	static int  Run();
 	static const char* OpenOpenDialog(char* extName, const char* ext);
 	static const char* OpenSaveDialog(char* extName, const char* ext);
+	static bool OpenColorDialog(float* color);
 };

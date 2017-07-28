@@ -69,3 +69,16 @@ const char* EUI::OpenSaveDialog(char* extName, const char* ext)
 	return WinDialog::FileDialog(data, extName, ext, false);
 #endif
 }
+
+bool EUI::OpenColorDialog(float* color)
+{
+#ifdef PLATFORM_WIN
+	void* data = NULL;
+
+	if (wnds.size() > 0)
+	{
+		data = wnds[0]->GetNative();
+	}
+	return WinDialog::ColorDialog(data, color);
+#endif
+}
