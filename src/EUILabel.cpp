@@ -32,4 +32,5 @@ void EUILabel::SetBackgroundColor(bool use, int* color)
 {
 	bck_use = use;
 	memcpy(bck_color, color, sizeof(int) * 3);
+	nativeWidget->Redraw();
 }
