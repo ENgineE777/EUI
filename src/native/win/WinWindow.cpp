@@ -207,3 +207,8 @@ void WinWindow::SetAtScreenCenter()
 		   (desktopRect.bottom - rect.bottom) * 0.5f);
 
 }
+
+void WinWindow::Close()
+{
+	DestroyWindow(handle);
+}

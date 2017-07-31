@@ -31,4 +31,5 @@ public:
 
 	virtual void Maximaze();
 	virtual void SetAtScreenCenter();
+	virtual void Close();
 };

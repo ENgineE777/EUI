@@ -58,6 +58,11 @@ void EUIWindow::Maximaze()
 	}
 }
 
+void EUIWindow::Close()
+{
+	Native()->Close();
+}
+
 bool EUIWindow::IsMinimazed()
 {
 	return is_minimazed;

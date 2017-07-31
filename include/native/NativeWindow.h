@@ -16,4 +16,5 @@ public:
 
 	virtual void Maximaze() = 0;
 	virtual void SetAtScreenCenter() = 0;
+	virtual void Close() = 0;
 };

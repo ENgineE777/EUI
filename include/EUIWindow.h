@@ -30,4 +30,5 @@ public:
 	virtual bool IsMinimazed();
 
 	void SetNeedStrictSize(bool set_strict);
+	void Close();
 };
