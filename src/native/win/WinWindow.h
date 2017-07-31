@@ -30,4 +30,5 @@ public:
 	virtual LRESULT Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam );
 
 	virtual void Maximaze();
+	virtual void SetAtScreenCenter();
 };

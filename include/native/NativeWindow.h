@@ -15,4 +15,5 @@ public:
 	NativeWindow(EUIWidget* owner) : WinWidget(owner) {};
 
 	virtual void Maximaze() = 0;
+	virtual void SetAtScreenCenter() = 0;
 };

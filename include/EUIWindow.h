@@ -25,6 +25,7 @@ public:
 
 	virtual void SetText(const char* txt);
 
+	virtual void SetAtScreenCenter();
 	virtual void Maximaze();
 	virtual bool IsMinimazed();
 

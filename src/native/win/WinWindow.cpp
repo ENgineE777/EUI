@@ -192,3 +192,18 @@ void WinWindow::Maximaze()
 {
 	ShowWindow(handle, SW_MAXIMIZE);
 }
+
+void WinWindow::SetAtScreenCenter()
+{
+	HWND desktop = GetDesktopWindow();
+
+	RECT desktopRect;
+	GetWindowRect(desktop, &desktopRect);
+	
+	RECT rect;
+	GetWindowRect(handle, &rect);
+
+	SetPos((desktopRect.right- rect.right) * 0.5f,
+		   (desktopRect.bottom - rect.bottom) * 0.5f);
+
+}

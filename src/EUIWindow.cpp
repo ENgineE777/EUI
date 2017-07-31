@@ -45,6 +45,11 @@ bool EUIWindow::IsActive()
 	return active;
 }
 
+void EUIWindow::SetAtScreenCenter()
+{
+	Native()->SetAtScreenCenter();
+}
+
 void EUIWindow::Maximaze()
 {	
 	if (IsVisible())
