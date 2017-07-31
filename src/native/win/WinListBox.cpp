@@ -109,7 +109,14 @@ int WinListBox::GetSelectedItemIndex()
 
 void* WinListBox::GetSelectedItemData()
 {
-	return (void*)ListBox_GetItemData(handle, GetSelectedItemIndex());
+	int index = GetSelectedItemIndex();
+
+	if (index == -1)
+	{
+		return NULL;
+	}
+
+	return (void*)ListBox_GetItemData(handle, index);
 }
 
 void WinListBox::SelectItemByIndex(int index)
