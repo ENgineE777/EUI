@@ -182,7 +182,7 @@ int EUIWidget::GetIndexAsChild()
 
 void EUIWidget::Update()
 {
-	if (listener && (listenerFlag & listenerFlag))
+	if (listener && (listenerFlag & OnUpdate))
 	{
 		listener->OnUpdate(this);
 	}
