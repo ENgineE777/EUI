@@ -7,7 +7,11 @@ bool WinWindow::wndClassReg = false;
 
 LRESULT CALLBACK WinWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	WinWindow* wnd = (WinWindow*)GetWindowLongPtr(hwnd, GWLP_USERDATA);;
+#ifdef _WIN64
+	WinWindow* wnd = (WinWindow*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+#else
+	WinWindow* wnd = (WinWindow*)GetWindowLong(hwnd, GWL_USERDATA);
+#endif
 
 	if (wnd)
 	{
@@ -79,7 +83,11 @@ WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(o
 							rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
 							NULL, NULL, NULL, NULL );
 
+#ifdef _WIN64
+	SetWindowLongPtr(handle, GWLP_USERDATA, (LONG_PTR)this);
+#else
 	SetWindowLong(handle, GWL_USERDATA, (LONG)this);
+#endif
 
 	if (!adjust)
 	{
