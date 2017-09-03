@@ -4,8 +4,8 @@
 WinCheckBox::WinCheckBox(EUIWidget* owner) : NativeCheckBox(owner)
 {
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
-							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), (HMENU)win_id, NULL, NULL);
+							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();
@@ -59,7 +59,7 @@ void WinCheckBox::Draw()
 		uState |= EUITheme::UISTATE_PUSHED;
 	}
 
-	RECT m_rcItem = { 0, 0, Owner()->width, Owner()->height };
+	RECT m_rcItem = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
 
 	theme->DrawCheckBox(GetDC(handle), m_rcItem, Owner()->text.c_str(), uState, DT_SINGLELINE);
 }

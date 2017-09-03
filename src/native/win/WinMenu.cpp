@@ -71,6 +71,6 @@ void WinMenu::EndSubMenu()
 {
 	if (cur_depth == 0) return;
 
-	AppendMenu(depth_menu[cur_depth-1], MF_POPUP, (UINT)depth_menu[cur_depth], sub_menu_name.c_str());
+	AppendMenu(depth_menu[cur_depth-1], MF_POPUP, (UINT_PTR)depth_menu[cur_depth], sub_menu_name.c_str());
 	cur_depth--;
 }

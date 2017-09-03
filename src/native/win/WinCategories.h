@@ -10,10 +10,10 @@ class WinCategories : public NativeCategories
 {
 public:
 
-	int   overallHeight;
-	int   thumbHeight;
-	int   thumbPos;
-	int   thumbMaxPos;
+	float overallHeight;
+	float thumbHeight;
+	float thumbPos;
+	float thumbMaxPos;
 	float thumbDelta;
 	bool  thumbDraged;
 	int   thumbPressed;

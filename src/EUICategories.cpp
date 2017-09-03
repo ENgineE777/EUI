@@ -30,17 +30,14 @@ void EUICategories::OnChildShow(int index, bool set)
 		return;
 	}
 
-	for (int i = 0; i < categories.size(); i++)
+	for (int i = 0; i < (int)categories.size(); i++)
 	{
 		Category& category = categories[i];
 
-		for (int j = 0; j < category.childs.size(); j++)
+		for (int j = 0; j < (int)category.childs.size(); j++)
 		{
 			if (category.childs[j] == childs[index])
 			{
-				int sz = category.childsVis.size();
-				sz = category.childsVis.size();
-
 				category.childsVis[j] = set;
 				break;
 			}
@@ -54,9 +51,9 @@ void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
 {
 	Category* category = NULL;
 
-	for (int i = 0; i < categories.size(); i++)
+	for (int i = 0; i < (int)categories.size(); i++)
 	{
-		if (stricmp(categories[i].name, name) == 0)
+		if (_stricmp(categories[i].name, name) == 0)
 		{
 			category = &categories[i];
 			break;
@@ -68,7 +65,7 @@ void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
 		categories.push_back(Category());
 		category = &categories[categories.size() - 1];
 		strcpy(category->name, name);
-		category->y = (categories.size() - 1) * 25;
+		category->y = ((float)categories.size() - 1.0f) * 25.0f;
 		category->opened = true;
 	}
 	

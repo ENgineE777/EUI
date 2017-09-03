@@ -3,7 +3,7 @@
 #include "WinWidget.h"
 
 WinWidget* WinWidget::mouse_over = NULL;
-int WinWidget::win_id = 500;
+HMENU WinWidget::win_id = (HMENU)500;
 
 WinWidget::WinWidget(EUIWidget* set_owner) : NativeWidget(set_owner)
 {
@@ -45,12 +45,12 @@ void WinWidget::Enable(bool set)
 
 void WinWidget::SetPos(float set_x, float set_y)
 {
-	SetWindowPos(handle, 0, set_x, set_y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	SetWindowPos(handle, 0, (int)set_x, (int)set_y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 void WinWidget::SetSize(float w, float h)
 {
-	SetWindowPos(handle, 0, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
+	SetWindowPos(handle, 0, 0, 0, (int)w, (int)h, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 void WinWidget::SetText(const char* txt)
@@ -82,7 +82,7 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 			if (sender != handle)
 			{
-				for (int i = 0; i < owner->childs.size(); i++)
+				for (int i = 0; i < (int)owner->childs.size(); i++)
 				{
 					WinWidget* win_wgt = (WinWidget*)owner->childs[i]->nativeWidget;
 
@@ -198,7 +198,7 @@ void WinWidget::Resize()
 		owner->listener->OnResize(owner);
 	}
 
-	for (int i = 0; i<owner->childs.size(); i++)
+	for (int i = 0; i<(int)owner->childs.size(); i++)
 	{
 		owner->childs[i]->nativeWidget->Resize();
 	}
@@ -270,7 +270,7 @@ bool WinWidget::IsHoveredByMouse()
 
 		GetWindowRect( handle, &windowRect );
 
-		return PtInRect( &windowRect, point );
+		return PtInRect( &windowRect, point ) ? true : false;
 	}
 
 	return false;

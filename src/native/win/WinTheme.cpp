@@ -251,8 +251,8 @@ void WinTheme::DrawGradient(HDC hDC, RECT rc, COLORREF clrFirst, COLORREF clrSec
 	{
 		TRIVERTEX triv[2] =
 		{
-			{ rc.left, rc.top, GetRValue(clrFirst) << 8, GetGValue(clrFirst) << 8, GetBValue(clrFirst) << 8, 0xFF00 },
-			{ rc.right, rc.bottom, GetRValue(clrSecond) << 8, GetGValue(clrSecond) << 8, GetBValue(clrSecond) << 8, 0xFF00 }
+			{ rc.left, rc.top, (COLOR16)(GetRValue(clrFirst) << 8), (COLOR16)(GetGValue(clrFirst) << 8), (COLOR16)(GetBValue(clrFirst) << 8), (COLOR16)0xFF00 },
+			{ rc.right, rc.bottom, (COLOR16)(GetRValue(clrSecond) << 8), (COLOR16)(GetGValue(clrSecond) << 8), (COLOR16)(GetBValue(clrSecond) << 8), (COLOR16)0xFF00 }
 		};
 		GRADIENT_RECT grc = { 0, 1 };
 		lpGradientFill(hDC, triv, 2, &grc, 1, bVertical ? GRADIENT_FILL_RECT_V : GRADIENT_FILL_RECT_H);
@@ -337,8 +337,6 @@ void WinTheme::DrawText(HDC hDC, RECT& rc, LPCTSTR pstrText, const char* iTextCo
 	{
 		DrawRect(hDC, rc, iBackColor);
 	}
-
-	int i;
 
 	POINT ptMouse;
 	GetCursorPos(&ptMouse);
@@ -595,9 +593,9 @@ void WinTheme::DrawCheckBox(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UIN
 	RECT box_rc = rc;
 
 	box_rc.left += 2;
-	int box_y = (rc.top + rc.bottom) * 0.5f - checkBoxSize * 0.5f;
-	box_rc.top = box_y;
-	box_rc.bottom = box_y + checkBoxSize;
+	float box_y = (rc.top + rc.bottom) * 0.5f - checkBoxSize * 0.5f;
+	box_rc.top = (int)box_y;
+	box_rc.bottom = (int)box_y + checkBoxSize;
 
 	box_rc.right = box_rc.left + checkBoxSize;
 

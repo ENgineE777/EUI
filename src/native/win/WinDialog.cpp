@@ -16,7 +16,7 @@ const char* WinDialog::FileDialog(void* data, char* extName, const char* ext, bo
 	char filter[512];
 	strcpy(filter, extName);
 
-	int index = strlen(filter);
+	int index = (int)strlen(filter);
 
 	filter[index + 1] = '*';
 	filter[index + 2] = '.';
@@ -53,11 +53,11 @@ const char* WinDialog::FileDialog(void* data, char* extName, const char* ext, bo
 
 	if (open)
 	{
-		res = GetOpenFileNameA(&ofn);
+		res = GetOpenFileNameA(&ofn) ? true : false;
 	}
 	else
 	{
-		res = GetSaveFileNameA(&ofn);
+		res = GetSaveFileNameA(&ofn) ? true : false;
 	}
 
 	SetCurrentDirectoryA(curDir);

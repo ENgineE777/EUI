@@ -13,8 +13,8 @@ WinCategories::WinCategories(EUIWidget* owner) : NativeCategories(owner)
 	thumbPressed = 0;
 
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
-							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), (HMENU)win_id, NULL, NULL);
+							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();
@@ -95,7 +95,7 @@ bool WinCategories::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 			if (point.x < owner->width - theme->scrollbarThin || thumbHeight > 0)
 			{
-				for (int i = 0; i < Owner()->categories.size(); i++)
+				for (int i = 0; i < (int)Owner()->categories.size(); i++)
 				{
 					if (Owner()->categories[i].y < point.y &&
 						point.y < Owner()->categories[i].y + theme->categoryHeight)
@@ -152,13 +152,13 @@ void WinCategories::CalcThumb()
 {
 	overallHeight = 0;
 
-	for (int i = 0; i < Owner()->categories.size(); i++)
+	for (int i = 0; i < (int)Owner()->categories.size(); i++)
 	{
 		EUICategories::Category& category = Owner()->categories[i];
 
 		overallHeight += theme->categoryHeight;
 
-		for (int j = 0; j < category.childs.size(); j++)
+		for (int j = 0; j < (int)category.childs.size(); j++)
 		{
 			if (category.opened)
 			{
@@ -200,16 +200,16 @@ void WinCategories::UpdateChildPos()
 {
 	Owner()->allowCallOnChildShow = false;
 
-	int pos = -thumbPos * thumbDelta;
+	float pos = -thumbPos * thumbDelta;
 
-	for (int i = 0; i < Owner()->categories.size(); i++)
+	for (int i = 0; i < (int)Owner()->categories.size(); i++)
 	{
 		EUICategories::Category& category = Owner()->categories[i];
 
 		category.y = pos;
 		pos += theme->categoryHeight;
 
-		for (int j = 0; j < category.childs.size(); j++)
+		for (int j = 0; j < (int)category.childs.size(); j++)
 		{
 			if (!category.childsVis[j])
 			{
@@ -245,11 +245,11 @@ void WinCategories::Draw()
 		state = EUITheme::UISTATE_DISABLED;
 	}
 
-	for (int i = 0; i < Owner()->categories.size(); i++)
+	for (int i = 0; i < (int)Owner()->categories.size(); i++)
 	{
 		EUICategories::Category& category = Owner()->categories[i];
 
-		RECT m_rcItem = { 0, category.y, Owner()->width, category.y + theme->categoryHeight };
+		RECT m_rcItem = { 0, (LONG)category.y, (LONG)Owner()->width, (LONG)(category.y + theme->categoryHeight) };
 
 		UINT sub_state = 0;
 
@@ -263,8 +263,8 @@ void WinCategories::Draw()
 
 	if (thumbHeight > 0)
 	{
-		RECT m_rcItem = { 0, 0, Owner()->width, Owner()->height };
-		theme->DrawScrollBar(GetDC(handle), m_rcItem, thumbPos, thumbHeight, state);
+		RECT m_rcItem = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
+		theme->DrawScrollBar(GetDC(handle), m_rcItem, (int)thumbPos, (int)thumbHeight, state);
 	}
 }
 

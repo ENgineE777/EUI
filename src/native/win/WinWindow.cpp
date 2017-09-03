@@ -65,11 +65,11 @@ WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(o
 
 	RECT rect;
 
-	rect.left = Owner()->x;
-	rect.top = Owner()->y;
+	rect.left = (LONG)Owner()->x;
+	rect.top = (LONG)Owner()->y;
 
-	rect.right = Owner()->x + Owner()->width;
-	rect.bottom = Owner()->y + Owner()->height;
+	rect.right = (LONG)(Owner()->x + Owner()->width);
+	rect.bottom = (LONG)(Owner()->y + Owner()->height);
 
 	if (adjust)
 	{
@@ -94,8 +94,8 @@ WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(o
 		RECT rect;
 		
 		GetClientRect(handle, &rect);
-		Owner()->width = rect.right;
-		Owner()->height = rect.bottom;
+		Owner()->width = (float)rect.right;
+		Owner()->height = (float)rect.bottom;
 	}
 
 	is_minimazed = false;
@@ -133,8 +133,8 @@ LRESULT WinWindow::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 		{
 			if (wParam != 1)
 			{
-				Owner()->width = GET_X_LPARAM(lParam);
-				Owner()->height = GET_Y_LPARAM(lParam);
+				Owner()->width = (float)GET_X_LPARAM(lParam);
+				Owner()->height = (float)GET_Y_LPARAM(lParam);
 
 				Resize();
 			}
@@ -163,7 +163,7 @@ LRESULT WinWindow::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 		break;
 		case WM_DESTROY:
 		{
-			for (int i = 0; i < EUI::wnds.size(); i++)
+			for (int i = 0; i < (int)EUI::wnds.size(); i++)
 			{
 				if (EUI::wnds[i] == owner)
 				{

@@ -6,8 +6,8 @@
 WinListBox::WinListBox(EUIWidget* owner) : NativeListBox(owner)
 {
 	handle = CreateWindowW(L"ListBox", L"", WS_CHILD | WS_VSCROLL | WS_VISIBLE | LBS_NOTIFY | WS_BORDER,
-							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), (HMENU)win_id, NULL, NULL);
+							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();
@@ -38,7 +38,7 @@ bool WinListBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		else
-		if (HIWORD(wParam) == msg == LBN_DBLCLK)
+		if (HIWORD(wParam) == LBN_DBLCLK)
 		{
 			if (Owner()->listener)
 			{
@@ -77,9 +77,9 @@ void WinListBox::AddItem(const char* str, void* data)
 	std::wstring wtext;
 	UTFConv::UTF8to16(wtext, str);
 
-	int sel = SendMessageW(handle, LB_ADDSTRING, 0, (LPARAM)wtext.c_str()); 
+	LRESULT sel = SendMessageW(handle, LB_ADDSTRING, 0, (LPARAM)wtext.c_str());
 
-	SendMessage(handle, LB_SETITEMDATA ,(WPARAM) sel, (LPARAM)data);
+	SendMessage(handle, LB_SETITEMDATA ,(WPARAM)sel, (LPARAM)data);
 }
 
 void WinListBox::ChangeItemNameByIndex(const char* str, int index)

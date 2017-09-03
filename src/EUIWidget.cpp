@@ -34,7 +34,7 @@ EUIWidget::~EUIWidget()
 		parent->DelChild(this);
 	}
 
-	for (int i = 0; i < childs.size(); i++)
+	for (int i = 0; i < (int)childs.size(); i++)
 	{
 		childs[i]->Release();
 		i--;
@@ -152,7 +152,7 @@ void EUIWidget::AddChild(EUIWidget* child)
 
 void EUIWidget::DelChild(EUIWidget* child)
 {
-	for (int i = 0; i < childs.size(); i++)
+	for (int i = 0; i < (int)childs.size(); i++)
 	{
 		if (childs[i] == child)
 		{
@@ -169,7 +169,7 @@ int EUIWidget::GetIndexAsChild()
 		return -1;
 	}
 
-	for (int i = 0; i < parent->childs.size(); i++)
+	for (int i = 0; i < (int)parent->childs.size(); i++)
 	{
 		if (parent->childs[i] == this)
 		{
@@ -187,7 +187,7 @@ void EUIWidget::Update()
 		listener->OnUpdate(this);
 	}
 
-	for (int i = 0; i < childs.size(); i++)
+	for (int i = 0; i < (int)childs.size(); i++)
 	{
 		if (childs[i]->IsVisible())
 		{
@@ -208,7 +208,7 @@ EUIWidget* EUIWidget::GetParent()
 
 int	EUIWidget::GetChildsCount()
 {
-	return childs.size();
+	return (int)childs.size();
 }
 
 EUIWidget* EUIWidget::GetChild(int index)

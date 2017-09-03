@@ -33,7 +33,7 @@ int EUI::Run()
 			DispatchMessage(&msg);
 		}
 
-		for (int i = 0; i < wnds.size(); i++)
+		for (int i = 0; i < (int)wnds.size(); i++)
 		{
 			wnds[i]->Update();
 		}

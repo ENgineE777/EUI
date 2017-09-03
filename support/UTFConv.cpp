@@ -8,9 +8,9 @@ void UTFConv::UTF8to16(std::wstring& dest, const char* src)
 	int bytes = 0;
 	wchar_t err = L'?';
 
-	int count = strlen(src);
+	size_t count = (size_t)strlen(src);
 
-	for (int i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		char c = src[i];
 
@@ -73,9 +73,9 @@ void UTFConv::UTF16to8(std::string& dest, const wchar_t* src)
 {
 	dest.clear();
 
-	int len = wcslen(src);
+	size_t len = wcslen(src);
 
-	for (int i = 0; i < len; i++)
+	for (size_t i = 0; i < len; i++)
 	{
 		int c = src[i];
 

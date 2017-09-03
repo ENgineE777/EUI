@@ -29,17 +29,17 @@ void EUILayout::Resize()
 
 	if (vertical)
 	{
-		size = parent->GetHeight();
+		size = (int)parent->GetHeight();
 	}
 	else
 	{
-		size = parent->GetWidth();
+		size = (int)parent->GetWidth();
 	}
 
-	int sz = 0;
+	float sz = 0;
 	int cnt = 0;
 
-	for (int i = 0; i < childs.size(); i++)
+	for (int i = 0; i < (int)childs.size(); i++)
 	{
 		if (childs_size[i].size > 0)
 		{
@@ -51,18 +51,18 @@ void EUILayout::Resize()
 		}
 	}
 
-	int elem_size = (float)(size - sz) / (float)cnt;
+	float elem_size = (float)(size - sz) / (float)cnt;
 
 	if (size < 0)
 	{
 		size = 0;
 	}
 
-	int pos = 0;
+	float pos = 0;
 
-	for (int i = 0; i < childs.size(); i++)
+	for (int i = 0; i < (int)childs.size(); i++)
 	{
-		int sz = elem_size;
+		float sz = elem_size;
 
 		if (childs_size[i].size > 0)
 		{
@@ -108,7 +108,7 @@ void EUILayout::DelChild(EUIWidget* child)
 
 void EUILayout::SetChildSize(EUIWidget* child, float size, bool absolute)
 {
-	for (int i = 0; i < childs_size.size(); i++)
+	for (int i = 0; i < (int)childs_size.size(); i++)
 	{
 		if (childs[i] == child)
 		{

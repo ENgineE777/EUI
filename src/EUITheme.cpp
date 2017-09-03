@@ -11,7 +11,7 @@ void EUITheme::ReadTheme(const char* name)
 {
 	strcpy(themePath, name);
 
-	int index = strlen(themePath) - 1;
+	int index = (int)strlen(themePath) - 1;
 
 	while (themePath[index] != '/' && themePath[index] != '\\' && index >= 0)
 	{

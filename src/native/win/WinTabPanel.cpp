@@ -5,8 +5,8 @@
 WinTabPanel::WinTabPanel(EUIWidget* owner) : NativeTabPanel(owner)
 {
 	handle = CreateWindow(WC_TABCONTROL, "", WS_CHILD | WS_VISIBLE,
-							Owner()->x, Owner()->y, Owner()->width, Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), (HMENU)win_id, NULL, NULL);
+							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();
@@ -47,7 +47,7 @@ bool WinTabPanel::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 void WinTabPanel::Resize()
 {
-	for (int i = 0; i < owner->childs.size(); i++)
+	for (int i = 0; i < (int)owner->childs.size(); i++)
 	{
 		owner->childs[i]->SetSize(Owner()->width - 12, Owner()->height - 30);
 	}
@@ -76,7 +76,7 @@ int WinTabPanel::GetCurrentTabIndex()
 
 void WinTabPanel::DeleteTab(int index)
 {
-	if (index < 0 || index >= owner->childs.size())
+	if (index < 0 || index >= (int)owner->childs.size())
 	{
 		return;
 	}
@@ -100,7 +100,7 @@ void WinTabPanel::ClearTabs()
 
 void WinTabPanel::SetTabName(int index, const char* name)
 {
-	if (index < owner->childs.size())
+	if (index < (int)owner->childs.size())
 	{
 		TCITEM tie; 
 		tie.mask = TCIF_TEXT; 
@@ -114,7 +114,7 @@ void WinTabPanel::SetCurrentTab(int index)
 {
 	if (index >= 0)
 	{
-		if (curTab == index || index < 0 || index >= owner->childs.size())
+		if (curTab == index || index < 0 || index >= (int)owner->childs.size())
 		{
 			return;
 		}
@@ -128,7 +128,7 @@ void WinTabPanel::SetCurrentTab(int index)
 
 void WinTabPanel::ShowTab(int index, bool show)
 {
-	if (index<0 || index>=owner->childs.size()) return;
+	if (index<0 || index>= (int)owner->childs.size()) return;
 
 	owner->childs[index]->Show(show);
 }

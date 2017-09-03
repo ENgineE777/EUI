@@ -23,7 +23,7 @@ protected:
 
 	int    processRes;
 	static WinWidget* mouse_over;
-	static int win_id;
+	static HMENU win_id;
 
 public:
 	WinWidget(EUIWidget* owner);
