@@ -97,6 +97,11 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		case WM_PAINT:
 		{
 			Draw();
+
+			if (owner->listener && (owner->listenerFlag & EUIWidget::OnDraw))
+			{
+				owner->listener->OnDraw(owner);
+			}
 		}
 		break;
 		case WM_LBUTTONDOWN:

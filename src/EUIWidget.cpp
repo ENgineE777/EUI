@@ -196,6 +196,11 @@ void EUIWidget::Update()
 	}
 }
 
+void EUIWidget::Redraw()
+{
+	nativeWidget->Redraw();
+}
+
 void* EUIWidget::GetNative()
 {
 	return nativeWidget->GetNative();
