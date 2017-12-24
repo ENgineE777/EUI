@@ -57,9 +57,6 @@
     <ClCompile Include="..\..\src\EUITheme.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\EUIWidget.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\EUIWindow.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -125,6 +122,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\EUITabSheet.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\EUIWidget.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\EUIScrollBar.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win\WinScrollBar.cpp">
+      <Filter>Source\native\win</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -277,6 +283,15 @@
     </ClInclude>
     <ClInclude Include="..\..\include\EUIWindow.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUIScrollBar.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeScrollBar.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win\WinScrollBar.h">
+      <Filter>Source\native\win</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

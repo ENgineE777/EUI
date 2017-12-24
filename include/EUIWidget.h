@@ -26,6 +26,7 @@ class EUIWidget
 	friend class EUICategories;
 	friend class WinTabPanel;
 	friend class WinTabSheet;
+	friend class WinScrollBar;
 
 public:
 

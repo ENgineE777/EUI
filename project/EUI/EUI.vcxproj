@@ -30,6 +30,7 @@
     <ClCompile Include="..\..\src\EUIListBox.cpp" />
     <ClCompile Include="..\..\src\EUIMenu.cpp" />
     <ClCompile Include="..\..\src\EUIPanel.cpp" />
+    <ClCompile Include="..\..\src\EUIScrollBar.cpp" />
     <ClCompile Include="..\..\src\EUITabPanel.cpp" />
     <ClCompile Include="..\..\src\EUITabSheet.cpp" />
     <ClCompile Include="..\..\src\EUITheme.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="..\..\src\native\win\WinListBox.cpp" />
     <ClCompile Include="..\..\src\native\win\WinMenu.cpp" />
     <ClCompile Include="..\..\src\native\win\WinPanel.cpp" />
+    <ClCompile Include="..\..\src\native\win\WinScrollBar.cpp" />
     <ClCompile Include="..\..\src\native\win\WinTabPanel.cpp" />
     <ClCompile Include="..\..\src\native\win\WinTabSheet.cpp" />
     <ClCompile Include="..\..\src\native\win\WinTheme.cpp" />
@@ -68,6 +70,7 @@
     <ClInclude Include="..\..\include\EUIListBox.h" />
     <ClInclude Include="..\..\include\EUIMenu.h" />
     <ClInclude Include="..\..\include\EUIPanel.h" />
+    <ClInclude Include="..\..\include\EUIScrollBar.h" />
     <ClInclude Include="..\..\include\EUITabPanel.h" />
     <ClInclude Include="..\..\include\EUITabSheet.h" />
     <ClInclude Include="..\..\include\EUITheme.h" />
@@ -83,6 +86,7 @@
     <ClInclude Include="..\..\include\native\NativeListBox.h" />
     <ClInclude Include="..\..\include\native\NativeMenu.h" />
     <ClInclude Include="..\..\include\native\NativePanel.h" />
+    <ClInclude Include="..\..\include\native\NativeScrollBar.h" />
     <ClInclude Include="..\..\include\native\NativeTabPanel.h" />
     <ClInclude Include="..\..\include\native\NativeTabSheet.h" />
     <ClInclude Include="..\..\include\native\NativeWidget.h" />
@@ -98,6 +102,7 @@
     <ClInclude Include="..\..\src\native\win\WinListBox.h" />
     <ClInclude Include="..\..\src\native\win\WinMenu.h" />
     <ClInclude Include="..\..\src\native\win\WinPanel.h" />
+    <ClInclude Include="..\..\src\native\win\WinScrollBar.h" />
     <ClInclude Include="..\..\src\native\win\WinTabPanel.h" />
     <ClInclude Include="..\..\src\native\win\WinTabSheet.h" />
     <ClInclude Include="..\..\src\native\win\WinTheme.h" />
