@@ -10,4 +10,14 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommand>$(SolutionDir)..\Bin\$(TargetName)$(TargetExt)</LocalDebuggerCommand>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommand>$(SolutionDir)..\Bin\$(TargetName)x64$(TargetExt)</LocalDebuggerCommand>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>..\..\Bin\</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerWorkingDirectory>..\..\Bin\</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>$(SolutionDir)..\Bin\$(TargetName)_debugx64$(TargetExt)</LocalDebuggerCommand>
+  </PropertyGroup>
 </Project>

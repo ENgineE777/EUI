@@ -40,7 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	EUILayout* lt = new EUILayout(wnd, true);
 
 	EUIMenu* menu = new EUIMenu(wnd);
-	menu->SetListener(&listiner, 0);
+	menu->SetListener(-1, &listiner, 0);
 
 	menu->StartSubMenu("File");
 
@@ -56,13 +56,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 	EUITabPanel* tabPanel = new EUITabPanel(lt, 30, 50, 100, 30);
-	tabPanel->SetListener(&listiner, 0);
+	tabPanel->SetListener(-1, &listiner, 0);
 
 	{
 		EUITabSheet* sheet = tabPanel->AddTab("Tab1");
 
 		EUIButton* btn = new EUIButton(sheet, "<a>Just</a> <b>Button</b>", 10, 20, 100, 30);
-		btn->SetListener(&listiner, 0);
+		btn->SetListener(-1, &listiner, 0);
 
 		EUICheckBox* chk = new EUICheckBox(sheet, "Selected RadioButton", 10, 60, 100, 30);
 
@@ -71,7 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		cbx->AddItem("item1");
 		cbx->AddItem("item2");
 
-		cbx->SetListener(&listiner, 0);
+		cbx->SetListener(-1, &listiner, 0);
 	}
 
 	{
@@ -90,7 +90,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		EUITabSheet* sheet = tabPanel->AddTab("Tab3");
 
 		EUIPanel* pn = new EUIPanel(sheet, 10, 10, 100, 30);
-		pn->SetListener(&listiner, EUIWidget::OnResize | EUIWidget::OnUpdate);
+		pn->SetListener(-1, &listiner, EUIWidget::OnResize | EUIWidget::OnUpdate);
 	}
 
 	{
