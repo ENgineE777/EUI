@@ -209,6 +209,8 @@ void WinCategories::UpdateChildPos()
 		category.y = pos;
 		pos += theme->categoryHeight;
 
+		category.visible = false;
+
 		for (int j = 0; j < (int)category.childs.size(); j++)
 		{
 			if (!category.childsVis[j])
@@ -216,6 +218,7 @@ void WinCategories::UpdateChildPos()
 				continue;
 			}
 
+			category.visible = true;
 			category.childs[j]->Show(category.opened);
 
 			if (category.opened)
@@ -223,6 +226,11 @@ void WinCategories::UpdateChildPos()
 				category.childs[j]->SetPos(category.childs[j]->GetX(), pos);
 				pos += category.childs[j]->GetHeight();
 			}
+		}
+
+		if (!category.visible)
+		{
+			pos -= theme->categoryHeight;
 		}
 	}
 
@@ -248,6 +256,11 @@ void WinCategories::Draw()
 	for (int i = 0; i < (int)Owner()->categories.size(); i++)
 	{
 		EUICategories::Category& category = Owner()->categories[i];
+
+		if (!category.visible)
+		{
+			continue;
+		}
 
 		RECT m_rcItem = { 0, (LONG)category.y, (LONG)Owner()->width, (LONG)(category.y + theme->categoryHeight) };
 
