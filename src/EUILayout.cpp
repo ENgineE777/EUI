@@ -80,6 +80,8 @@ void EUILayout::Resize()
 			childs[i]->SetPos(pos, 0);
 		}
 
+		childs[i]->Redraw();
+
 		pos += sz;
 	}
 
