@@ -51,8 +51,9 @@ int EUIWidget::GetID()
 	return id;
 }
 
-void EUIWidget::SetListener(Listener* set_listener, uint32_t flag)
+void EUIWidget::SetListener(int set_id, Listener* set_listener, uint32_t flag)
 {
+	SetID(set_id);
 	listener = set_listener;
 	listenerFlag = flag;
 }

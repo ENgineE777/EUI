@@ -92,7 +92,10 @@ bool WinScrollBar::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 	if (last_pos != Owner()->cur_pos)
 	{
-		//EventsWidget::SetEvent(id, EventsWidget::scrollbar_change);
+		if (Owner()->listener)
+		{
+			Owner()->listener->OnSrollerPosChange(Owner(), last_pos);
+		}
 	}
 
 	SetScrollPos(handle, SB_CTL, Owner()->cur_pos, true);

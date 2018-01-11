@@ -72,6 +72,8 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_NOTIFY:
 		case WM_COMMAND:
+		case WM_HSCROLL:
+		case WM_VSCROLL:
 		{
 			HWND sender = (HWND)lParam;
 			
