@@ -41,7 +41,12 @@ void EUIComboBox::SetCurString(const char* str)
 	Native()->SetCurString(str);
 }
 
-int EUIComboBox::GetCurString()
+const char* EUIComboBox::GetCurString()
 {
 	return Native()->GetCurString();
+}
+
+int EUIComboBox::GetCurStringIndex()
+{
+	return Native()->GetCurStringIndex();
 }

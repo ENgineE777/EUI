@@ -73,7 +73,22 @@ void WinComboBox::SetCurString(const char* str)
 	SendMessageW(handle, CB_SELECTSTRING, (WPARAM)0, (LPARAM)wtext.c_str());
 }
 
-int WinComboBox::GetCurString()
+const char* WinComboBox::GetCurString()
+{
+	int index = GetCurStringIndex();
+
+	if (index != -1)
+	{
+		Owner()->text.resize(ComboBox_GetLBTextLen(handle, index) + 1);
+		ComboBox_GetLBText(handle, index, &Owner()->text[0]);
+
+		return Owner()->text.c_str();
+	}
+
+	return "";
+}
+
+int WinComboBox::GetCurStringIndex()
 {
 	return ComboBox_GetCurSel(handle);
 }
