@@ -1,7 +1,7 @@
 # EUI
 
-This is GUI Library taht craeted as cross-platform. But currently only Windows is supported.
-Library have simple skin system and layout system based on horizontal and verticcal divders.
+This is a cross-platform GUI Library, currently only Windows supported.
+Library have simple skin system and layout system based on horizontal and verticcal dividers.
 Currently library support follow controls:
 - button
 - checkbox
