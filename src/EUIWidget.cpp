@@ -207,6 +207,16 @@ void* EUIWidget::GetNative()
 	return nativeWidget->GetNative();
 }
 
+void* EUIWidget::GetNativeRoot()
+{
+	if (parent)
+	{
+		return parent->GetNativeRoot();
+	}
+
+	return nativeWidget->GetNative();
+}
+
 EUIWidget* EUIWidget::GetParent()
 {
 	return parent;

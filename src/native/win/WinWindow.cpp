@@ -60,7 +60,7 @@ WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(o
 	}
 	else
 	{
-		flag = WS_POPUP | WS_BORDER | WS_CAPTION;
+		flag = WS_DLGFRAME | WS_BORDER | WS_CAPTION | WS_SIZEBOX;
 	}
 
 	RECT rect;
@@ -167,6 +167,14 @@ LRESULT WinWindow::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 			{
 				if (EUI::wnds[i] == owner)
 				{
+					if (i == 0)
+					{
+						for (int i = 1; i < (int)EUI::wnds.size(); i++)
+						{
+							EUI::wnds[i]->Close();
+						}
+					}
+
 					EUI::wnds.erase(EUI::wnds.begin() + i);
 					break;
 				}

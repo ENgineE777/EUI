@@ -44,41 +44,23 @@ int EUI::Run()
 	return 0;
 }
 
-const char* EUI::OpenOpenDialog(char* extName, const char* ext)
+const char* EUI::OpenOpenDialog(void* parent, char* extName, const char* ext)
 {
 #ifdef PLATFORM_WIN
-	void* data = NULL;
-
-	if (wnds.size() > 0)
-	{
-		data = wnds[0]->GetNative();
-	}
-	return WinDialog::FileDialog(data, extName, ext, true);
+	return WinDialog::FileDialog(parent, extName, ext, true);
 #endif
 }
 
-const char* EUI::OpenSaveDialog(char* extName, const char* ext)
+const char* EUI::OpenSaveDialog(void* parent, char* extName, const char* ext)
 {
 #ifdef PLATFORM_WIN
-	void* data = NULL;
-
-	if (wnds.size() > 0)
-	{
-		data = wnds[0]->GetNative();
-	}
-	return WinDialog::FileDialog(data, extName, ext, false);
+	return WinDialog::FileDialog(parent, extName, ext, false);
 #endif
 }
 
-bool EUI::OpenColorDialog(float* color)
+bool EUI::OpenColorDialog(void* parent, float* color)
 {
 #ifdef PLATFORM_WIN
-	void* data = NULL;
-
-	if (wnds.size() > 0)
-	{
-		data = wnds[0]->GetNative();
-	}
-	return WinDialog::ColorDialog(data, color);
+	return WinDialog::ColorDialog(parent, color);
 #endif
 }

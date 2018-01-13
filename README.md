@@ -17,3 +17,5 @@ Currently library support follow controls:
 - vertical & horizontal scroolbar
 - tab/tab sheet
 - window
+- wrapped File dialog
+- wrapped Color dialog
