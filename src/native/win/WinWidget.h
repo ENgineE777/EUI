@@ -46,6 +46,9 @@ public:
 	virtual void Draw();
 	virtual void Redraw();
 
+	virtual void CaptureMouse();
+	virtual void ReleaseMouse();
+
 	virtual void Resize();
 
 	virtual void NotifyMouseOver(WinWidget* widget);

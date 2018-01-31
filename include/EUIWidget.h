@@ -130,6 +130,9 @@ public:
 	virtual void Update();
 	virtual void Redraw();
 
+	virtual void CaptureMouse();
+	virtual void ReleaseMouse();
+
 	virtual void* GetNative();
 	virtual void* GetNativeRoot();
 

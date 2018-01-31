@@ -175,27 +175,16 @@ void WinWidget::Redraw()
 	{
 		InvalidateRect(handle, NULL, true);
 	}
+}
 
-	/*RECT rc;
-	rc.left = 0;
-	rc.top = 0;
-	rc.right = owner->width;
-	rc.bottom = owner->height;
+void WinWidget::CaptureMouse()
+{
+	SetCapture(handle);
+}
 
-	EUIWidget* wgt = owner;
-
-	while (wgt->parent)
-	{
-		rc.left += wgt->x;
-		rc.top += wgt->y;
-
-		rc.right += wgt->x;
-		rc.bottom += wgt->y;
-
-		wgt = wgt->parent;
-	}
-
-	InvalidateRect(((WinWidget*)wgt->nativeWidget)->GetHandle(), &rc, false);*/
+void WinWidget::ReleaseMouse()
+{
+	ReleaseCapture();
 }
 
 void WinWidget::Resize()

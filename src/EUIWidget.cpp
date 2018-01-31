@@ -202,6 +202,16 @@ void EUIWidget::Redraw()
 	nativeWidget->Redraw();
 }
 
+void EUIWidget::CaptureMouse()
+{
+	nativeWidget->CaptureMouse();
+}
+
+void EUIWidget::ReleaseMouse()
+{
+	nativeWidget->ReleaseMouse();
+}
+
 void* EUIWidget::GetNative()
 {
 	return nativeWidget->GetNative();

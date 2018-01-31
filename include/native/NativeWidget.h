@@ -28,6 +28,9 @@ public:
 	virtual void Draw() = 0;
 	virtual void Redraw() = 0;
 
+	virtual void CaptureMouse() = 0;
+	virtual void ReleaseMouse() = 0;
+
 	virtual void Resize() = 0;
 
 	virtual void Release() = 0;
