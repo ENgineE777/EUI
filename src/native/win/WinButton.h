@@ -9,7 +9,6 @@ class EUIButton;
 class WinButton : public NativeButton
 {
 	HBITMAP images[4];
-
 	bool is_howered;
 
 public:

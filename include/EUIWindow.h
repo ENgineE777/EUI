@@ -16,10 +16,8 @@ class EUIWindow : public EUIWidget
 	NativeWindow* Native();
 
 public:
-	EUIWindow(const char* text, bool popup, bool adjust, float x, float y, float w, float h);
+	EUIWindow(const char* text, bool popup, bool adjust, int x, int y, int w, int h);
 	virtual ~EUIWindow();
-
-	virtual void SetSize(float w, float h);
 
 	virtual bool IsActive();
 

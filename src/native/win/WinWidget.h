@@ -34,9 +34,8 @@ public:
 
 	virtual void Show(bool set);
 	virtual void Enable(bool set);
-	virtual void SetPos(float set_x, float set_y);
-
-	virtual void SetSize(float w, float h);
+	virtual void SetPos(int set_x, int set_y);
+	virtual void SetSize(int w, int h);
 
 	virtual void SetText(const char* txt);
 

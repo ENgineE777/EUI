@@ -2,7 +2,7 @@
 #include "EUIScrollBar.h"
 #include "native/win/WinScrollBar.h"
 
-EUIScrollBar::EUIScrollBar(EUIWidget* prnt, bool set_horiz, float set_x, float set_y, float set_w, float set_h) : EUIWidget(prnt, "")
+EUIScrollBar::EUIScrollBar(EUIWidget* prnt, bool set_horiz, int set_x, int set_y, int set_w, int set_h) : EUIWidget(prnt, "")
 {
 	x = set_x;
 	y = set_y;

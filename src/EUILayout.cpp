@@ -71,13 +71,13 @@ void EUILayout::Resize()
 		
 		if (vertical)
 		{
-			childs[i]->SetSize(parent->GetWidth(), sz);
-			childs[i]->SetPos(0, pos);
+			childs[i]->SetSize(parent->GetWidth(), (int)sz);
+			childs[i]->SetPos(0, (int)pos);
 		}
 		else
 		{
-			childs[i]->SetSize(sz, parent->GetHeight());
-			childs[i]->SetPos(pos, 0);
+			childs[i]->SetSize((int)sz, parent->GetHeight());
+			childs[i]->SetPos((int)pos, 0);
 		}
 
 		childs[i]->Redraw();

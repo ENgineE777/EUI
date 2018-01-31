@@ -8,7 +8,6 @@ class EUIComboBox;
 
 class WinComboBox : public NativeComboBox
 {
-
 public:
 
 	WinComboBox(EUIWidget* owner);

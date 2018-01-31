@@ -43,14 +43,14 @@ void WinWidget::Enable(bool set)
 	EnableWindow(handle, set);
 }
 
-void WinWidget::SetPos(float set_x, float set_y)
+void WinWidget::SetPos(int set_x, int set_y)
 {
-	SetWindowPos(handle, 0, (int)set_x, (int)set_y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	SetWindowPos(handle, 0, set_x, set_y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void WinWidget::SetSize(float w, float h)
+void WinWidget::SetSize(int w, int h)
 {
-	SetWindowPos(handle, 0, 0, 0, (int)w, (int)h, SWP_NOMOVE | SWP_NOZORDER);
+	SetWindowPos(handle, 0, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 void WinWidget::SetText(const char* txt)

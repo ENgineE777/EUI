@@ -2,7 +2,7 @@
 #include "EUIComboBox.h"
 #include "native/win/WinComboBox.h"
 
-EUIComboBox::EUIComboBox(EUIWidget* prnt, float set_x, float set_y, float w, float h) : EUIWidget(prnt, "")
+EUIComboBox::EUIComboBox(EUIWidget* prnt, int set_x, int set_y, int w, int h) : EUIWidget(prnt, "")
 {
 	x = set_x;
 	y = set_y;

@@ -99,7 +99,7 @@ bool EUIWidget::IsEnabled()
 	return enabled;
 }
 
-void EUIWidget::SetPos(float set_x, float set_y)
+void EUIWidget::SetPos(int set_x, int set_y)
 {
 	x = set_x;
 	y = set_y;
@@ -107,17 +107,17 @@ void EUIWidget::SetPos(float set_x, float set_y)
 	nativeWidget->SetPos(set_x, set_y);
 }
 
-float EUIWidget::GetX()
+int EUIWidget::GetX()
 {
 	return x;
 }
 
-float EUIWidget::GetY()
+int EUIWidget::GetY()
 {
 	return y;
 }
 
-void EUIWidget::SetSize(float w, float h)
+void EUIWidget::SetSize(int w, int h)
 {
 	width = w;
 	height = h;
@@ -125,12 +125,12 @@ void EUIWidget::SetSize(float w, float h)
 	nativeWidget->SetSize(width, height);
 }
 
-float EUIWidget::GetWidth()
+int EUIWidget::GetWidth()
 {
 	return width;
 }
 
-float EUIWidget::GetHeight()
+int EUIWidget::GetHeight()
 {
 	return height;
 }

@@ -12,9 +12,9 @@ public:
 
 	virtual void Show(bool set) = 0;
 	virtual void Enable(bool set) = 0;
-	virtual void SetPos(float set_x, float set_y) = 0;
+	virtual void SetPos(int set_x, int set_y) = 0;
 
-	virtual void SetSize(float w, float h) = 0;
+	virtual void SetSize(int w, int h) = 0;
 
 	virtual void SetText(const char* txt) = 0;
 

@@ -8,7 +8,6 @@ class EUILabel;
 
 class WinLabel : public NativeLabel
 {
-
 public:
 
 	WinLabel(EUIWidget* owner);

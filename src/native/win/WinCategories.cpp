@@ -223,7 +223,7 @@ void WinCategories::UpdateChildPos()
 
 			if (category.opened)
 			{
-				category.childs[j]->SetPos(category.childs[j]->GetX(), pos);
+				category.childs[j]->SetPos(category.childs[j]->GetX(), (int)pos);
 				pos += category.childs[j]->GetHeight();
 			}
 		}

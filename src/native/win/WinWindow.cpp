@@ -94,8 +94,8 @@ WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(o
 		RECT rect;
 		
 		GetClientRect(handle, &rect);
-		Owner()->width = (float)rect.right;
-		Owner()->height = (float)rect.bottom;
+		Owner()->width = rect.right;
+		Owner()->height = rect.bottom;
 	}
 
 	is_minimazed = false;
@@ -133,8 +133,8 @@ LRESULT WinWindow::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 		{
 			if (wParam != 1)
 			{
-				Owner()->width = (float)GET_X_LPARAM(lParam);
-				Owner()->height = (float)GET_Y_LPARAM(lParam);
+				Owner()->width = GET_X_LPARAM(lParam);
+				Owner()->height = GET_Y_LPARAM(lParam);
 
 				Resize();
 			}
@@ -219,8 +219,8 @@ void WinWindow::SetAtScreenCenter()
 	RECT rect;
 	GetWindowRect(handle, &rect);
 
-	SetPos((desktopRect.right- rect.right) * 0.5f,
-		   (desktopRect.bottom - rect.bottom) * 0.5f);
+	SetPos((int)(0.5f * (desktopRect.right- rect.right)),
+		   (int)(0.5f * (desktopRect.bottom - rect.bottom)));
 
 }
 
