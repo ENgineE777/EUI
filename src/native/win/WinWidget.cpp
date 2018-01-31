@@ -167,14 +167,7 @@ void WinWidget::Draw()
 
 void WinWidget::Redraw()
 {
-	if (owner->parent)
-	{
-		InvalidateRect(((WinWidget*)owner->parent->nativeWidget)->GetHandle(), NULL, true);
-	}
-	else
-	{
-		InvalidateRect(handle, NULL, true);
-	}
+	InvalidateRect(handle, NULL, true);
 }
 
 void WinWidget::CaptureMouse()
