@@ -21,7 +21,7 @@ LRESULT CALLBACK WinWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(owner)
+WinWindow::WinWindow(EUIWidget* owner, EUIWindow::Style style, bool adjust) : NativeWindow(owner)
 {
 	EUI::wnds.push_back(Owner());
 
@@ -54,13 +54,18 @@ WinWindow::WinWindow(EUIWidget* owner, bool popup, bool adjust) : NativeWindow(o
 
 	int flag = 0;
 
-	if (!popup)
+	if (style == EUIWindow::Normal)
 	{
 		flag = WS_OVERLAPPEDWINDOW | WS_MAXIMIZE;
 	}
 	else
 	{
 		flag = WS_DLGFRAME | WS_BORDER | WS_CAPTION | WS_SIZEBOX;
+
+		if (style == EUIWindow::PopupWithCloseBtn)
+		{
+			flag |= WS_SYSMENU;
+		}
 	}
 
 	RECT rect;

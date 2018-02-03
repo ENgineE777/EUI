@@ -21,7 +21,7 @@ class WinWindow : public NativeWindow
 	bool is_minimazed;
 
 public:
-	WinWindow(EUIWidget* owner, bool popup, bool adjust);
+	WinWindow(EUIWidget* owner, EUIWindow::Style style, bool adjust);
 	virtual ~WinWindow();
 
 	EUIWindow* Owner();

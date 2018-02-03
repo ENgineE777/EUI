@@ -16,7 +16,15 @@ class EUIWindow : public EUIWidget
 	NativeWindow* Native();
 
 public:
-	EUIWindow(const char* text, bool popup, bool adjust, int x, int y, int w, int h);
+
+	enum Style
+	{
+		Normal,
+		Popup,
+		PopupWithCloseBtn
+	};
+
+	EUIWindow(const char* text, Style style, bool adjust, int x, int y, int w, int h);
 	virtual ~EUIWindow();
 
 	virtual bool IsActive();
