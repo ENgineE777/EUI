@@ -50,6 +50,8 @@ public:
 		virtual void OnRightMouseDown(EUIWidget* sender, int mx, int my) {};
 		virtual void OnRightMouseUp(EUIWidget* sender, int mx, int my) {};
 
+		virtual void OnKey(EUIWidget* sender, int key) {};
+
 		virtual void OnResize(EUIWidget* sender) {};
 		virtual void OnUpdate(EUIWidget* sender) {};
 		virtual void OnDraw(EUIWidget* sender) {};

@@ -96,6 +96,14 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		break;
+		case WM_KEYDOWN:
+		{
+			if (owner->listener)
+			{
+				owner->listener->OnKey(owner, wParam);
+			}
+			break;
+		}
 		case WM_PAINT:
 		{
 			Draw();
