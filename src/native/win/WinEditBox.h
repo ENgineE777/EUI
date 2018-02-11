@@ -9,6 +9,11 @@ class EUIEditBox;
 class WinEditBox : public NativeEditBox
 {
 public:
+
+	static int timerID; 
+	int cur_timerID;
+	float time2callback = -1.0f;
+
 	WinEditBox(EUIWidget* owner);
 	virtual ~WinEditBox();
 

@@ -3,6 +3,8 @@
 #include "WinEditBox.h"
 #include "UTFConv.h"
 
+int WinEditBox::timerID = 0;
+
 WinEditBox::WinEditBox(EUIWidget* owner) : NativeEditBox(owner)
 {
 	std::wstring wtext;
@@ -16,6 +18,9 @@ WinEditBox::WinEditBox(EUIWidget* owner) : NativeEditBox(owner)
 	MakeSubClassing();
 
 	SendMessage(handle, WM_SETFONT, (WPARAM)theme->GetFont("FONT_NORMAL"), MAKELPARAM(TRUE, 0));
+	cur_timerID = timerID;
+	SetTimer(handle, cur_timerID, 10, (TIMERPROC)NULL);
+	timerID++;
 }
 
 WinEditBox::~WinEditBox()
@@ -31,14 +36,29 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 {
 	NativeEditBox::ProcessWidget(msg, wParam, lParam);
 
+	if (msg == WM_TIMER && (wParam == cur_timerID))
+	{
+		if (time2callback > 0.0f)
+		{
+			time2callback -= 0.01f;
+
+			if (time2callback< 0.0f)
+			{
+				time2callback = -1.0f;
+
+				if (Owner()->listener)
+				{
+					Owner()->listener->OnEditBoxChange(Owner());
+				}
+			}
+		}
+	}
+
 	if (msg == WM_COMMAND)
 	{
 		if (HIWORD(wParam) == EN_CHANGE)
 		{
-			if (Owner()->listener)
-			{
-				Owner()->listener->OnEditBoxChange(Owner());
-			}
+			time2callback = 1.0f;
 		}
 	}
 
@@ -58,13 +78,17 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 			if (wParam == '-')
 			{
+				if (Owner()->text.find('-') != std::string::npos)
+				{
+					return false;
+				}
+
 				if (Owner()->inputType == EUIEditBox::InputUInteger || Owner()->inputType == EUIEditBox::InputUFloat)
 				{
 					return false;
 				}
 
-				if ((Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputFloat) &&
-					Owner()->text.size() > 0)
+				if ((Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputFloat) && (LOWORD(Edit_GetSel(handle) != 0)))
 				{
 					return false;
 				}
@@ -72,13 +96,12 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			else
 			if (wParam == '.')
 			{
-				if (Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputUInteger)
+				if (Owner()->text.find('.') != std::string::npos)
 				{
 					return false;
 				}
 
-				if ((Owner()->inputType == EUIEditBox::InputUFloat || Owner()->inputType == EUIEditBox::InputFloat) &&
-					Owner()->text.find(".") != std::string::npos)
+				if (Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputUInteger)
 				{
 					return false;
 				}
