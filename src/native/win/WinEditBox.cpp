@@ -58,6 +58,11 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 			if (wParam == '-')
 			{
+				if (Owner()->inputType == EUIEditBox::InputUInteger || Owner()->inputType == EUIEditBox::InputUFloat)
+				{
+					return false;
+				}
+
 				if ((Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputFloat) &&
 					Owner()->text.size() > 0)
 				{
@@ -67,6 +72,11 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			else
 			if (wParam == '.')
 			{
+				if (Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputUInteger)
+				{
+					return false;
+				}
+
 				if ((Owner()->inputType == EUIEditBox::InputUFloat || Owner()->inputType == EUIEditBox::InputFloat) &&
 					Owner()->text.find(".") != std::string::npos)
 				{

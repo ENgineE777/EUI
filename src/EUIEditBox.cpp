@@ -29,9 +29,37 @@ void EUIEditBox::SetText(const char* txt)
 	nativeWidget->SetText(txt);
 }
 
+void EUIEditBox::SetText(int value)
+{
+	char str[128];
+	sprintf(str, "%i", value);
+	SetText(str);
+}
+
+void EUIEditBox::SetText(float value)
+{
+	char str[128];
+	sprintf(str, "%4.3f", value);
+	SetText(str);
+}
+
 const char* EUIEditBox::GetText()
 {
 	text = Native()->GetText();
 
 	return EUIWidget::GetText();
+}
+
+int EUIEditBox::GetAsInt()
+{
+	text = Native()->GetText();
+	int value = atoi(text.c_str());
+	return value;
+}
+
+float EUIEditBox::GetAsFloat()
+{
+	text = Native()->GetText();
+	float value = (float)atof(text.c_str());
+	return value;
 }

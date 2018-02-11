@@ -44,6 +44,11 @@ void WinLabel::Draw()
 		COLORREF color = RGB(Owner()->bck_color[0], Owner()->bck_color[1], Owner()->bck_color[2]);
 		theme->DrawGradient(GetDC(handle), m_rcItem, color, color, false, 2);
 	}
+	else
+	{
+		COLORREF color = RGB(128, 128, 128);
+		theme->DrawGradient(GetDC(handle), m_rcItem, color, color, false, 2);
+	}
 
 	theme->DrawLabel(GetDC(handle), m_rcItem, Owner()->text.c_str(), uState, DT_SINGLELINE);
 }
