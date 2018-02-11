@@ -68,8 +68,7 @@ public:
 		virtual void OnListBoxChange(EUIWidget* sender, int index) {};
 		virtual void OnListBoxDblClick(EUIWidget* sender, int index) {};
 
-		virtual void OnEditBoxEnterPressed(EUIWidget* sender) {};
-		virtual void OnEditBoxChange(EUIWidget* sender) {};
+		virtual void OnEditBoxStopEditing(EUIWidget* sender) {};
 
 		virtual void OnSrollerPosChange(EUIWidget* sender, int pos) {};
 	};

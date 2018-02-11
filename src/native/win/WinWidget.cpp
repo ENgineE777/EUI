@@ -74,6 +74,7 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		case WM_COMMAND:
 		case WM_HSCROLL:
 		case WM_VSCROLL:
+		case WM_CTLCOLOREDIT:
 		{
 			HWND sender = (HWND)lParam;
 			
@@ -90,7 +91,10 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 					if (win_wgt && win_wgt->handle == sender)
 					{
-						((WinWidget*)owner->childs[i]->nativeWidget)->ProcessWidget(msg, wParam, lParam);
+						if (!((WinWidget*)owner->childs[i]->nativeWidget)->ProcessWidget(msg, wParam, lParam))
+						{
+							return false;
+						}
 					}
 				}
 			}

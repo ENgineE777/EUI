@@ -48,8 +48,10 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 				if (Owner()->listener)
 				{
-					Owner()->listener->OnEditBoxChange(Owner());
+					Owner()->listener->OnEditBoxStopEditing(Owner());
 				}
+
+				Redraw();
 			}
 		}
 	}
@@ -59,17 +61,37 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		if (HIWORD(wParam) == EN_CHANGE)
 		{
 			time2callback = 1.0f;
+			Redraw();
 		}
+	}
+
+	if (msg == WM_CTLCOLOREDIT)
+	{
+		if (time2callback > 0.0f)
+		{
+			SetTextColor((HDC)wParam, RGB(255, 0, 0));
+		}
+		else
+		{
+			SetTextColor((HDC)wParam, RGB(0, 0, 0));
+		}
+
+		processRes = true;
+		return false;
 	}
 
 	if (msg == WM_CHAR)
 	{
 		if (wParam == VK_RETURN)
 		{
+			time2callback = -1.0f;
+
 			if (Owner()->listener)
 			{
-				Owner()->listener->OnEditBoxEnterPressed(Owner());
+				Owner()->listener->OnEditBoxStopEditing(Owner());
 			}
+
+			Redraw();
 		}
 		else
 		if (wParam != VK_RETURN && wParam != VK_BACK)
@@ -112,6 +134,9 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			{
 				return false;
 			}
+
+			time2callback = 1.0f;
+			Redraw();
 		}
 	}
 
@@ -134,6 +159,9 @@ void WinEditBox::SetText(const char* txt)
 
 	SetWindowTextW(handle, wtext.c_str());
 	Edit_SetSel(handle,pos,pos);
+
+	time2callback = -1.0f;
+	Redraw();
 }
 
 const char* WinEditBox::GetText()
