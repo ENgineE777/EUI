@@ -39,11 +39,11 @@ void WinLabel::Draw()
 		uState = EUITheme::UISTATE_DISABLED;
 	}
 
-	COLORREF color = RGB(240, 240, 240);
+	COLORREF color = theme->GetColor("LABEL_BACK");
 
 	if (Owner()->bck_use)
 	{
-		COLORREF color = RGB(Owner()->bck_color[0], Owner()->bck_color[1], Owner()->bck_color[2]);
+		color = RGB(Owner()->bck_color[0], Owner()->bck_color[1], Owner()->bck_color[2]);
 	}
 
 	theme->DrawGradient(GetDC(handle), m_rcItem, color, color, false, 2);

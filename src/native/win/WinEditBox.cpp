@@ -69,11 +69,11 @@ bool WinEditBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (time2callback > 0.0f)
 		{
-			SetTextColor((HDC)wParam, RGB(255, 0, 0));
+			SetTextColor((HDC)wParam, theme->GetColor("FONT_EDITBOX_CHANGED"));
 		}
 		else
 		{
-			SetTextColor((HDC)wParam, RGB(0, 0, 0));
+			SetTextColor((HDC)wParam, theme->GetColor("FONT_NORMAL"));
 		}
 
 		processRes = true;
