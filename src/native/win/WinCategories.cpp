@@ -13,8 +13,8 @@ WinCategories::WinCategories(EUIWidget* owner) : NativeCategories(owner)
 	thumbPressed = 0;
 
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
-							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
+	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();
@@ -253,6 +253,9 @@ void WinCategories::Draw()
 		state = EUITheme::UISTATE_DISABLED;
 	}
 
+	COLORREF color = theme->GetColor("LABEL_BACK");
+	theme->DrawGradient(GetDC(handle), { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height }, color, color, false, 2);
+
 	for (int i = 0; i < (int)Owner()->categories.size(); i++)
 	{
 		EUICategories::Category& category = Owner()->categories[i];
@@ -262,7 +265,7 @@ void WinCategories::Draw()
 			continue;
 		}
 
-		RECT m_rcItem = { 0, (LONG)category.y, (LONG)Owner()->width, (LONG)(category.y + theme->categoryHeight) };
+		RECT rc = { 0, (LONG)category.y, (LONG)Owner()->width, (LONG)(category.y + theme->categoryHeight) };
 
 		UINT sub_state = 0;
 
@@ -271,13 +274,13 @@ void WinCategories::Draw()
 			sub_state = EUITheme::UISTATE_PUSHED;
 		}
 
-		theme->DrawCategory(GetDC(handle), m_rcItem, category.name, state | sub_state, DT_SINGLELINE);
+		theme->DrawCategory(GetDC(handle), rc, category.name, state | sub_state, DT_SINGLELINE);
 	}
 
 	if (thumbHeight > 0)
 	{
-		RECT m_rcItem = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
-		theme->DrawScrollBar(GetDC(handle), m_rcItem, (int)thumbPos, (int)thumbHeight, state);
+		RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
+		theme->DrawScrollBar(GetDC(handle), rc, (int)thumbPos, (int)thumbHeight, state);
 	}
 }
 

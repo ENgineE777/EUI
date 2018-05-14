@@ -2,14 +2,14 @@
 #include "EUIListBox.h"
 #include "native/win/WinListBox.h"
 
-EUIListBox::EUIListBox(EUIWidget* prnt, int set_x, int set_y, int set_w, int set_h) : EUIWidget(prnt, "")
+EUIListBox::EUIListBox(EUIWidget* prnt, int set_x, int set_y, int set_w, int set_h, bool abs_sort) : EUIWidget(prnt, "")
 {
 	x = set_x;
 	y = set_y;
 	width = set_w;
 	height = set_h;
 
-	nativeWidget = new WinListBox(this);
+	nativeWidget = new WinListBox(this, abs_sort);
 }
 
 EUIListBox::~EUIListBox()

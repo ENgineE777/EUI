@@ -13,7 +13,7 @@ class WinMenu : public NativeMenu
 	int cur_depth;
 	HMENU depth_menu[16];
 
-	std::string sub_menu_name;
+	std::string sub_menu_name[16];
 
 public:
 	

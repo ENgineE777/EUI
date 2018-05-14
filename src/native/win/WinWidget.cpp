@@ -104,7 +104,7 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		{
 			if (owner->listener)
 			{
-				owner->listener->OnKey(owner, wParam);
+				owner->listener->OnKey(owner, (int)wParam);
 			}
 			break;
 		}

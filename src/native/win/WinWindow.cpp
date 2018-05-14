@@ -84,9 +84,9 @@ WinWindow::WinWindow(EUIWidget* owner, EUIWindow::Style style, bool adjust) : Na
 	hack_wnd_width = rect.right - rect.left;
 	hack_wnd_height = rect.bottom - rect.top;
 
-	handle = CreateWindow( class_name, Owner()->text.c_str(), flag,
-							rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-							NULL, NULL, NULL, NULL );
+	handle = CreateWindow(class_name, Owner()->text.c_str(), flag,
+	                      rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+	                      NULL, NULL, NULL, NULL );
 
 #ifdef _WIN64
 	SetWindowLongPtr(handle, GWLP_USERDATA, (LONG_PTR)this);

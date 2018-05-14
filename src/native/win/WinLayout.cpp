@@ -5,8 +5,8 @@
 WinLayout::WinLayout(EUIWidget* owner) : NativeLayout(owner)
 {
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_NOTIFY,
-							(int)Owner()->parent->x, (int)Owner()->parent->y, (int)Owner()->parent->width, (int)Owner()->parent->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
+	                      (int)Owner()->parent->x, (int)Owner()->parent->y, (int)Owner()->parent->width, (int)Owner()->parent->height,
+	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();

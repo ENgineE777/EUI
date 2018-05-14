@@ -11,8 +11,8 @@ WinEditBox::WinEditBox(EUIWidget* owner) : NativeEditBox(owner)
 	UTFConv::UTF8to16(wtext, Owner()->text.c_str());
 
 	handle = CreateWindowW(L"EDIT", wtext.c_str(), ES_AUTOHSCROLL | WS_CHILD | WS_BORDER | WS_VISIBLE | WS_TABSTOP,
-							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL );
+	                       (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+	                       ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL );
 	win_id++;
 
 	MakeSubClassing();

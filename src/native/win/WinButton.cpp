@@ -12,8 +12,8 @@ WinButton::WinButton(EUIWidget* owner) : NativeButton(owner)
 	}
 
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
-							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
+	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();

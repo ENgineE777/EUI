@@ -3,11 +3,12 @@
 #include "WinListBox.h"
 #include "UTFConv.h"
 
-WinListBox::WinListBox(EUIWidget* owner) : NativeListBox(owner)
+WinListBox::WinListBox(EUIWidget* owner, bool abs_sort) : NativeListBox(owner)
 {
-	handle = CreateWindowW(L"ListBox", L"", WS_CHILD | WS_VSCROLL | WS_VISIBLE | LBS_NOTIFY | WS_BORDER,
-							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
+	int flag = abs_sort ? LBS_SORT : 0;
+	handle = CreateWindowW(L"ListBox", L"", WS_CHILD | WS_VSCROLL | WS_VISIBLE | LBS_NOTIFY | WS_BORDER | flag,
+	                       (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+	                       ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();

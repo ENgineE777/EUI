@@ -5,8 +5,8 @@
 WinTabPanel::WinTabPanel(EUIWidget* owner) : NativeTabPanel(owner)
 {
 	handle = CreateWindow(WC_TABCONTROL, "", WS_CHILD | WS_VISIBLE,
-							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
+	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();

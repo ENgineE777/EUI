@@ -5,8 +5,8 @@
 WinLabel::WinLabel(EUIWidget* owner) : NativeLabel(owner)
 {
 	handle = CreateWindow("STATIC", "Static", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
-							(int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-							((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
+	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 
 	MakeSubClassing();
@@ -30,7 +30,7 @@ void WinLabel::SetText(const char* txt)
 
 void WinLabel::Draw()
 {
-	RECT m_rcItem = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
+	RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
 
 	UINT uState = EUITheme::UISTATE_NORMAL;
 
@@ -46,6 +46,6 @@ void WinLabel::Draw()
 		color = RGB(Owner()->bck_color[0], Owner()->bck_color[1], Owner()->bck_color[2]);
 	}
 
-	theme->DrawGradient(GetDC(handle), m_rcItem, color, color, false, 2);
-	theme->DrawLabel(GetDC(handle), m_rcItem, Owner()->text.c_str(), uState, DT_SINGLELINE);
+	theme->DrawGradient(GetDC(handle), rc, color, color, false, 2);
+	theme->DrawLabel(GetDC(handle), rc, Owner()->text.c_str(), uState, DT_SINGLELINE);
 }

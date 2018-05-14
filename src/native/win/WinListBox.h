@@ -11,7 +11,7 @@ class WinListBox : public NativeListBox
 	int FindIndexByData(void* data);
 public:
 
-	WinListBox(EUIWidget* owner);
+	WinListBox(EUIWidget* owner, bool abs_sort);
 	virtual ~WinListBox();
 
 	EUIListBox* Owner();
