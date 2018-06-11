@@ -50,9 +50,8 @@ public:
 
 	virtual void Resize();
 
-	virtual void NotifyMouseOver(WinWidget* widget);
+	virtual void NotifyMouseOver();
 	virtual void OnMouseLeave();
-
 
 	virtual void SetFocused();
 	virtual bool IsFocused();

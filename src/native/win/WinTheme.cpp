@@ -64,6 +64,28 @@ void WinTheme::LoadFonts(JSONReader* reader)
 	}
 }
 
+void WinTheme::LoadCursors(JSONReader* reader)
+{
+	cursors[""] = LoadCursor(NULL, IDC_ARROW);
+
+	while (reader->EnterBlock("cursors"))
+	{
+		char name[128];
+		reader->Read("name", name, 128);
+
+		char filename[128];
+		reader->Read("filename", filename, 128);
+
+		char path[512];
+		strcpy(path, themePath);
+		strcat(path, filename);
+
+		cursors[name] = (HCURSOR)LoadImage(0, path, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);;
+
+		reader->LeaveBlock();
+	}
+}
+
 COLORREF WinTheme::ReadColor(JSONReader* reader, const char* name)
 {
 	COLORREF color = RGB(0, 0, 0);
@@ -171,6 +193,11 @@ HBITMAP WinTheme::GetImage(const char* image)
 	}
 
 	return images[image];
+}
+
+HCURSOR WinTheme::GetCursor(const char* name)
+{
+	return cursors[name];
 }
 
 TEXTMETRIC& WinTheme::GetFontInfo(HDC hdc, const char* font)

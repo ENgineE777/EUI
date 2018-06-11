@@ -34,7 +34,7 @@ bool WinComboBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		{
 			if (Owner()->listener)
 			{
-				Owner()->listener->OnComboBoxChange(Owner(), ComboBox_GetCurSel(handle));
+				Owner()->listener->OnComboBoxSelChange(Owner(), ComboBox_GetCurSel(handle));
 			}
 		}
 	}

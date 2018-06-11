@@ -18,14 +18,14 @@ public:
 
 	EUIButton* Owner();
 
-	virtual void Enable(bool set);
+	void Enable(bool set) override;
 
-	virtual void SetImage(int img, const char* image_name);
-	virtual bool ProcessWidget(long msg, WPARAM wParam, LPARAM lParam);
-	virtual void SetText(const char* txt);
+	void SetImage(int img, const char* image_name) override;
+	bool ProcessWidget(long msg, WPARAM wParam, LPARAM lParam) override;
+	void SetText(const char* txt) override;
 
-	virtual void NotifyMouseOver(WinWidget* widget);
-	virtual void OnMouseLeave();
+	void NotifyMouseOver() override;
+	void OnMouseLeave() override;
 
-	virtual void Draw();
+	void Draw() override;
 };

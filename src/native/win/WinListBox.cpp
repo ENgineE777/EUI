@@ -35,7 +35,7 @@ bool WinListBox::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		{
 			if (Owner()->listener)
 			{
-				Owner()->listener->OnListBoxChange(Owner(), ListBox_GetCurSel(handle));
+				Owner()->listener->OnListBoxSelChange(Owner(), ListBox_GetCurSel(handle));
 			}
 		}
 		else

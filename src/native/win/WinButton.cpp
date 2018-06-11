@@ -115,18 +115,15 @@ void WinButton::Draw()
 	}
 }
 
-void WinButton::NotifyMouseOver(WinWidget* widget)
+void WinButton::NotifyMouseOver()
 {
-	if (widget == this)
+	if (!is_howered)
 	{
-		if (!is_howered)
-		{
-			is_howered = true;
-			InvalidateRect(handle, NULL, false);
-		}
+		is_howered = true;
+		Redraw();
 	}
 
-	NativeButton::NotifyMouseOver(widget);
+	NativeButton::NotifyMouseOver();
 }
 
 void WinButton::OnMouseLeave()

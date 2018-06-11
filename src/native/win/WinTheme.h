@@ -39,6 +39,7 @@ public:
 	std::map<std::string, Color> colors;
 	std::map<std::string, Font> fonts;
 	std::map<std::string, HBITMAP> images;
+	std::map<std::string, HCURSOR> cursors;
 
 	DWORD prevColors[2];
 
@@ -52,6 +53,7 @@ public:
 	HBRUSH      GetBrush(const char* color);
 	COLORREF    GetColor(const char* color);
 	HBITMAP     GetImage(const char* image);
+	HCURSOR     GetCursor(const char* name);
 	TEXTMETRIC& GetFontInfo(HDC hdc, const char* font);
 
 	void DrawRect(HDC hDC, RECT rc, const char* color);
@@ -70,8 +72,9 @@ public:
 
 protected:
 	COLORREF ReadColor(JSONReader* reader, const char* name);
-	virtual void LoadColors(JSONReader* reader);
-	virtual void LoadFonts(JSONReader* reader);
+	void LoadColors(JSONReader* reader) override;
+	void LoadFonts(JSONReader* reader) override;
+	void LoadCursors(JSONReader* reader) override;
 };
 
 extern WinTheme* theme;

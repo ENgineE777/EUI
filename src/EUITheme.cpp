@@ -29,6 +29,7 @@ void EUITheme::ReadTheme(const char* name)
 
 	LoadColors(reader);
 	LoadFonts(reader);
+	LoadCursors(reader);
 
 	reader->Read("FONT_SELECTED", fontSelecetd, 32);
 	reader->Read("FONT_BACK_SELECTED", fontBackSeleceted, 32);

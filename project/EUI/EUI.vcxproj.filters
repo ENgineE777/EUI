@@ -132,6 +132,12 @@
     <ClCompile Include="..\..\src\native\win\WinScrollBar.cpp">
       <Filter>Source\native\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\EUITreeView.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win\WinTreeView.cpp">
+      <Filter>Source\native\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\native\win\WinButton.h">
@@ -291,6 +297,15 @@
       <Filter>Source\native</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\native\win\WinScrollBar.h">
+      <Filter>Source\native\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\EUITreeView.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeTreeView.h">
+      <Filter>Source\native</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win\WinTreeView.h">
       <Filter>Source\native\win</Filter>
     </ClInclude>
   </ItemGroup>

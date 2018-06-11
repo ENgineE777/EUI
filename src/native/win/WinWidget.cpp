@@ -68,38 +68,33 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	int xPos = GET_X_LPARAM(lParam);
 	int yPos = GET_Y_LPARAM(lParam);
 
-	switch (msg)
+	HWND sender = (HWND)lParam;
+
+	if (msg == WM_NOTIFY)
 	{
-		case WM_NOTIFY:
-		case WM_COMMAND:
-		case WM_HSCROLL:
-		case WM_VSCROLL:
-		case WM_CTLCOLOREDIT:
+		sender = ((LPNMHDR)lParam)->hwndFrom;
+	}
+
+	if (sender != handle)
+	{
+		for (auto child : owner->childs)
 		{
-			HWND sender = (HWND)lParam;
-			
-			if (msg == WM_NOTIFY)
-			{
-				sender = ((LPNMHDR)lParam)->hwndFrom;
-			}
+			WinWidget* win_wgt = (WinWidget*)child->nativeWidget;
 
-			if (sender != handle)
+			if (win_wgt && win_wgt->handle == sender)
 			{
-				for (int i = 0; i < (int)owner->childs.size(); i++)
+				if (!((WinWidget*)child->nativeWidget)->ProcessWidget(msg, wParam, lParam))
 				{
-					WinWidget* win_wgt = (WinWidget*)owner->childs[i]->nativeWidget;
-
-					if (win_wgt && win_wgt->handle == sender)
-					{
-						if (!((WinWidget*)owner->childs[i]->nativeWidget)->ProcessWidget(msg, wParam, lParam))
-						{
-							return false;
-						}
-					}
+					return false;
 				}
+
+				break;
 			}
 		}
-		break;
+	}
+
+	switch (msg)
+	{
 		case WM_KEYDOWN:
 		{
 			if (owner->listener)
@@ -160,7 +155,7 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		break;
 		case WM_MOUSEMOVE:
 		{
-			NotifyMouseOver(this);
+			NotifyMouseOver();
 
 			if (owner->listener)
 			{
@@ -205,12 +200,12 @@ void WinWidget::Resize()
 	}
 }
 
-void WinWidget::NotifyMouseOver(WinWidget* widget)
+void WinWidget::NotifyMouseOver()
 {
-	if (mouse_over != widget)
+	if (mouse_over != this)
 	{
 		if (mouse_over) mouse_over->OnMouseLeave();
-		mouse_over = widget;
+		mouse_over = this;
 	}
 }
 

@@ -13,7 +13,7 @@ EUITabSheet::~EUITabSheet()
 
 NativeTabSheet* EUITabSheet::Native()
 {
-	return NULL;
+	return nullptr;
 }
 
 void EUITabSheet::SetText(const char* text)

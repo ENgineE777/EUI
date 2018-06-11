@@ -34,6 +34,7 @@
     <ClCompile Include="..\..\src\EUITabPanel.cpp" />
     <ClCompile Include="..\..\src\EUITabSheet.cpp" />
     <ClCompile Include="..\..\src\EUITheme.cpp" />
+    <ClCompile Include="..\..\src\EUITreeView.cpp" />
     <ClCompile Include="..\..\src\EUIWidget.cpp" />
     <ClCompile Include="..\..\src\EUIWindow.cpp" />
     <ClCompile Include="..\..\src\native\win\WinButton.cpp" />
@@ -51,6 +52,7 @@
     <ClCompile Include="..\..\src\native\win\WinTabPanel.cpp" />
     <ClCompile Include="..\..\src\native\win\WinTabSheet.cpp" />
     <ClCompile Include="..\..\src\native\win\WinTheme.cpp" />
+    <ClCompile Include="..\..\src\native\win\WinTreeView.cpp" />
     <ClCompile Include="..\..\src\native\win\WinWidget.cpp" />
     <ClCompile Include="..\..\src\native\win\WinWindow.cpp" />
     <ClCompile Include="..\..\support\json\block_allocator.cpp" />
@@ -74,6 +76,7 @@
     <ClInclude Include="..\..\include\EUITabPanel.h" />
     <ClInclude Include="..\..\include\EUITabSheet.h" />
     <ClInclude Include="..\..\include\EUITheme.h" />
+    <ClInclude Include="..\..\include\EUITreeView.h" />
     <ClInclude Include="..\..\include\EUIWidget.h" />
     <ClInclude Include="..\..\include\EUIWindow.h" />
     <ClInclude Include="..\..\include\native\NativeButton.h" />
@@ -89,6 +92,7 @@
     <ClInclude Include="..\..\include\native\NativeScrollBar.h" />
     <ClInclude Include="..\..\include\native\NativeTabPanel.h" />
     <ClInclude Include="..\..\include\native\NativeTabSheet.h" />
+    <ClInclude Include="..\..\include\native\NativeTreeView.h" />
     <ClInclude Include="..\..\include\native\NativeWidget.h" />
     <ClInclude Include="..\..\include\native\NativeWindow.h" />
     <ClInclude Include="..\..\src\native\win\WinButton.h" />
@@ -106,6 +110,7 @@
     <ClInclude Include="..\..\src\native\win\WinTabPanel.h" />
     <ClInclude Include="..\..\src\native\win\WinTabSheet.h" />
     <ClInclude Include="..\..\src\native\win\WinTheme.h" />
+    <ClInclude Include="..\..\src\native\win\WinTreeView.h" />
     <ClInclude Include="..\..\src\native\win\WinWidget.h" />
     <ClInclude Include="..\..\src\native\win\WinWindow.h" />
     <ClInclude Include="..\..\support\json\block_allocator.h" />
