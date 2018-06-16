@@ -75,10 +75,10 @@ void WinListBox::ClearList()
 
 void WinListBox::AddItem(const char* str, void* data)
 {
-	std::wstring wtext;
-	UTFConv::UTF8to16(wtext, str);
+	std::wstring text;
+	UTFConv::UTF8to16(text, str);
 
-	LRESULT sel = SendMessageW(handle, LB_ADDSTRING, 0, (LPARAM)wtext.c_str());
+	LRESULT sel = SendMessageW(handle, LB_ADDSTRING, 0, (LPARAM)text.c_str());
 
 	SendMessage(handle, LB_SETITEMDATA ,(WPARAM)sel, (LPARAM)data);
 }

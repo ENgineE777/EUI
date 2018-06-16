@@ -1,10 +1,10 @@
 
-#include "JSONReader.h"
+#include "JSONParser.h"
 #include "stdio.h"
 #include <string.h>
 #include <stdlib.h>
 
-JSONReader::JSONReader() : allocator(1 << 10)
+JSONParser::JSONParser() : allocator(1 << 10)
 {
 	root = NULL;
 	curNode = NULL;
@@ -13,7 +13,7 @@ JSONReader::JSONReader() : allocator(1 << 10)
 	buffer = NULL;
 }
 
-bool JSONReader::Parse(const char* name)
+bool JSONParser::Parse(const char* name)
 {
 	FILE* file = fopen(name, "rb");
 
@@ -51,7 +51,7 @@ bool JSONReader::Parse(const char* name)
 	return false;
 }
 
-bool JSONReader::EnterBlock(const char* name)
+bool JSONParser::EnterBlock(const char* name)
 {
 	nodes[curDepth +1] = FindValue(name);
 
@@ -81,7 +81,7 @@ bool JSONReader::EnterBlock(const char* name)
 	return false;
 }
 
-void JSONReader::LeaveBlock()
+void JSONParser::LeaveBlock()
 {
 	if (curDepth == 0) return;
 
@@ -94,7 +94,7 @@ void JSONReader::LeaveBlock()
 	curNode = nodes[curDepth];
 }
 
-bool JSONReader::Read(const char* name, char* val, int val_len)
+bool JSONParser::Read(const char* name, char* val, int val_len)
 {
 	json_value* node = FindValue(name);
 	
@@ -125,10 +125,50 @@ bool JSONReader::Read(const char* name, char* val, int val_len)
 		}
 	}
 
-	return false;	
+	return false;
 }
 
-bool JSONReader::Read(const char* name, bool& val)
+bool JSONParser::Read(const char* name, std::string& val)
+{
+	json_value* node = FindValue(name);
+
+	if (node)
+	{
+		if (node->type == JSON_STRING)
+		{
+			val = node->string_value;
+			return true;
+		}
+		else
+			if (node->type == JSON_BOOL || node->type == JSON_INT)
+			{
+				char tmp[128];
+				sprintf(tmp, "%i", node->int_value);
+				val = tmp;
+
+				return true;
+			}
+			else
+				if (node->type == JSON_FLOAT)
+				{
+					char tmp[128];
+					sprintf(tmp, "%4.5f", node->float_value);
+					val = tmp;
+
+					return true;
+				}
+				else
+					if (node->type == JSON_NULL)
+					{
+						val = "";
+						return true;
+					}
+	}
+
+	return false;
+}
+
+bool JSONParser::Read(const char* name, bool& val)
 {
 	json_value* node = FindValue(name);
 
@@ -173,7 +213,7 @@ bool JSONReader::Read(const char* name, bool& val)
 	return false;
 }
 
-bool JSONReader::Read(const char* name, float& val)
+bool JSONParser::Read(const char* name, float& val)
 {
 	json_value* node = FindValue(name);
 
@@ -201,7 +241,7 @@ bool JSONReader::Read(const char* name, float& val)
 	return false;
 }
 
-bool JSONReader::Read(const char* name, int& val)
+bool JSONParser::Read(const char* name, int& val)
 {
 	json_value* node = FindValue(name);
 
@@ -231,7 +271,7 @@ bool JSONReader::Read(const char* name, int& val)
 	return false;
 }
 
-bool JSONReader::Read(const char* name, int64_t& val)
+bool JSONParser::Read(const char* name, int64_t& val)
 {
 	json_value* node = FindValue(name);
 
@@ -260,7 +300,7 @@ bool JSONReader::Read(const char* name, int64_t& val)
 	return false;
 }
 
-json_value* JSONReader::FindValue(const char* name)
+json_value* JSONParser::FindValue(const char* name)
 {
 	if (!root)
 	{
@@ -283,7 +323,7 @@ json_value* JSONReader::FindValue(const char* name)
 	return NULL;
 }
 
-void JSONReader::Release()
+void JSONParser::Release()
 {
 	if (buffer)
 	{

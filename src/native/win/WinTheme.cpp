@@ -11,7 +11,7 @@ WinTheme::WinTheme() : EUITheme()
 	LoadLibrary("msimg32.dll");
 }
 
-void WinTheme::LoadColors(JSONReader* reader)
+void WinTheme::LoadColors(JSONParser* reader)
 {
 	while (reader->EnterBlock("colors"))
 	{
@@ -27,7 +27,7 @@ void WinTheme::LoadColors(JSONReader* reader)
 	}
 }
 
-void WinTheme::LoadFonts(JSONReader* reader)
+void WinTheme::LoadFonts(JSONParser* reader)
 {
 	LOGFONT lf = { 0 };
 	::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
@@ -64,7 +64,7 @@ void WinTheme::LoadFonts(JSONReader* reader)
 	}
 }
 
-void WinTheme::LoadCursors(JSONReader* reader)
+void WinTheme::LoadCursors(JSONParser* reader)
 {
 	cursors[""] = LoadCursor(NULL, IDC_ARROW);
 
@@ -86,7 +86,7 @@ void WinTheme::LoadCursors(JSONReader* reader)
 	}
 }
 
-COLORREF WinTheme::ReadColor(JSONReader* reader, const char* name)
+COLORREF WinTheme::ReadColor(JSONParser* reader, const char* name)
 {
 	COLORREF color = RGB(0, 0, 0);
 

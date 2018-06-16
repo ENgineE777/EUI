@@ -71,10 +71,10 @@ public:
 	void DrawScrollBar(HDC hDC, RECT rc, int pos, int size, UINT uState);
 
 protected:
-	COLORREF ReadColor(JSONReader* reader, const char* name);
-	void LoadColors(JSONReader* reader) override;
-	void LoadFonts(JSONReader* reader) override;
-	void LoadCursors(JSONReader* reader) override;
+	COLORREF ReadColor(JSONParser* reader, const char* name);
+	void LoadColors(JSONParser* reader) override;
+	void LoadFonts(JSONParser* reader) override;
+	void LoadCursors(JSONParser* reader) override;
 };
 
 extern WinTheme* theme;

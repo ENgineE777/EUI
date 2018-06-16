@@ -2,8 +2,9 @@
 #pragma once
 
 #include "json.h"
+#include <string>
 
-class JSONReader
+class JSONParser
 {
 	block_allocator allocator;
 	json_value* root;
@@ -16,7 +17,7 @@ class JSONReader
 
 public:
 
-	JSONReader();
+	JSONParser();
 
 	bool Parse(const char* name);
 
@@ -24,6 +25,7 @@ public:
 	void LeaveBlock();
 
 	bool Read(const char* name, char* val, int val_len);
+	bool Read(const char* name, std::string& val);
 	bool Read(const char* name, bool& val);
 	bool Read(const char* name, float& val);
 	bool Read(const char* name, int& val);

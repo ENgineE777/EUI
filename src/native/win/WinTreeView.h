@@ -15,44 +15,20 @@ class WinTreeView : public NativeTreeView
 		HTREEITEM item = 0;
 		void* ptr = nullptr;
 		std::string text;
-		std::string tooltip;
+		std::wstring wtext;
+		std::wstring tooltip;
 		int image;
 		bool  can_have_childs = true;
 		Node* parent = nullptr;
 		int   child_index = -1;
 		std::vector<Node*> childs;
 
-		void ReCreateItem(WinTreeView* tree_view)
-		{
-			TVITEM tvi;
-			tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM;
-			tvi.pszText = (LPSTR)text.c_str();
-			tvi.cchTextMax = (int)text.size() + 1;
-			tvi.lParam = (LPARAM)this;
-			tvi.iImage = image;
-			tvi.iSelectedImage = image;
-			tvi.state = TVIS_EXPANDED;
-
-			TVINSERTSTRUCT tvins;
-			tvins.item = tvi;
-			tvins.hInsertAfter = TVI_LAST;
-
-			tvins.hParent = (parent != &tree_view->root_node) ? (HTREEITEM)parent->item : TVI_ROOT;
-			item = (HTREEITEM)TreeView_InsertItem(tree_view->handle, &tvins);
-		}
-
-		void  DeleteNodeChilds()
-		{
-			for (auto child : childs)
-			{
-				child->DeleteNodeChilds();
-				delete child;
-			}
-
-			childs.clear();
-		}
+		void ReCreateItem(WinTreeView* tree_view);
+		void DeleteNodeChilds(WinTreeView* tree_view);
+		void AddChild(WinTreeView* tree_view, Node* node, int insert_index);
 	};
 
+	bool abs_sort = false;
 	HWND selection = 0;
 
 	HMENU popUpMenu = 0;
@@ -79,10 +55,11 @@ class WinTreeView : public NativeTreeView
 	Node* GetNode(HTREEITEM item);
 	void  ReCreateChilds(Node* parent);
 	bool  ContainNode(Node* parent, Node* node);
+	void  MoveDraggedItem();
 
 public:
 
-	WinTreeView(EUIWidget* owner);
+	WinTreeView(EUIWidget* owner, bool abs_sort, bool allow_edit_names);
 	virtual ~WinTreeView();
 
 	EUITreeView* Owner();
@@ -92,13 +69,15 @@ public:
 	void  AddImage(const char* name) override;
 	void  DeleteItem(void* item) override;
 	void  ClearTree() override;
-	void  SortItems(void* root, bool recursive) override;
 	void* AddItem(const char* text, int image, void* ptr, void* parent, int child_index, bool can_have_childs, const char* tooltip) override;
 	void  SetItemText(void* item, const char* text) override;
 	void* GetSelectedItem() override;
 	void  SelectItem(void* item) override;
+	void  GetItemText(void* item, std::string& text) override;
 	void* GetItemPtr(void* item) override;
-	void  MoveDraggedItem() override;
+	void* GetItemParent(void* item) override;
+	int   GetItemChildCount(void* item) override;
+	void* GetItemChild(void* item, int index) override;
 	void  NotifyMouseOver() override;
 
 	void StartPopupMenu() override;

@@ -1,6 +1,6 @@
 
 #include "EUITheme.h"
-#include "TCHAR.H"
+#include "UTFConv.h"
 
 EUITheme::EUITheme()
 {
@@ -20,7 +20,19 @@ void EUITheme::ReadTheme(const char* name)
 
 	themePath[index + 1] = 0;
 
-	JSONReader* reader = new JSONReader();
+	{
+		std::string file_name = themePath;
+		file_name += "low2hi.dat";
+
+		JSONParser* reader = new JSONParser();
+		reader->Parse(file_name.c_str());
+
+		UTFConv::Init(reader);
+
+		reader->Release();
+	}
+
+	JSONParser* reader = new JSONParser();
 
 	if (!reader->Parse(name))
 	{
@@ -142,4 +154,6 @@ void EUITheme::ReadTheme(const char* name)
 
 		reader->LeaveBlock();
 	}
+
+	reader->Release();
 }

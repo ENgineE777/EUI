@@ -1,5 +1,6 @@
 #include "EUITreeView.h"
 #include "WinTreeView.h"
+#include "UTFConv.h"
 
 WinTreeView* WinTreeView::dragged_source_tree = nullptr;
 WinTreeView* WinTreeView::dragged_target_tree = nullptr;
@@ -8,6 +9,95 @@ WinTreeView::Node* WinTreeView::dragged_target = nullptr;
 bool WinTreeView::drag_on = false;
 bool WinTreeView::drag_into_item = false;
 
+void WinTreeView::Node::ReCreateItem(WinTreeView* tree_view)
+{
+	TVITEMW tvi;
+	tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM;
+	tvi.pszText = (LPWSTR)wtext.c_str();
+	tvi.cchTextMax = (int)wtext.size() + 1;
+	tvi.lParam = (LPARAM)this;
+	tvi.iImage = image;
+	tvi.iSelectedImage = image;
+	tvi.state = TVIS_EXPANDED;
+
+	TVINSERTSTRUCTW tvins;
+	tvins.item = tvi;
+	tvins.hInsertAfter = TVI_LAST;
+
+	tvins.hParent = (parent != &tree_view->root_node) ? (HTREEITEM)parent->item : TVI_ROOT;
+	item = (HTREEITEM)SNDMSG(tree_view->handle, TVM_INSERTITEMW, 0, (LPARAM)(LPTV_INSERTSTRUCTW)&tvins);
+}
+
+void WinTreeView::Node::DeleteNodeChilds(WinTreeView* tree_view)
+{
+	for (auto child : childs)
+	{
+		child->DeleteNodeChilds(tree_view);
+
+		if (tree_view->Owner()->listener)
+		{
+			tree_view->Owner()->listener->OnTreeDeleteItem(tree_view->Owner(), child->item, child->ptr);
+		}
+
+		delete child;
+	}
+
+	childs.clear();
+}
+
+void WinTreeView::Node::AddChild(WinTreeView* tree_view, Node* node, int insert_index)
+{
+	if (!tree_view->abs_sort && insert_index == -1)
+	{
+		node->child_index = (int)node->parent->childs.size();
+		node->parent->childs.push_back(node);
+		node->ReCreateItem(tree_view);
+
+		return;
+	}
+
+	for (auto child : childs)
+	{
+		TreeView_DeleteItem(tree_view->handle, child->item);
+	}
+
+	if (tree_view->abs_sort)
+	{
+		childs.push_back(node);
+
+		for (int i = (int)childs.size() - 1; i > 0; i--)
+		{
+			if (!childs[i]->can_have_childs && childs[i - 1]->can_have_childs)
+			{
+				break;
+			}
+
+			if ((childs[i]->can_have_childs && !childs[i - 1]->can_have_childs) ||
+				UTFConv::CompareABC(childs[i]->text.c_str(), childs[i - 1]->text.c_str()))
+			{
+				Node* tmp = childs[i - 1];
+				childs[i - 1] = childs[i];
+				childs[i] = tmp;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		childs.insert(childs.begin() + insert_index, node);
+	}
+
+	int index = 0;
+	for (auto child : childs)
+	{
+		child->child_index = index;
+		index++;
+		tree_view->ReCreateChilds(child);
+	}
+}
 
 LRESULT CALLBACK SelectionWidgetProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
@@ -20,10 +110,11 @@ LRESULT CALLBACK SelectionWidgetProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 	return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
-WinTreeView::WinTreeView(EUIWidget* owner) : NativeTreeView(owner)
+WinTreeView::WinTreeView(EUIWidget* owner, bool set_abs_sort, bool allow_edit_names) : NativeTreeView(owner)
 {
-	handle = CreateWindowEx(0, WC_TREEVIEW, "",
-	                        WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_SHOWSELALWAYS | WS_VISIBLE | TVS_EX_DOUBLEBUFFER | TVS_HASBUTTONS | TVS_LINESATROOT | TVS_INFOTIP | TVS_EDITLABELS,
+	int flag = allow_edit_names ? TVS_EDITLABELS : 0;
+	handle = CreateWindowExW(0, WC_TREEVIEWW, L"",
+	                        WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_SHOWSELALWAYS | WS_VISIBLE | TVS_EX_DOUBLEBUFFER | TVS_HASBUTTONS | TVS_LINESATROOT | TVS_INFOTIP | flag,
 	                        (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height, ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 
 	win_id++;
@@ -39,6 +130,8 @@ WinTreeView::WinTreeView(EUIWidget* owner) : NativeTreeView(owner)
 
 	imageList = ImageList_Create(21, 21, ILC_COLOR24, 0, 0);
 	TreeView_SetImageList(handle, imageList, TVSIL_NORMAL);
+
+	abs_sort = set_abs_sort;
 }
 
 WinTreeView::~WinTreeView()
@@ -127,7 +220,10 @@ void WinTreeView::EndDrag()
 			parent = dragged_target->parent;
 		}
 
-		Owner()->listener->OnTreeViewItemDragged(dragged_source_tree->Owner(), dragged_target_tree->Owner(), dragged_item->item, dragged_item->child_index, parent->item, insert_index);
+		if (Owner()->listener->OnTreeViewItemDragged(dragged_source_tree->Owner(), dragged_target_tree->Owner(), dragged_item->item, dragged_item->child_index, parent->item, insert_index))
+		{
+			MoveDraggedItem();
+		}
 	}
 
 	ShowWindow(selection, false);
@@ -168,15 +264,11 @@ WinTreeView::Node* WinTreeView::GetNode(HTREEITEM item)
 		return &root_node;
 	}
 
-	char str[1024];
-
-	TVITEM tvItem;
+	TVITEMW tvItem;
 	tvItem.hItem = (HTREEITEM)item;
-	tvItem.mask = TVIF_CHILDREN | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_STATE | TVIF_TEXT | TVIF_PARAM;
-	tvItem.pszText = str;
-	tvItem.cchTextMax = 1024 - 1;
+	tvItem.mask = TVIF_CHILDREN | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_STATE | TVIF_PARAM;
 
-	TreeView_GetItem(handle, &tvItem);
+	SNDMSG(handle, TVM_GETITEMW, 0, (LPARAM)&tvItem);
 
 	return (WinTreeView::Node*)tvItem.lParam;
 }
@@ -241,11 +333,11 @@ bool WinTreeView::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (((LPNMHDR)lParam)->code == TVN_GETINFOTIPA || ((LPNMHDR)lParam)->code == TVN_GETINFOTIPW)
 		{
-			LPNMTVGETINFOTIP tip = (LPNMTVGETINFOTIP)lParam;
+			LPNMTVGETINFOTIPW tip = (LPNMTVGETINFOTIPW)lParam;
 			Node* node = FindNode(nullptr, tip->hItem);
 			if (node)
 			{
-				strcpy(tip->pszText, node->tooltip.c_str());
+				wcscpy(tip->pszText, node->tooltip.c_str());
 			}
 		}
 		else
@@ -292,25 +384,21 @@ bool WinTreeView::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			StartDrag((LPNMTREEVIEW)lParam);
 		}
 		else
-		if (((LPNMHDR)lParam)->code == TVN_ENDLABELEDITW || ((LPNMHDR)lParam)->code == TVN_ENDLABELEDITA)
+		if (((LPNMHDR)lParam)->code == TVN_ENDLABELEDIT)// || ((LPNMHDR)lParam)->code == TVN_ENDLABELEDITA)
 		{
-			/*LPNMTVDISPINFO ptvdi = (LPNMTVDISPINFO)lParam;
-			if (ptvdi->item.pszText)
+			LPNMTVDISPINFO ptvdi = (LPNMTVDISPINFO)lParam;
+			Node* node = GetNode(ptvdi->item.hItem);
+
+			if (ptvdi->item.pszText && node)
 			{
-				int index = 0;
-				int step = 1;
-				if (((LPNMHDR)lParam)->code == TVN_ENDLABELEDITW)
-					step = 2;
-				while (ptvdi->item.pszText[index * step] != 0)
+				node->text = ptvdi->item.pszText;
+				//UTFConv::UTF16to8(node->text, ptvdi->item.pszText);
+
+				if (Owner()->listener)
 				{
-					edited_text[index] = ptvdi->item.pszText[index * step];
-					index++;
+					Owner()->listener->OnTreeViewSelItemTextChanged(Owner(), ptvdi->item.hItem, node->text.c_str());
 				}
-
-				edited_text[index] = ptvdi->item.pszText[index * step];
-
-				EventsWidget::SetEvent(id, EventsWidget::treelist_labeledited);
-			}*/
+			}
 		}
 	}
 
@@ -332,7 +420,13 @@ void WinTreeView::DeleteItem(void* item)
 	{
 		TreeView_DeleteItem(handle, node->item);
 		node->parent->childs.erase(node->parent->childs.begin() + node->child_index);
-		node->DeleteNodeChilds();
+		node->DeleteNodeChilds(this);
+
+		if (Owner()->listener)
+		{
+			Owner()->listener->OnTreeDeleteItem(Owner(), node->item, node->ptr);
+		}
+
 		delete node;
 	}
 }
@@ -340,46 +434,27 @@ void WinTreeView::DeleteItem(void* item)
 void WinTreeView::ClearTree()
 {
 	TreeView_DeleteAllItems(handle);
-	root_node.DeleteNodeChilds();
-}
-
-void WinTreeView::SortItems(void* root, bool recursive)
-{
+	root_node.DeleteNodeChilds(this);
 }
 
 void* WinTreeView::AddItem(const char* text, int image, void* ptr, void* parent, int child_index, bool can_have_childs, const char* tooltip)
 {
 	Node* node = new Node();
 	node->ptr = ptr;
+
 	node->text = text;
-	if (tooltip) node->tooltip = tooltip;
+	UTFConv::UTF8to16(node->wtext, text);
+
+	if (tooltip)
+	{
+		UTFConv::UTF8to16(node->tooltip, tooltip);
+	}
+
 	node->can_have_childs = can_have_childs;
 	node->parent = FindNode(nullptr, parent);
 	node->image = image;
 
-	if (child_index == -1)
-	{
-		node->child_index = (int)node->parent->childs.size();
-		node->parent->childs.push_back(node);
-		node->ReCreateItem(this);
-	}
-	else
-	{
-		for (auto child : node->parent->childs)
-		{
-			TreeView_DeleteItem(handle, child->item);
-		}
-
-		node->parent->childs.insert(node->parent->childs.begin() + child_index, node);
-
-		int index = 0;
-		for (auto child : node->parent->childs)
-		{
-			child->child_index = index;
-			index++;
-			ReCreateChilds(child);
-		}
-	}
+	node->parent->AddChild(this, node, child_index);
 
 	Redraw();
 
@@ -393,15 +468,33 @@ void WinTreeView::SetItemText(void* item, const char* text)
 		return;
 	}
 
-	TVITEM tvitem;
+	Node* node = GetNode((HTREEITEM)item);
 
-	tvitem.mask = TVIF_TEXT;
-	tvitem.hItem = (HTREEITEM)item;
+	if (node)
+	{
+		node->text = text;
+		UTFConv::UTF8to16(node->wtext, text);
 
-	tvitem.pszText = (char*)text;
-	tvitem.cchTextMax = (int)strlen(text) + 1;
+		if (abs_sort)
+		{
+			TreeView_DeleteItem(handle, node->item);
+			node->parent->childs.erase(node->parent->childs.begin() + node->child_index);
 
-	TreeView_SetItem(handle, &tvitem);
+			node->parent->AddChild(this, node, -1);
+		}
+		else
+		{
+			TVITEMW tvitem;
+
+			tvitem.mask = TVIF_TEXT;
+			tvitem.hItem = (HTREEITEM)item;
+
+			tvitem.pszText = (LPWSTR)node->wtext.c_str();
+			tvitem.cchTextMax = (int)node->wtext.size() + 1;
+
+			SNDMSG(handle, TVM_SETITEMW, 0, (LPARAM)&tvitem);
+		}
+	}
 }
 
 void* WinTreeView::GetSelectedItem()
@@ -414,11 +507,47 @@ void WinTreeView::SelectItem(void* item)
 	TreeView_SelectItem(handle, item);
 }
 
+void WinTreeView::GetItemText(void* item, std::string& text)
+{
+	Node* node = FindNode(nullptr, item);
+
+	if (node)
+	{
+		text = node->text;
+	}
+}
+
 void* WinTreeView::GetItemPtr(void* item)
 {
 	Node* node = FindNode(nullptr, item);
 
 	return node ? node->ptr : nullptr;
+}
+
+void* WinTreeView::GetItemParent(void* item)
+{
+	if (!item)
+	{
+		return nullptr;
+	}
+
+	Node* node = FindNode(nullptr, item);
+
+	return node->parent ? node->parent->item : nullptr;
+}
+
+int WinTreeView::GetItemChildCount(void* item)
+{
+	Node* node = FindNode(nullptr, item);
+
+	return node ? (int)node->childs.size() : 0;
+}
+
+void* WinTreeView::GetItemChild(void* item, int index)
+{
+	Node* node = FindNode(nullptr, item);
+
+	return node ? node->childs[index]->item : nullptr;
 }
 
 void WinTreeView::MoveDraggedItem()
@@ -449,20 +578,7 @@ void WinTreeView::MoveDraggedItem()
 
 	dragged_item->parent = dragged_target;
 
-	for (auto child : dragged_target->childs)
-	{
-		TreeView_DeleteItem(handle, child->item);
-	}
-
-	dragged_target->childs.insert(dragged_target->childs.begin() + insert_index, dragged_item);
-
-	index = 0;
-	for (auto child : dragged_target->childs)
-	{
-		child->child_index = index;
-		index++;
-		ReCreateChilds(child);
-	}
+	dragged_target->AddChild(this, dragged_item, insert_index);
 
 	Redraw();
 }
