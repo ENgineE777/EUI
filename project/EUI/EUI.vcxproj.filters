@@ -111,9 +111,6 @@
     <ClCompile Include="..\..\support\json\json.cpp">
       <Filter>support\json</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\support\json\JSONReader.cpp">
-      <Filter>support\json</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\native\win\WinDialog.cpp">
       <Filter>Source\native\win</Filter>
     </ClCompile>
@@ -137,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\native\win\WinTreeView.cpp">
       <Filter>Source\native\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\support\json\JSONParser.cpp">
+      <Filter>support\json</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,9 +189,6 @@
       <Filter>support\json</Filter>
     </ClInclude>
     <ClInclude Include="..\..\support\json\json.h">
-      <Filter>support\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\support\json\JSONReader.h">
       <Filter>support\json</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\native\win\WinDialog.h">
@@ -307,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\native\win\WinTreeView.h">
       <Filter>Source\native\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\support\json\JSONParser.h">
+      <Filter>support\json</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

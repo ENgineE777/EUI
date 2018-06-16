@@ -57,7 +57,7 @@
     <ClCompile Include="..\..\src\native\win\WinWindow.cpp" />
     <ClCompile Include="..\..\support\json\block_allocator.cpp" />
     <ClCompile Include="..\..\support\json\json.cpp" />
-    <ClCompile Include="..\..\support\json\JSONReader.cpp" />
+    <ClCompile Include="..\..\support\json\JSONParser.cpp" />
     <ClCompile Include="..\..\support\UTFConv.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -115,7 +115,7 @@
     <ClInclude Include="..\..\src\native\win\WinWindow.h" />
     <ClInclude Include="..\..\support\json\block_allocator.h" />
     <ClInclude Include="..\..\support\json\json.h" />
-    <ClInclude Include="..\..\support\json\JSONReader.h" />
+    <ClInclude Include="..\..\support\json\JSONParser.h" />
     <ClInclude Include="..\..\support\UTFConv.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
