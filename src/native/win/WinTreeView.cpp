@@ -49,8 +49,8 @@ void WinTreeView::Node::AddChild(WinTreeView* tree_view, Node* node, int insert_
 {
 	if (!tree_view->abs_sort && insert_index == -1)
 	{
-		node->child_index = (int)node->parent->childs.size();
-		node->parent->childs.push_back(node);
+		node->child_index = (int)childs.size();
+		childs.push_back(node);
 		node->ReCreateItem(tree_view);
 
 		return;
@@ -220,7 +220,7 @@ void WinTreeView::EndDrag()
 			parent = dragged_target->parent;
 		}
 
-		if (Owner()->listener->OnTreeViewItemDragged(dragged_source_tree->Owner(), dragged_target_tree->Owner(), dragged_item->item, dragged_item->child_index, parent->item, insert_index))
+		if (Owner()->listener->OnTreeViewItemDragged(dragged_source_tree->Owner(), dragged_target_tree->Owner(), dragged_item->item, dragged_item->child_index, parent ? parent->item : nullptr, insert_index))
 		{
 			MoveDraggedItem();
 		}
