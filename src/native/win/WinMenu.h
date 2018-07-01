@@ -25,6 +25,10 @@ public:
 	virtual bool ProcessWidget(long msg, WPARAM wParam, LPARAM lParam);
 	virtual void Show(bool set);
 
+	void AttachToWidget(EUIWidget* widget);
+	void ShowAsPopup(EUIWidget* parent, int x, int y);
+
+	void StartMenu(bool is_popup);
 	void AddItem(int id, const char* name);
 	void AddSeparator();
 	void StartSubMenu(const char* name);

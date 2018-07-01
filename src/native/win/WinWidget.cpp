@@ -93,6 +93,11 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		}
 	}
 
+	if (msg == WM_COMMAND && (HIWORD(wParam) == 0) && menu_wiget)
+	{
+		menu_wiget->ProcessWidget(msg, wParam, lParam);
+	}
+
 	switch (msg)
 	{
 		case WM_KEYDOWN:

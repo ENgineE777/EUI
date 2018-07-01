@@ -26,6 +26,9 @@ protected:
 	static HMENU win_id;
 
 public:
+
+	WinWidget* menu_wiget = nullptr;
+
 	WinWidget(EUIWidget* owner);
 	virtual ~WinWidget();
 

@@ -31,13 +31,6 @@ class WinTreeView : public NativeTreeView
 	bool abs_sort = false;
 	HWND selection = 0;
 
-	HMENU popUpMenu = 0;
-
-	int cur_depth = 0;
-	HMENU depth_menu[16];
-
-	std::string sub_menu_name[16];
-
 	static WinTreeView* dragged_source_tree;
 	static WinTreeView* dragged_target_tree;
 	static Node* dragged_item;
@@ -79,11 +72,5 @@ public:
 	int   GetItemChildCount(void* item) override;
 	void* GetItemChild(void* item, int index) override;
 	void  NotifyMouseOver() override;
-
-	void StartPopupMenu() override;
-	void PopupMenuAddItem(int id, const char* name) override;
-	void PopupMenuAddSeparator() override;
-	void PopupMenuStartSubMenu(const char* name) override;
-	void PopupMenuEndSubMenu() override;
 };
 

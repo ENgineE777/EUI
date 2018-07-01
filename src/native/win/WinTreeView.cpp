@@ -311,6 +311,8 @@ void WinTreeView::DrawSelection()
 
 bool WinTreeView::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 {
+	NativeTreeView::ProcessWidget(msg, wParam, lParam);
+
 	if (msg == WM_MOUSEMOVE)
 	{
 		Drag();
@@ -319,14 +321,6 @@ bool WinTreeView::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	if (msg == WM_LBUTTONUP)
 	{
 		EndDrag();
-	}
-
-	if (msg == WM_COMMAND && HIWORD(wParam) == 0)
-	{
-		if (Owner()->listener)
-		{
-			Owner()->listener->OnTreeViewPopupItem(Owner(), LOWORD(wParam));
-		}
 	}
 
 	if (msg == WM_NOTIFY)
@@ -359,23 +353,9 @@ bool WinTreeView::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			MapWindowPoints(HWND_DESKTOP, lpnmh->hwndFrom, &ht.pt, 1);
 			TreeView_HitTest(lpnmh->hwndFrom, &ht);
 
-			if (popUpMenu)
-			{
-				DestroyMenu(popUpMenu);
-				popUpMenu = 0;
-			}
-
 			if (Owner()->listener)
 			{
-				Owner()->listener->OnTreeViewRightClick(Owner(), ht.hItem, GetNode(ht.hItem)->child_index);
-			}
-
-			if (popUpMenu)
-			{
-				POINT p = ht.pt;
-				ClientToScreen(handle, &p);
-				SetForegroundWindow(handle);
-				TrackPopupMenuEx(popUpMenu, TPM_TOPALIGN | TPM_LEFTALIGN, p.x, p.y, handle, 0);
+				Owner()->listener->OnTreeViewRightClick(Owner(), ht.pt.x, ht.pt.y, ht.hItem, GetNode(ht.hItem)->child_index);
 			}
 		}
 		else
@@ -588,37 +568,4 @@ void WinTreeView::NotifyMouseOver()
 	NativeTreeView::NotifyMouseOver();
 
 	Drag();
-}
-
-void WinTreeView::StartPopupMenu()
-{
-	popUpMenu = CreatePopupMenu();
-	
-	cur_depth = 0;
-	depth_menu[cur_depth] = popUpMenu;
-}
-
-void WinTreeView::PopupMenuAddItem(int id, const char* name)
-{
-	AppendMenu(depth_menu[cur_depth], MF_STRING, id, name);
-}
-
-void WinTreeView::PopupMenuAddSeparator()
-{
-	AppendMenu(depth_menu[cur_depth], MF_SEPARATOR, 7, 0);
-}
-
-void WinTreeView::PopupMenuStartSubMenu(const char* name)
-{
-	cur_depth++;
-	depth_menu[cur_depth] = CreateMenu();
-	sub_menu_name[cur_depth] = name;
-}
-
-void WinTreeView::PopupMenuEndSubMenu()
-{
-	if (cur_depth == 0) return;
-
-	AppendMenu(depth_menu[cur_depth - 1], MF_POPUP, (UINT_PTR)depth_menu[cur_depth], sub_menu_name[cur_depth].c_str());
-	cur_depth--;
 }

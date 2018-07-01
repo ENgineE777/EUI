@@ -79,28 +79,3 @@ void* EUITreeView::GetItemChild(void* item, int index)
 {
 	return Native()->GetItemChild(item, index);
 }
-
-void EUITreeView::StartPopupMenu()
-{
-	Native()->StartPopupMenu();
-}
-
-void EUITreeView::PopupMenuAddItem(int id, const char* name)
-{
-	Native()->PopupMenuAddItem(id, name);
-}
-
-void EUITreeView::PopupMenuAddSeparator()
-{
-	Native()->PopupMenuAddSeparator();
-}
-
-void EUITreeView::PopupMenuStartSubMenu(const char* name)
-{
-	Native()->PopupMenuStartSubMenu(name);
-}
-
-void EUITreeView::PopupMenuEndSubMenu()
-{
-	Native()->PopupMenuEndSubMenu();
-}

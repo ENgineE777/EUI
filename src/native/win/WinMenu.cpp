@@ -4,9 +4,8 @@
 
 WinMenu::WinMenu(EUIWidget* owner) : NativeMenu(owner)
 {
-	menu = CreateMenu();
+	menu = 0;
 	handle = 0;
-	SetMenu(((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), menu );
 
 	cur_depth = 0;
 	depth_menu[cur_depth] = menu;
@@ -43,10 +42,42 @@ void WinMenu::Show(bool set)
 	}
 	else
 	{
-		SetMenu(((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), NULL );
+		SetMenu(((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), nullptr );
 	}
 
 	NativeMenu::Show(set);
+}
+
+void WinMenu::AttachToWidget(EUIWidget* widget)
+{
+	((WinWidget*)widget->nativeWidget)->menu_wiget = this;
+	SetMenu(((WinWidget*)widget->nativeWidget)->GetHandle(), menu);
+}
+
+void WinMenu::ShowAsPopup(EUIWidget* parent, int x, int y)
+{
+	((WinWidget*)parent->nativeWidget)->menu_wiget = this;
+	HWND handle = ((WinWidget*)parent->nativeWidget)->GetHandle();
+
+	POINT p;
+	p.x = x;
+	p.y = y;
+	ClientToScreen(handle, &p);
+	SetForegroundWindow(handle);
+	TrackPopupMenuEx(menu, TPM_TOPALIGN | TPM_LEFTALIGN, p.x, p.y, handle, 0);
+}
+
+void WinMenu::StartMenu(bool is_popup)
+{
+	if (menu)
+	{
+		DestroyMenu(menu);
+	}
+
+	menu = is_popup ? CreatePopupMenu() : CreateMenu();
+
+	cur_depth = 0;
+	depth_menu[cur_depth] = menu;
 }
 
 void WinMenu::AddItem(int id, const char* name)
