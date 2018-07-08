@@ -80,9 +80,10 @@ void WinMenu::StartMenu(bool is_popup)
 	depth_menu[cur_depth] = menu;
 }
 
-void WinMenu::AddItem(int id, const char* name)
+void WinMenu::AddItem(int id, const char* name, bool enabled)
 {
-	AppendMenu(depth_menu[cur_depth], MF_STRING, id, name);
+	int flag = enabled ? 0 : MF_DISABLED;
+	AppendMenu(depth_menu[cur_depth], MF_STRING | flag, id, name);
 }
 
 void WinMenu::AddSeparator()

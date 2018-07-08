@@ -40,6 +40,11 @@ void* EUITreeView::AddItem(const char* txt, int image, void* ptr, void* parent, 
 	return Native()->AddItem(txt, image, ptr, parent, child_index, can_have_childs, tooltip);
 }
 
+void EUITreeView::SetABSortChilds(void* item, bool sort)
+{
+	Native()->SetABSortChilds(item, sort);
+}
+
 void EUITreeView::SetItemText(void* item, const char* text)
 {
 	return Native()->SetItemText(item, text);

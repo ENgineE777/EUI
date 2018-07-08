@@ -11,11 +11,11 @@ EUIWidget::EUIWidget(EUIWidget* prnt, const char* txt)
 	id = 0;
 	parent = prnt;
 	text = txt;
-	focused = NULL;
+	focused = nullptr;
 	enabled = true;
 
-	nativeWidget = NULL;
-	listener = NULL;
+	nativeWidget = nullptr;
+	listener = nullptr;
 
 	listenerFlag = 0;
 
@@ -181,6 +181,11 @@ int EUIWidget::GetIndexAsChild()
 	return -1;
 }
 
+void EUIWidget::GetMousePos(int& x, int& y)
+{
+	nativeWidget->GetMousePos(x, y);
+}
+
 void EUIWidget::Update()
 {
 	if (listener && (listenerFlag & OnUpdate))
@@ -217,14 +222,14 @@ void* EUIWidget::GetNative()
 	return nativeWidget->GetNative();
 }
 
-void* EUIWidget::GetNativeRoot()
+EUIWidget* EUIWidget::GetRoot()
 {
 	if (parent)
 	{
-		return parent->GetNativeRoot();
+		return parent->GetRoot();
 	}
 
-	return nativeWidget->GetNative();
+	return this;
 }
 
 EUIWidget* EUIWidget::GetParent()

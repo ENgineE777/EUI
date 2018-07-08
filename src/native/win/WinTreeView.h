@@ -22,17 +22,18 @@ class WinTreeView : public NativeTreeView
 		Node* parent = nullptr;
 		int   child_index = -1;
 		std::vector<Node*> childs;
+		bool abc_sort_childs = false;
 
 		void ReCreateItem(WinTreeView* tree_view);
 		void DeleteNodeChilds(WinTreeView* tree_view);
 		void AddChild(WinTreeView* tree_view, Node* node, int insert_index);
 	};
 
-	bool abs_sort = false;
+	bool def_abs_sort_childs = false;
 	HWND selection = 0;
 
 	static WinTreeView* dragged_source_tree;
-	static WinTreeView* dragged_target_tree;
+	static WinWidget* dragged_target_widget;
 	static Node* dragged_item;
 	static Node* dragged_target;
 	static bool  drag_on;
@@ -63,6 +64,7 @@ public:
 	void  DeleteItem(void* item) override;
 	void  ClearTree() override;
 	void* AddItem(const char* text, int image, void* ptr, void* parent, int child_index, bool can_have_childs, const char* tooltip) override;
+	void  SetABSortChilds(void* item, bool sort) override;
 	void  SetItemText(void* item, const char* text) override;
 	void* GetSelectedItem() override;
 	void  SelectItem(void* item) override;
@@ -72,5 +74,6 @@ public:
 	int   GetItemChildCount(void* item) override;
 	void* GetItemChild(void* item, int index) override;
 	void  NotifyMouseOver() override;
+	bool IsTreeView() override;
 };
 

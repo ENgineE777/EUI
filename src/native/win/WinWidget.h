@@ -61,9 +61,13 @@ public:
 
 	void CreateTooltip();
 
-	bool IsHoveredByMouse();
+	bool IsHoveredByMouse() override;
+	WinWidget* GetHoveredWidget();
+	void GetMousePos(int& x, int& y) override;
 
 	void MakeSubClassing();
 
 	static LRESULT CALLBACK WinWidgetProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
+
+	virtual bool IsTreeView();
 };

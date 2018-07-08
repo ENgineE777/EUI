@@ -31,9 +31,9 @@ void EUIMenu::StartMenu(bool is_popup)
 	Native()->StartMenu(is_popup);
 }
 
-void EUIMenu::AddItem(int id, const char* name)
+void EUIMenu::AddItem(int id, const char* name, bool enabled)
 {
-	Native()->AddItem(id, name);
+	Native()->AddItem(id, name, enabled);
 }
 
 void EUIMenu::AddSeparator()

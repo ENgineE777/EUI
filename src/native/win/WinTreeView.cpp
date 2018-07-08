@@ -3,7 +3,7 @@
 #include "UTFConv.h"
 
 WinTreeView* WinTreeView::dragged_source_tree = nullptr;
-WinTreeView* WinTreeView::dragged_target_tree = nullptr;
+WinWidget* WinTreeView::dragged_target_widget = nullptr;
 WinTreeView::Node* WinTreeView::dragged_item = nullptr;
 WinTreeView::Node* WinTreeView::dragged_target = nullptr;
 bool WinTreeView::drag_on = false;
@@ -47,7 +47,7 @@ void WinTreeView::Node::DeleteNodeChilds(WinTreeView* tree_view)
 
 void WinTreeView::Node::AddChild(WinTreeView* tree_view, Node* node, int insert_index)
 {
-	if (!tree_view->abs_sort && insert_index == -1)
+	if (!node->abc_sort_childs && insert_index == -1)
 	{
 		node->child_index = (int)childs.size();
 		childs.push_back(node);
@@ -61,7 +61,7 @@ void WinTreeView::Node::AddChild(WinTreeView* tree_view, Node* node, int insert_
 		TreeView_DeleteItem(tree_view->handle, child->item);
 	}
 
-	if (tree_view->abs_sort)
+	if (node->abc_sort_childs)
 	{
 		childs.push_back(node);
 
@@ -131,7 +131,7 @@ WinTreeView::WinTreeView(EUIWidget* owner, bool set_abs_sort, bool allow_edit_na
 	imageList = ImageList_Create(21, 21, ILC_COLOR24, 0, 0);
 	TreeView_SetImageList(handle, imageList, TVSIL_NORMAL);
 
-	abs_sort = set_abs_sort;
+	def_abs_sort_childs = set_abs_sort;
 }
 
 WinTreeView::~WinTreeView()
@@ -147,26 +147,31 @@ void WinTreeView::StartDrag(LPNMTREEVIEW lpnmtv)
 {
 	drag_on = true;
 	dragged_source_tree = this;
-	dragged_target_tree = this;
+	dragged_target_widget = this;
 	dragged_item = GetNode(lpnmtv->itemNew.hItem);
 	SetCursor(theme->GetCursor("DRAG_CURSOR"));
+
+	CaptureMouse();
 }
 
 void WinTreeView::Drag()
 {
-	if (!drag_on || !IsHoveredByMouse()) return;
+	if (!drag_on) return;
 
 	HTREEITEM hitTarget;
 	TVHITTESTINFO tvht;
 
-	if (dragged_target_tree != this)
-	{
-		if (dragged_target_tree)
-		{
-			TreeView_SelectDropTarget(dragged_target_tree->GetHandle(), nullptr);
-		}
+	dragged_target_widget = ((WinWidget*)(owner->GetRoot()->nativeWidget))->GetHoveredWidget();
 
-		dragged_target_tree = this;
+	if (!dragged_target_widget)
+	{
+		dragged_target_widget = ((WinWidget*)(owner->GetRoot()->nativeWidget))->GetHoveredWidget();
+	}
+
+	if (dragged_target_widget->IsTreeView() && dragged_target_widget != this)
+	{
+		((WinTreeView*)dragged_target_widget)->Drag();
+		return;
 	}
 
 	POINT point;
@@ -203,33 +208,51 @@ void WinTreeView::EndDrag()
 		return;
 	}
 
-	dragged_target = GetNode(TreeView_GetDropHilight(dragged_target_tree->handle));
+	int insert_index = -1;
+	Node* parent = nullptr;
 
-	if (dragged_source_tree == dragged_target_tree && ContainNode(dragged_item, dragged_target))
+	if (dragged_target_widget->IsTreeView())
 	{
-		dragged_item = dragged_target;
-	}
+		WinTreeView* win_target = (WinTreeView*)dragged_target_widget;
 
-	if (Owner()->listener && dragged_item != dragged_target)
-	{
-		int insert_index = 0;
-		Node* parent = dragged_target;
-		if (!dragged_target->can_have_childs || !drag_into_item)
+		dragged_target = win_target->GetNode(TreeView_GetDropHilight(win_target->GetHandle()));
+
+		if (dragged_source_tree == dragged_target_widget && ContainNode(dragged_item, dragged_target))
 		{
-			insert_index = dragged_target->child_index + 1;
-			parent = dragged_target->parent;
+			dragged_item = dragged_target;
 		}
 
-		if (Owner()->listener->OnTreeViewItemDragged(dragged_source_tree->Owner(), dragged_target_tree->Owner(), dragged_item->item, dragged_item->child_index, parent ? parent->item : nullptr, insert_index))
+		if (dragged_item != dragged_target)
+		{
+			insert_index = 0;
+			parent = dragged_target;
+			
+			if (!dragged_target->can_have_childs || !drag_into_item)
+			{
+				insert_index = dragged_target->child_index + 1;
+				parent = dragged_target->parent;
+			}
+		}
+	}
+	else
+	{
+		dragged_target = nullptr;
+	}
+
+	if (Owner()->listener && dragged_target_widget)
+	{
+		if (Owner()->listener->OnTreeViewItemDragged(dragged_source_tree->Owner(), dragged_target_widget->owner, dragged_item->item, dragged_item->child_index, parent ? parent->item : nullptr, insert_index))
 		{
 			MoveDraggedItem();
 		}
-	}
 
+	}
 	ShowWindow(selection, false);
 	TreeView_SelectDropTarget(handle, nullptr);
 	SetCursor(theme->GetCursor(""));
 	drag_on = false;
+
+	ReleaseMouse();
 }
 
 WinTreeView::Node* WinTreeView::FindNode(Node* root, void* item)
@@ -420,6 +443,7 @@ void WinTreeView::ClearTree()
 void* WinTreeView::AddItem(const char* text, int image, void* ptr, void* parent, int child_index, bool can_have_childs, const char* tooltip)
 {
 	Node* node = new Node();
+	node->abc_sort_childs = def_abs_sort_childs;
 	node->ptr = ptr;
 
 	node->text = text;
@@ -441,6 +465,16 @@ void* WinTreeView::AddItem(const char* text, int image, void* ptr, void* parent,
 	return node->item;
 }
 
+void WinTreeView::SetABSortChilds(void* item, bool sort)
+{
+	Node* node = GetNode((HTREEITEM)item);
+
+	if (node)
+	{
+		node->abc_sort_childs = sort;
+	}
+}
+
 void WinTreeView::SetItemText(void* item, const char* text)
 {
 	if (!item)
@@ -455,7 +489,7 @@ void WinTreeView::SetItemText(void* item, const char* text)
 		node->text = text;
 		UTFConv::UTF8to16(node->wtext, text);
 
-		if (abs_sort)
+		if (node->parent->abc_sort_childs)
 		{
 			TreeView_DeleteItem(handle, node->item);
 			node->parent->childs.erase(node->parent->childs.begin() + node->child_index);
@@ -532,7 +566,7 @@ void* WinTreeView::GetItemChild(void* item, int index)
 
 void WinTreeView::MoveDraggedItem()
 {
-	if ((dragged_source_tree != dragged_target_tree) || dragged_item == dragged_target)
+	if ((dragged_source_tree != dragged_target_widget) || dragged_item == dragged_target)
 	{
 		return;
 	}
@@ -568,4 +602,9 @@ void WinTreeView::NotifyMouseOver()
 	NativeTreeView::NotifyMouseOver();
 
 	Drag();
+}
+
+bool WinTreeView::IsTreeView()
+{
+	return true;
 }

@@ -267,19 +267,62 @@ bool WinWidget::IsHoveredByMouse()
 
 	if (GetCursorPos(&point))
 	{
-		RECT windowRect;
+		RECT rect;
+		GetWindowRect(handle, &rect);
 
-		GetWindowRect( handle, &windowRect );
-
-		return PtInRect( &windowRect, point ) ? true : false;
+		return PtInRect(&rect, point) ? true : false;
 	}
 
 	return false;
 }
 
+WinWidget* WinWidget::GetHoveredWidget()
+{
+	if (!IsHoveredByMouse())
+	{
+		return nullptr;
+	}
+
+	for (auto child : owner->childs)
+	{
+		WinWidget* res = ((WinWidget*)child->nativeWidget)->GetHoveredWidget();
+		
+		if (res)
+		{
+			return res;
+		}
+	}
+
+	return this;
+}
+
+void WinWidget::GetMousePos(int& x, int& y)
+{
+	POINT point;
+
+	if (GetCursorPos(&point))
+	{
+		RECT rect;
+		GetWindowRect(handle, &rect);
+
+		x = point.x - rect.left;
+		y = point.y - rect.top;
+	}
+	else
+	{
+		x = 0;
+		y = 0;
+	}
+}
+
 void WinWidget::MakeSubClassing()
 {
 	SetWindowSubclass(handle, &WinWidgetProc, 0, (DWORD_PTR)this);
+}
+
+bool WinWidget::IsTreeView()
+{
+	return false;
 }
 
 LRESULT CALLBACK WinWidget::WinWidgetProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
