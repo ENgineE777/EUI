@@ -245,12 +245,22 @@ void WinTreeView::EndDrag()
 		{
 			MoveDraggedItem();
 		}
-
 	}
+
 	ShowWindow(selection, false);
 	TreeView_SelectDropTarget(handle, nullptr);
-	SetCursor(theme->GetCursor(""));
 	drag_on = false;
+
+	if (dragged_target_widget != this && dragged_target_widget->IsTreeView())
+	{
+		WinTreeView* target = dynamic_cast<WinTreeView*>(dragged_target_widget);
+
+		ShowWindow(target->selection, false);
+		TreeView_SelectDropTarget(target->handle, nullptr);
+		target->drag_on = false;
+	}
+
+	SetCursor(theme->GetCursor(""));
 
 	ReleaseMouse();
 }
@@ -495,6 +505,8 @@ void WinTreeView::SetItemText(void* item, const char* text)
 			node->parent->childs.erase(node->parent->childs.begin() + node->child_index);
 
 			node->parent->AddChild(this, node, -1);
+
+			SelectItem(node->item);
 		}
 		else
 		{
