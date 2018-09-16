@@ -433,6 +433,14 @@ void WinTreeView::DeleteItem(void* item)
 	{
 		TreeView_DeleteItem(handle, node->item);
 		node->parent->childs.erase(node->parent->childs.begin() + node->child_index);
+
+		int index = 0;
+		for (auto child : node->parent->childs)
+		{
+			child->child_index = index;
+			index++;
+		}
+
 		node->DeleteNodeChilds(this);
 
 		if (Owner()->listener)
