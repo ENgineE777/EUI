@@ -175,6 +175,10 @@ bool WinWidget::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 void WinWidget::Draw()
 {
+	for (auto child : owner->childs)
+	{
+		((WinWidget*)child->nativeWidget)->Draw();
+	}
 }
 
 void WinWidget::Redraw()

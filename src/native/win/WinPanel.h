@@ -15,4 +15,6 @@ public:
 	virtual ~WinPanel();
 
 	EUIPanel* Owner();
+
+	void Draw() override;
 };
