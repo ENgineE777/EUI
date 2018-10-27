@@ -7,7 +7,16 @@ EUICategories::EUICategories(EUIWidget* prnt, int set_x, int set_y, int w, int h
 	x = set_x;
 	y = set_y;
 	width = w;
-	height = h;
+
+	if (h == -1)
+	{
+		auto_size = true;
+		height = 5;
+	}
+	else
+	{
+		height = h;
+	}
 
 	allowCallOnChildShow = true;
 

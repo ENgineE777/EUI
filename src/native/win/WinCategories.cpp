@@ -167,7 +167,7 @@ void WinCategories::CalcThumb()
 		}
 	}
 
-	if (overallHeight > owner->height)
+	if (overallHeight > owner->height && !Owner()->auto_size)
 	{
 		thumbMaxPos = overallHeight - owner->height;
 		thumbHeight = owner->height - (theme->scrollbarThin + theme->scrollbarPaddingY) * 2 - thumbMaxPos;
@@ -231,6 +231,21 @@ void WinCategories::UpdateChildPos()
 		if (!category.visible)
 		{
 			pos -= theme->categoryHeight;
+		}
+	}
+
+	if (Owner()->auto_size)
+	{
+		Owner()->SetSize(Owner()->width, pos);
+
+		if (Owner()->parent)
+		{
+			EUICategories* cat = dynamic_cast<EUICategories*>(Owner()->parent);
+
+			if (cat)
+			{
+				cat->Native()->UpdateChildPos();
+			}
 		}
 	}
 
