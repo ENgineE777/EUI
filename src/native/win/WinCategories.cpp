@@ -1,21 +1,25 @@
 
 #include "EUICategories.h"
 #include "WinCategories.h"
+#include "EUIScrollBar.h"
+#include "WinScrollBar.h"
 
 WinCategories::WinCategories(EUIWidget* owner) : NativeCategories(owner)
 {
 	overallHeight = 0;
-	thumbHeight = 0;
-	thumbPos = 0;
-	thumbMaxPos = 50;
-	thumbDelta = 0.0f;
-	thumbDraged = false;
-	thumbPressed = 0;
 
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
 	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
 	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
+
+	if (!Owner()->auto_size)
+	{
+		Owner()->nativeWidget = this;
+		scrollbar = new EUIScrollBar(Owner(), false, Owner()->width - 20, 0, 20, Owner()->height);
+		scrollbar->Show(false);
+		scrollbar->SetListener(0, this, 0);
+	}
 
 	MakeSubClassing();
 }
@@ -43,76 +47,9 @@ bool WinCategories::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 		}
 		
 		prev_point = point;
-
-		if (point.x >= owner->width - theme->scrollbarThin && thumbHeight > 0)
-		{
-			if (point.y < theme->scrollbarThin)
-			{
-				thumbPressed = -1;
-			}
-			else
-			if (point.y >= owner->height - theme->scrollbarThin)
-			{
-				thumbPressed = 1;
-			}
-			else
-			{
-				thumbDraged = true;
-			}
-
-			thumbPos += thumbPressed;
-
-			if (thumbPos < 0)
-			{
-				thumbPos = 0;
-			}
-
-			if (thumbPos > thumbMaxPos)
-			{
-				thumbPos = thumbMaxPos;
-			}
-
-			UpdateChildPos();
-			Redraw();
-		}
 	}
 	else
 	if (msg == WM_LBUTTONUP)
-	{
-		if (thumbDraged)
-		{
-			thumbDraged = false;
-			thumbPressed = 0;
-		}
-		else
-		{
-			POINT point;
-
-			if (GetCursorPos(&point))
-			{
-				ScreenToClient(handle, &point);
-			}
-
-			if (point.x < owner->width - theme->scrollbarThin || thumbHeight > 0)
-			{
-				for (int i = 0; i < (int)Owner()->categories.size(); i++)
-				{
-					if (Owner()->categories[i].y < point.y &&
-						point.y < Owner()->categories[i].y + theme->categoryHeight)
-					{
-						Owner()->categories[i].opened = !Owner()->categories[i].opened;
-						CalcThumb();
-						UpdateChildPos();
-						Redraw();
-
-						break;
-					}
-				}
-			}
-		}
-	}
-	else
-	if (msg == WM_MOUSEMOVE && thumbDraged)
 	{
 		POINT point;
 
@@ -121,31 +58,28 @@ bool WinCategories::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 			ScreenToClient(handle, &point);
 		}
 
-		thumbPos += point.y - prev_point.y;
-
-		if (thumbPos < 0)
+		for (int i = 0; i < (int)Owner()->categories.size(); i++)
 		{
-			thumbPos = 0;
+			if (Owner()->categories[i].y < point.y &&
+				point.y < Owner()->categories[i].y + theme->categoryHeight)
+			{
+				Owner()->categories[i].opened = !Owner()->categories[i].opened;
+				CalcThumb();
+				UpdateChildPos();
+				Redraw();
+
+				break;
+			}
 		}
-
-		if (thumbPos > thumbMaxPos)
-		{
-			thumbPos = thumbMaxPos;
-		}
-
-		prev_point = point;
-
-		UpdateChildPos();
-		Redraw();
 	}
 
 	return true;
 }
 
-void WinCategories::OnMouseLeave()
+void WinCategories::OnSrollerPosChange(EUIScrollBar* sender, int pos)
 {
-	thumbDraged = false;
-	thumbPressed = 0;
+	UpdateChildPos();
+	Redraw();
 }
 
 void WinCategories::CalcThumb()
@@ -167,32 +101,18 @@ void WinCategories::CalcThumb()
 		}
 	}
 
-	if (overallHeight > owner->height && !Owner()->auto_size)
+	if (!Owner()->auto_size)
 	{
-		thumbMaxPos = overallHeight - owner->height;
-		thumbHeight = owner->height - (theme->scrollbarThin + theme->scrollbarPaddingY) * 2 - thumbMaxPos;
+		scrollbar->SetPos(Owner()->width - 20, 0);
+		scrollbar->SetSize(20, Owner()->height);
 
-		if (thumbHeight < 30)
-		{
-			thumbHeight = 30;
-			thumbMaxPos = owner->height - (theme->scrollbarThin + theme->scrollbarPaddingY) * 2 - thumbHeight;
-			thumbDelta = (overallHeight - owner->height) / thumbMaxPos;
-		}
-		else
-		{
-			thumbDelta = 1.0f;
-		}
+		float delta = overallHeight - Owner()->height;
+		scrollbar->Show(delta > 0.0f);
 
-		if (thumbPos > thumbMaxPos)
+		if (delta > 0.0f)
 		{
-			thumbPos = thumbMaxPos;
+			scrollbar->SetLimit(1, (int)delta);
 		}
-	}
-	else
-	{
-		thumbHeight = 0;
-		thumbPos = 0;
-		thumbMaxPos = 0;
 	}
 }
 
@@ -200,7 +120,12 @@ void WinCategories::UpdateChildPos()
 {
 	Owner()->allowCallOnChildShow = false;
 
-	float pos = -thumbPos * thumbDelta;
+	float pos = 0;
+
+	if (scrollbar && scrollbar->IsVisible())
+	{
+		pos = -scrollbar->GetPosition();
+	}
 
 	for (int i = 0; i < (int)Owner()->categories.size(); i++)
 	{
@@ -236,7 +161,7 @@ void WinCategories::UpdateChildPos()
 
 	if (Owner()->auto_size)
 	{
-		Owner()->SetSize(Owner()->width, pos);
+		Owner()->SetSize(Owner()->width, (int)pos);
 
 		if (Owner()->parent)
 		{
@@ -292,10 +217,10 @@ void WinCategories::Draw()
 		theme->DrawCategory(GetDC(handle), rc, category.name, state | sub_state, DT_SINGLELINE);
 	}
 
-	if (thumbHeight > 0)
+	/*if (thumbHeight > 0)
 	{
 		RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
 		theme->DrawScrollBar(GetDC(handle), rc, (int)thumbPos, (int)thumbHeight, state);
-	}
+	}*/
 }
 

@@ -6,17 +6,13 @@
 
 class EUICategories;
 
-class WinCategories : public NativeCategories
+class WinCategories : public NativeCategories, public EUIWidget::Listener
 {
 public:
 
 	float overallHeight;
-	float thumbHeight;
-	float thumbPos;
-	float thumbMaxPos;
-	float thumbDelta;
-	bool  thumbDraged;
-	int   thumbPressed;
+
+	class EUIScrollBar* scrollbar = nullptr;
 
 	POINT prev_point;
 
@@ -26,10 +22,11 @@ public:
 	EUICategories* Owner();
 
 	virtual bool ProcessWidget(long msg, WPARAM wParam, LPARAM lParam);
-	virtual void OnMouseLeave();
 
 	virtual void Draw();
 	virtual void CalcThumb();
 	virtual void UpdateChildPos();
 	virtual void Resize();
+
+	void OnSrollerPosChange(class EUIScrollBar* sender, int pos);
 };
