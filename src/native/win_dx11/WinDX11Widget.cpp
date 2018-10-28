@@ -45,6 +45,11 @@ void WinDX11Widget::SetSize(int w, int h)
 	//SetWindowPos(handle, 0, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
 }
 
+void WinDX11Widget::SetText(const char* txt)
+{
+	//CreateTooltip();
+}
+
 void WinDX11Widget::Release()
 {
 	delete this;
