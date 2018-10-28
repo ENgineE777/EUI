@@ -2,6 +2,8 @@
 #include "WinTreeView.h"
 #include "UTFConv.h"
 
+#ifdef PLATFORM_WIN
+
 WinTreeView* WinTreeView::dragged_source_tree = nullptr;
 WinWidget* WinTreeView::dragged_target_widget = nullptr;
 WinTreeView::Node* WinTreeView::dragged_item = nullptr;
@@ -628,3 +630,4 @@ bool WinTreeView::IsTreeView()
 {
 	return true;
 }
+#endif

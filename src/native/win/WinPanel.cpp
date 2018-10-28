@@ -2,6 +2,8 @@
 #include "EUIPanel.h"
 #include "WinPanel.h"
 
+#ifdef PLATFORM_WIN
+
 WinPanel::WinPanel(EUIWidget* owner) : NativePanel(owner)
 {
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
@@ -38,3 +40,4 @@ void WinPanel::Draw()
 
 	NativePanel::Draw();
 }
+#endif

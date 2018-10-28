@@ -7,6 +7,7 @@
 class EUICategories : public EUIWidget
 {
 	friend class WinCategories;
+	friend class WinDX11Categories;
 
 	struct Category
 	{

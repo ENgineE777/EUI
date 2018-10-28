@@ -3,7 +3,9 @@
 #include "CommCtrl.h"
 #include "TCHAR.H"
 
-WinTheme* theme = NULL;
+#ifdef PLATFORM_WIN
+
+WinTheme* theme = nullptr;
 
 WinTheme::WinTheme() : EUITheme()
 {
@@ -732,3 +734,4 @@ void WinTheme::DrawScrollBar(HDC hDC, RECT rc, int pos, int size, UINT uState)
 
 	DrawFrame(hDC, rcItem, scrl->thumbBorderColor, scrl->thumbBorderColor, scrl->thumbBackColor);
 }
+#endif

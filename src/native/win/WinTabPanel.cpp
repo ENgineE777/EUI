@@ -2,6 +2,8 @@
 #include "EUITabPanel.h"
 #include "WinTabPanel.h"
 
+#ifdef PLATFORM_WIN
+
 WinTabPanel::WinTabPanel(EUIWidget* owner) : NativeTabPanel(owner)
 {
 	handle = CreateWindow(WC_TABCONTROL, "", WS_CHILD | WS_VISIBLE,
@@ -132,3 +134,4 @@ void WinTabPanel::ShowTab(int index, bool show)
 
 	owner->childs[index]->Show(show);
 }
+#endif

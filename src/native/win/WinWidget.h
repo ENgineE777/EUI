@@ -1,6 +1,8 @@
 
 #pragma once
 
+#ifdef PLATFORM_WIN
+
 #define NOMINMAX
 #include "windows.h"
 #include "windowsx.h"
@@ -71,3 +73,4 @@ public:
 
 	virtual bool IsTreeView();
 };
+#endif

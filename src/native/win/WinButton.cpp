@@ -2,6 +2,8 @@
 #include "EUIButton.h"
 #include "WinButton.h"
 
+#ifdef PLATFORM_WIN
+
 WinButton::WinButton(EUIWidget* owner) : NativeButton(owner)
 {
 	is_howered = false;
@@ -146,4 +148,4 @@ void WinButton::Enable(bool set)
 
 	InvalidateRect(handle, NULL, false);
 }
-
+#endif

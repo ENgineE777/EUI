@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeCheckBox.h"
+
+#ifdef PLATFORM_WIN
 
 class EUICheckBox;
 
@@ -20,3 +21,4 @@ public:
 	virtual void SetChecked(bool set);
 	virtual void Draw();
 };
+#endif

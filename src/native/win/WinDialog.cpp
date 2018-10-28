@@ -4,6 +4,8 @@
 #include <string>
 #include "Commdlg.h"
 
+#ifdef PLATFORM_WIN
+
 const char* WinDialog::FileDialog(void* data, char* extName, const char* ext, bool open)
 {
 	char curDir[512];
@@ -103,3 +105,4 @@ bool WinDialog::ColorDialog(void* data, float* color)
 
 	return false;
 }
+#endif

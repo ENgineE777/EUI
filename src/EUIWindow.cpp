@@ -1,6 +1,12 @@
 
 #include "EUIWindow.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinWindow.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11Window.h"
+#endif
 
 EUIWindow::EUIWindow(const char* txt, Style style, bool adjust, int set_x, int set_y, int w, int h) : EUIWidget(NULL, txt)
 {
@@ -17,7 +23,12 @@ EUIWindow::EUIWindow(const char* txt, Style style, bool adjust, int set_x, int s
 
 	is_minimazed = false;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinWindow(this, style, adjust);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11Window(this, style, adjust);
+#endif
 }
 
 EUIWindow::~EUIWindow()

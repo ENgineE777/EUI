@@ -29,6 +29,24 @@ class EUIWidget
 	friend class WinScrollBar;
 	friend class WinTreeView;
 
+	friend class WinDX11Widget;
+	friend class WinDX11Button;
+	friend class WinDX11Label;
+	friend class WinDX11Window;
+	friend class WinDX11EditBox;
+	friend class WinDX11Menu;
+	friend class WinDX11Layout;
+	friend class WinDX11Panel;
+	friend class WinDX11CheckBox;
+	friend class WinDX11ListBox;
+	friend class WinDX11ComboBox;
+	friend class WinDX11Categories;
+	friend class EUIDX11Categories;
+	friend class WinDX11TabPanel;
+	friend class WinDX11TabSheet;
+	friend class WinDX11ScrollBar;
+	friend class WinDX11TreeView;
+
 public:
 
 	enum

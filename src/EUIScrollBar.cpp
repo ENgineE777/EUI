@@ -1,6 +1,12 @@
 
 #include "EUIScrollBar.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinScrollBar.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11ScrollBar.h"
+#endif
 
 EUIScrollBar::EUIScrollBar(EUIWidget* prnt, bool set_horiz, int set_x, int set_y, int set_w, int set_h) : EUIWidget(prnt, "")
 {
@@ -14,7 +20,12 @@ EUIScrollBar::EUIScrollBar(EUIWidget* prnt, bool set_horiz, int set_x, int set_y
 	max_pos = 100;
 	page_size = 10;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinScrollBar(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11ScrollBar(this);
+#endif
 }
 
 EUIScrollBar::~EUIScrollBar()

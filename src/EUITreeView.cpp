@@ -1,5 +1,11 @@
 #include "EUITreeView.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinTreeView.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11TreeView.h"
+#endif
 
 EUITreeView::EUITreeView(EUIWidget* prnt, int set_x, int set_y, int set_w, int set_h, bool abs_sort, bool allow_edit_names) : EUIWidget(prnt, "")
 {
@@ -8,7 +14,12 @@ EUITreeView::EUITreeView(EUIWidget* prnt, int set_x, int set_y, int set_w, int s
 	width = set_w;
 	height = set_h;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinTreeView(this, abs_sort, allow_edit_names);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11TreeView(this, abs_sort, allow_edit_names);
+#endif
 }
 
 EUITreeView::~EUITreeView()

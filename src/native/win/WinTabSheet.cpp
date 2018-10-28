@@ -3,6 +3,8 @@
 #include "WinTabSheet.h"
 #include "WinTabPanel.h"
 
+#ifdef PLATFORM_WIN
+
 WinTabSheet::WinTabSheet(EUIWidget* owner) : NativeTabSheet(owner)
 {
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | SS_OWNERDRAW | SS_NOTIFY,
@@ -36,3 +38,4 @@ void WinTabSheet::MakeAsCurrent()
 {
 	parent->SetCurrentTab(owner->GetIndexAsChild());
 }
+#endif

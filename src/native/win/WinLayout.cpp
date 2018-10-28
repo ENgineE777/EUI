@@ -2,6 +2,8 @@
 #include "EUILayout.h"
 #include "WinLayout.h"
 
+#ifdef PLATFORM_WIN
+
 WinLayout::WinLayout(EUIWidget* owner) : NativeLayout(owner)
 {
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_NOTIFY,
@@ -27,5 +29,5 @@ void WinLayout::Resize()
 	Owner()->Resize();
 	NativeLayout::Resize();
 }
-
+#endif
 

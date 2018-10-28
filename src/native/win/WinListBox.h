@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeListBox.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIListBox;
 
@@ -29,3 +30,4 @@ public:
 	virtual void  DeleteItemByIndex(int index);
 	virtual void  DeleteItemByData(void* data);
 };
+#endif

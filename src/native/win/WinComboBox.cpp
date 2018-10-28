@@ -3,6 +3,8 @@
 #include "WinComboBox.h"
 #include "UTFConv.h"
 
+#ifdef PLATFORM_WIN
+
 WinComboBox::WinComboBox(EUIWidget* owner) : NativeComboBox(owner)
 {
 	handle = CreateWindowW(L"COMBOBOX", L"", WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_AUTOHSCROLL,
@@ -92,3 +94,4 @@ int WinComboBox::GetCurStringIndex()
 {
 	return ComboBox_GetCurSel(handle);
 }
+#endif

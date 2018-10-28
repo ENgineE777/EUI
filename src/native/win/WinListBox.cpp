@@ -3,6 +3,8 @@
 #include "WinListBox.h"
 #include "UTFConv.h"
 
+#ifdef PLATFORM_WIN
+
 WinListBox::WinListBox(EUIWidget* owner, bool abs_sort) : NativeListBox(owner)
 {
 	int flag = abs_sort ? LBS_SORT : 0;
@@ -144,3 +146,4 @@ void WinListBox::DeleteItemByData(void* data)
 		ListBox_DeleteString(handle, index);
 	}
 }
+#endif

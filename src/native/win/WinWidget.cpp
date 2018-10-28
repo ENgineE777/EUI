@@ -2,7 +2,9 @@
 #include "EUIWidget.h"
 #include "WinWidget.h"
 
-WinWidget* WinWidget::mouse_over = NULL;
+#ifdef PLATFORM_WIN
+
+WinWidget* WinWidget::mouse_over = nullptr;
 HMENU WinWidget::win_id = (HMENU)500;
 
 WinWidget::WinWidget(EUIWidget* set_owner) : NativeWidget(set_owner)
@@ -343,3 +345,4 @@ LRESULT CALLBACK WinWidget::WinWidgetProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 
 	return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
+#endif

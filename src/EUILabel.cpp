@@ -1,6 +1,12 @@
 
 #include "EUILabel.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinLabel.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11Label.h"
+#endif
 
 EUILabel::EUILabel(EUIWidget* prnt, const char* txt, int set_x, int set_y, int set_w, int set_h) : EUIWidget(prnt, txt)
 {
@@ -10,7 +16,12 @@ EUILabel::EUILabel(EUIWidget* prnt, const char* txt, int set_x, int set_y, int s
 	width = set_w;
 	height = set_h;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinLabel(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11Label(this);
+#endif
 }
 
 EUILabel::~EUILabel()

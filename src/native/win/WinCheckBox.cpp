@@ -1,6 +1,8 @@
 #include "EUICheckBox.h"
 #include "WinCheckBox.h"
 
+#ifdef PLATFORM_WIN
+
 WinCheckBox::WinCheckBox(EUIWidget* owner) : NativeCheckBox(owner)
 {
 	handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
@@ -63,3 +65,4 @@ void WinCheckBox::Draw()
 
 	theme->DrawCheckBox(GetDC(handle), rc, Owner()->text.c_str(), uState, DT_SINGLELINE);
 }
+#endif

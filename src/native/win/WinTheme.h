@@ -5,6 +5,8 @@
 #include <map>
 #include "EUITheme.h"
 
+#ifdef PLATFORM_WIN
+
 class WinTheme : public EUITheme
 {
 	struct Color
@@ -78,3 +80,4 @@ protected:
 };
 
 extern WinTheme* theme;
+#endif

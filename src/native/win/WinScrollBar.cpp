@@ -2,6 +2,8 @@
 #include "EUIScrollBar.h"
 #include "WinScrollBar.h"
 
+#ifdef PLATFORM_WIN
+
 WinScrollBar::WinScrollBar(EUIWidget* owner) : NativeScrollBar(owner)
 {
 	int flag = WS_CHILD | WS_VISIBLE;
@@ -125,3 +127,4 @@ void WinScrollBar::SetLimit()
 {
 	SetLimitImpl();
 }
+#endif

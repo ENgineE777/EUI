@@ -3,6 +3,8 @@
 #include "WinEditBox.h"
 #include "UTFConv.h"
 
+#ifdef PLATFORM_WIN
+
 int WinEditBox::timerID = 0;
 
 WinEditBox::WinEditBox(EUIWidget* owner) : NativeEditBox(owner)
@@ -173,3 +175,4 @@ const char* WinEditBox::GetText()
 
 	return Owner()->text.c_str();
 }
+#endif

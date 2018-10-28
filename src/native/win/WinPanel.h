@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativePanel.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIPanel;
 
@@ -18,3 +19,4 @@ public:
 
 	void Draw() override;
 };
+#endif

@@ -2,7 +2,8 @@
 #pragma once
 
 #include "native/NativeWindow.h"
-#include "WinWindow.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIWindow;
 
@@ -33,3 +34,4 @@ public:
 	virtual void SetAtScreenCenter();
 	virtual void Close();
 };
+#endif

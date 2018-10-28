@@ -1,10 +1,21 @@
 
 #include "EUIMenu.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinMenu.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11Menu.h"
+#endif
 
 EUIMenu::EUIMenu() : EUIWidget(nullptr, "")
 {
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinMenu(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11Menu(this);
+#endif
 }
 
 EUIMenu::~EUIMenu()

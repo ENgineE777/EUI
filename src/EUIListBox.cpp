@@ -1,6 +1,12 @@
 
 #include "EUIListBox.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinListBox.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11ListBox.h"
+#endif
 
 EUIListBox::EUIListBox(EUIWidget* prnt, int set_x, int set_y, int set_w, int set_h, bool abs_sort) : EUIWidget(prnt, "")
 {
@@ -9,7 +15,12 @@ EUIListBox::EUIListBox(EUIWidget* prnt, int set_x, int set_y, int set_w, int set
 	width = set_w;
 	height = set_h;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinListBox(this, abs_sort);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11ListBox(this, abs_sort);
+#endif
 }
 
 EUIListBox::~EUIListBox()

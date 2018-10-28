@@ -1,6 +1,12 @@
 
 #include "EUIButton.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinButton.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11Button.h"
+#endif
 
 EUIButton::EUIButton(EUIWidget* prnt, const char* txt, int set_x, int set_y, int w, int h) : EUIWidget(prnt, txt)
 {
@@ -13,7 +19,12 @@ EUIButton::EUIButton(EUIWidget* prnt, const char* txt, int set_x, int set_y, int
 	is_pushable = false;
 	is_howered = false;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinButton(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11Button(this);
+#endif
 }
 
 EUIButton::~EUIButton()

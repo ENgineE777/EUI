@@ -1,7 +1,13 @@
 
 #include "EUITabPanel.h"
 #include "EUITabSheet.h"
-#include "native/win/WinTabPanel.h"
+
+#ifdef PLATFORM_WIN
+#include "native/win/WinPanel.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11Panel.h"
+#endif
 
 EUITabPanel::EUITabPanel(EUIWidget* prnt, int set_x, int set_y, int set_w, int set_h) : EUIWidget(prnt, "")
 {
@@ -10,7 +16,12 @@ EUITabPanel::EUITabPanel(EUIWidget* prnt, int set_x, int set_y, int set_w, int s
 	width = set_w;
 	height = set_h;
 
-	nativeWidget = new WinTabPanel(this);
+#ifdef PLATFORM_WIN
+	nativeWidget = new WinPanel(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11Panel(this);
+#endif
 }
 
 EUITabPanel::~EUITabPanel()

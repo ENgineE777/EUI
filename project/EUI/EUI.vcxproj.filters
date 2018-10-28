@@ -16,6 +16,9 @@
     <Filter Include="support\json">
       <UniqueIdentifier>{30b417fb-cf8f-4761-8987-f2c05e37447f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\native\win_dx11">
+      <UniqueIdentifier>{64d7ae12-7032-449f-94f6-abce40a991f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\EUI.cpp">
@@ -137,6 +140,60 @@
     </ClCompile>
     <ClCompile Include="..\..\support\json\JSONParser.cpp">
       <Filter>support\json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Button.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Categories.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11CheckBox.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11ComboBox.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Dialog.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11EditBox.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Label.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Layout.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11ListBox.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Menu.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Panel.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11ScrollBar.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11TabPanel.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11TabSheet.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Theme.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11TreeView.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Widget.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Window.cpp">
+      <Filter>Source\native\win_dx11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -307,6 +364,63 @@
     </ClInclude>
     <ClInclude Include="..\..\support\json\JSONParser.h">
       <Filter>support\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Button.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Categories.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11CheckBox.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11ComboBox.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Dialog.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11EditBox.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Label.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Layout.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11ListBox.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Menu.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Panel.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11ScrollBar.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11TabPanel.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11TabSheet.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Theme.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11TreeView.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Widget.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Window.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\native\NativeInclude.h">
+      <Filter>Source\native</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

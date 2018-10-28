@@ -1,6 +1,12 @@
 
 #include "EUICheckBox.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinCheckBox.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11CheckBox.h"
+#endif
 
 EUICheckBox::EUICheckBox(EUIWidget* prnt, const char* txt, int set_x, int set_y, int w, int h) : EUIWidget(prnt, txt)
 {	
@@ -11,7 +17,12 @@ EUICheckBox::EUICheckBox(EUIWidget* prnt, const char* txt, int set_x, int set_y,
 
 	checked = false;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinCheckBox(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11CheckBox(this);
+#endif
 }
 
 EUICheckBox::~EUICheckBox()

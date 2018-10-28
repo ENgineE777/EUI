@@ -6,6 +6,7 @@
 class EUITheme
 {
 	friend class WinTheme;
+	friend class WinDX11Theme;
 
 	struct ButtonColors
 	{

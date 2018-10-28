@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeLabel.h"
+
+#ifdef PLATFORM_WIN
 
 class EUILabel;
 
@@ -18,3 +19,4 @@ public:
 	void SetText(const char* txt) override;
 	void Draw() override;
 };
+#endif

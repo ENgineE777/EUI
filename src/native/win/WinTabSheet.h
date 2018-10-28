@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeTabSheet.h"
+
+#ifdef PLATFORM_WIN
 
 class EUITabSheet;
 class WinTabPanel;
@@ -21,3 +22,4 @@ public:
 	virtual void SetText(const char* text);
 	virtual void MakeAsCurrent();
 };
+#endif

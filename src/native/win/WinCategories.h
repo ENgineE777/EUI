@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeCategories.h"
+
+#ifdef PLATFORM_WIN
 
 class EUICategories;
 
@@ -30,3 +31,4 @@ public:
 
 	void OnSrollerPosChange(class EUIScrollBar* sender, int pos);
 };
+#endif

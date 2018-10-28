@@ -3,6 +3,8 @@
 #include "EUI.h"
 #include "WinWindow.h"
 
+#ifdef PLATFORM_WIN
+
 bool WinWindow::wndClassReg = false;
 
 LRESULT CALLBACK WinWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -233,3 +235,4 @@ void WinWindow::Close()
 {
 	DestroyWindow(handle);
 }
+#endif

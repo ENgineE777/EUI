@@ -1,6 +1,12 @@
 
 #include "EUICategories.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinCategories.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11Categories.h"
+#endif
 
 EUICategories::EUICategories(EUIWidget* prnt, int set_x, int set_y, int w, int h) : EUIWidget(prnt, "")
 {
@@ -20,7 +26,12 @@ EUICategories::EUICategories(EUIWidget* prnt, int set_x, int set_y, int w, int h
 
 	allowCallOnChildShow = true;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinCategories(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11Categories(this);
+#endif
 }
 
 EUICategories::~EUICategories()

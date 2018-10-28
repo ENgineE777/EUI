@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeLayout.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIButton;
 
@@ -17,3 +18,4 @@ public:
 
 	virtual void Resize();
 };
+#endif

@@ -4,6 +4,8 @@
 #include "EUIScrollBar.h"
 #include "WinScrollBar.h"
 
+#ifdef PLATFORM_WIN
+
 WinCategories::WinCategories(EUIWidget* owner) : NativeCategories(owner)
 {
 	overallHeight = 0;
@@ -124,7 +126,7 @@ void WinCategories::UpdateChildPos()
 
 	if (scrollbar && scrollbar->IsVisible())
 	{
-		pos = -scrollbar->GetPosition();
+		pos = -(float)scrollbar->GetPosition();
 	}
 
 	for (int i = 0; i < (int)Owner()->categories.size(); i++)
@@ -223,4 +225,4 @@ void WinCategories::Draw()
 		theme->DrawScrollBar(GetDC(handle), rc, (int)thumbPos, (int)thumbHeight, state);
 	}*/
 }
-
+#endif

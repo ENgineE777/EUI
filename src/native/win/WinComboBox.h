@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeLabel.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIComboBox;
 
@@ -24,3 +25,4 @@ public:
 	virtual const char* GetCurString();
 	virtual int  GetCurStringIndex();
 };
+#endif

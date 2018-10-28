@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeScrollBar.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIScrollBar;
 
@@ -22,3 +23,4 @@ public:
 	void SetLimitImpl();
 	virtual void SetLimit();
 };
+#endif

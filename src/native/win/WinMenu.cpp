@@ -2,6 +2,8 @@
 #include "EUIMenu.h"
 #include "WinMenu.h"
 
+#ifdef PLATFORM_WIN
+
 WinMenu::WinMenu(EUIWidget* owner) : NativeMenu(owner)
 {
 	menu = 0;
@@ -105,3 +107,4 @@ void WinMenu::EndSubMenu()
 	AppendMenu(depth_menu[cur_depth-1], MF_POPUP, (UINT_PTR)depth_menu[cur_depth], sub_menu_name[cur_depth].c_str());
 	cur_depth--;
 }
+#endif

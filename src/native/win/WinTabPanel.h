@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeTabPanel.h"
+
+#ifdef PLATFORM_WIN
 
 class EUITabPanel;
 
@@ -31,3 +32,4 @@ public:
 	virtual void DeleteTab(int index);
 	virtual void ClearTabs();
 };
+#endif

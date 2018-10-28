@@ -1,6 +1,12 @@
 
 #include "EUILayout.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinLayout.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11Layout.h"
+#endif
 
 EUILayout::EUILayout(EUIWidget* prnt, bool set_vertical) : EUIWidget(prnt, "")
 {
@@ -10,7 +16,13 @@ EUILayout::EUILayout(EUIWidget* prnt, bool set_vertical) : EUIWidget(prnt, "")
 	height = 0;
 
 	vertical = set_vertical;
+
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinLayout(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11Layout(this);
+#endif
 }
 
 EUILayout::~EUILayout()

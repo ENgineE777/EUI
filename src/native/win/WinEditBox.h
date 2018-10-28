@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeEditBox.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIEditBox;
 
@@ -23,3 +24,4 @@ public:
 	virtual void SetText(const char* txt);
 	virtual const char* GetText();
 };
+#endif

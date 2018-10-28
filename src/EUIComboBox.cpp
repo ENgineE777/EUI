@@ -1,6 +1,12 @@
 
 #include "EUIComboBox.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinComboBox.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11ComboBox.h"
+#endif
 
 EUIComboBox::EUIComboBox(EUIWidget* prnt, int set_x, int set_y, int w, int h) : EUIWidget(prnt, "")
 {
@@ -9,7 +15,12 @@ EUIComboBox::EUIComboBox(EUIWidget* prnt, int set_x, int set_y, int w, int h) : 
 	width = w;
 	height = h;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinComboBox(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11ComboBox(this);
+#endif
 }
 
 EUIComboBox::~EUIComboBox()

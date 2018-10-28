@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeButton.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIButton;
 
@@ -29,3 +30,4 @@ public:
 
 	void Draw() override;
 };
+#endif

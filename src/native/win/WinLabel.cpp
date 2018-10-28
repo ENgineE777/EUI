@@ -2,6 +2,8 @@
 #include "EUILabel.h"
 #include "WinLabel.h"
 
+#ifdef PLATFORM_WIN
+
 WinLabel::WinLabel(EUIWidget* owner) : NativeLabel(owner)
 {
 	handle = CreateWindow("STATIC", "Static", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
@@ -49,3 +51,4 @@ void WinLabel::Draw()
 	theme->DrawGradient(GetDC(handle), rc, color, color, false, 2);
 	theme->DrawLabel(GetDC(handle), rc, Owner()->text.c_str(), uState, DT_SINGLELINE);
 }
+#endif

@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeMenu.h"
+
+#ifdef PLATFORM_WIN
 
 class EUIMenu;
 
@@ -34,3 +35,4 @@ public:
 	void StartSubMenu(const char* name);
 	void EndSubMenu();
 };
+#endif

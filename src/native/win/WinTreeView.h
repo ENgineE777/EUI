@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "WinWidget.h"
 #include "native/NativeTreeView.h"
+
+#ifdef PLATFORM_WIN
 
 class EUITreeView;
 
@@ -76,4 +77,4 @@ public:
 	void  NotifyMouseOver() override;
 	bool IsTreeView() override;
 };
-
+#endif

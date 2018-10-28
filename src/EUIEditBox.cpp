@@ -1,6 +1,12 @@
 
 #include "EUIEditBox.h"
+
+#ifdef PLATFORM_WIN
 #include "native/win/WinEditBox.h"
+#endif
+#ifdef PLATFORM_WIN_DX11
+#include "native/win_dx11/WinDX11EditBox.h"
+#endif
 
 EUIEditBox::EUIEditBox(EUIWidget* prnt, const char* txt, int set_x, int set_y, int w, int h, InputType type): EUIWidget(prnt, txt)
 {
@@ -11,7 +17,12 @@ EUIEditBox::EUIEditBox(EUIWidget* prnt, const char* txt, int set_x, int set_y, i
 
 	inputType = type;
 
+#ifdef PLATFORM_WIN
 	nativeWidget = new WinEditBox(this);
+#endif
+#ifdef PLATFORM_WIN_DX11
+	nativeWidget = new WinDX11EditBox(this);
+#endif
 }
 
 EUIEditBox::~EUIEditBox()
