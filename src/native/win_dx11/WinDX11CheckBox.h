@@ -18,5 +18,8 @@ public:
 	void SetText(const char* txt) override;
 	void SetChecked(bool set) override;
 	void Draw() override;
+
+	void OnMouseMove(int ms_x, int ms_y) override;
+	void OnLeftMouseUp(int ms_x, int ms_y) override;
 };
 #endif

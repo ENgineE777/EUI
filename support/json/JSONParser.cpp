@@ -4,32 +4,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-JSONParser::JSONParser() : allocator(1 << 10)
+JSONParser::JSONParser(uint8_t* set_buffer) : allocator(1 << 10)
 {
-	root = NULL;
-	curNode = NULL;
-	curDepth = 0;
-
-	buffer = NULL;
-}
-
-bool JSONParser::Parse(const char* name)
-{
-	FILE* file = fopen(name, "rb");
-
-	if (file)
-	{
-		fseek(file, 0, SEEK_END);
-		int size = ftell(file);
-		fseek(file, 0, SEEK_SET);
-
-		buffer = (uint8_t*)malloc(size + 1);
-		fread(buffer, size, 1, file);
-
-		buffer[size] = 0;
-
-		fclose(file);
-	}
+	buffer = set_buffer;
 
 	if (buffer)
 	{
@@ -43,21 +20,28 @@ bool JSONParser::Parse(const char* name)
 		{
 			nodes[curDepth] = root;
 			curNode = nodes[curDepth];
-
-			return true;
 		}
 	}
-
-	return false;
 }
+
+JSONParser::~JSONParser()
+{
+	if (buffer)
+	{
+		free(buffer);
+	}
+
+	allocator.free();
+}
+
 
 bool JSONParser::EnterBlock(const char* name)
 {
-	nodes[curDepth +1] = FindValue(name);
+	nodes[curDepth + 1] = FindValue(name);
 
-	if (nodes[curDepth +1])
+	if (nodes[curDepth + 1])
 	{
-		if (nodes[curDepth +1]->type == JSON_OBJECT)
+		if (nodes[curDepth + 1]->type == JSON_OBJECT)
 		{
 			curDepth++;
 			curNode = nodes[curDepth];
@@ -65,9 +49,9 @@ bool JSONParser::EnterBlock(const char* name)
 			return true;
 		}
 		else
-		if (nodes[curDepth +1]->type == JSON_ARRAY)
+		if (nodes[curDepth + 1]->type == JSON_ARRAY)
 		{
-			if (nodes[curDepth +1]->first_child)
+			if (nodes[curDepth + 1]->first_child)
 			{
 				curDepth++;
 				nodes[curDepth] = nodes[curDepth]->first_child;
@@ -304,7 +288,7 @@ json_value* JSONParser::FindValue(const char* name)
 {
 	if (!root)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	if (!name[0])
@@ -320,17 +304,5 @@ json_value* JSONParser::FindValue(const char* name)
 		}
 	}
 
-	return NULL;
-}
-
-void JSONParser::Release()
-{
-	if (buffer)
-	{
-		free(buffer);
-	}
-
-	allocator.free();
-
-	delete this;
+	return nullptr;
 }

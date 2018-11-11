@@ -25,19 +25,22 @@ EUIPanel* WinDX11Panel::Owner()
 
 void WinDX11Panel::Draw()
 {
-	/*RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 
-	UINT uState = EUITheme::UISTATE_NORMAL;
-
-	if (!Owner()->IsEnabled())
+	if (texture)
 	{
-		uState = EUITheme::UISTATE_DISABLED;
+		theme->Draw(texture, nullptr, global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	}
+	else
+	{
+		theme->Draw("Panel", global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 	}
 
-	COLORREF color = theme->GetColor("LABEL_BACK");
+	NativePanel::Draw();
+}
 
-	theme->DrawGradient(GetDC(handle), rc, color, color, false, 2);
-
-	NativePanel::Draw();*/
+void WinDX11Panel::SetTexture(void* set_texture)
+{
+	texture = set_texture;
 }
 #endif

@@ -7,14 +7,6 @@
 
 WinDX11ComboBox::WinDX11ComboBox(EUIWidget* owner) : NativeComboBox(owner)
 {
-	/*handle = CreateWindowW(L"COMBOBOX", L"", WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_AUTOHSCROLL,
-	                       (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-	                       ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
-	win_id++;
-
-	MakeSubClassing();
-
-	SendMessage(handle, WM_SETFONT, (WPARAM)theme->GetFont("FONT_NORMAL"), MAKELPARAM(TRUE, 0));*/
 }
 
 WinDX11ComboBox::~WinDX11ComboBox()
@@ -28,52 +20,150 @@ EUIComboBox* WinDX11ComboBox::Owner()
 
 void WinDX11ComboBox::ClearList()
 {
-	//ComboBox_ResetContent(handle);
+	items.clear();
+	cur_string = -1;
 }
 
 void WinDX11ComboBox::AddItem(const char* str)
 {
-	/*std::wstring wtext;
-	UTFConv::UTF8to16(wtext, str);
+	items.push_back(str);
 
-	SendMessageW(handle, CB_ADDSTRING, (WPARAM)0, (LPARAM)wtext.c_str());
-
-	if (SendMessage(handle, CB_GETCOUNT, (WPARAM)0, (LPARAM)0) == 1)
+	if (items.size() == 1)
 	{
-		SetCurString(0);
-	}*/
+		cur_string = 0;
+	}
 }
 
 void WinDX11ComboBox::SetCurString(int index)
 {
-	//ComboBox_SetCurSel(handle, index);
+	cur_string = index;
 }
 
 void WinDX11ComboBox::SetCurString(const char* str)
 {
-	/*std::wstring wtext;
-	UTFConv::UTF8to16(wtext, str);
-
-	SendMessageW(handle, CB_SELECTSTRING, (WPARAM)0, (LPARAM)wtext.c_str());*/
+	for (int i = 0; i < items.size(); i++)
+	{
+		if (strcmp(items[i].c_str(), str) == 0)
+		{
+			cur_string = i;
+			break;
+		}
+	}
 }
 
 const char* WinDX11ComboBox::GetCurString()
 {
-	/*int index = GetCurStringIndex();
+	Owner()->text = cur_string != -1 ? items[cur_string] : "";;
 
-	if (index != -1)
-	{
-		Owner()->text.resize(ComboBox_GetLBTextLen(handle, index) + 1);
-		ComboBox_GetLBText(handle, index, &Owner()->text[0]);
-
-		return Owner()->text.c_str();
-	}*/
-
-	return "";
+	return Owner()->text.c_str();
 }
 
 int WinDX11ComboBox::GetCurStringIndex()
 {
-	return -1;// ComboBox_GetCurSel(handle);
+	return cur_string;
 }
+
+void WinDX11ComboBox::Draw()
+{
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->Draw(is_howered ? "ComboBoxHowered" : "ComboBoxNormal", global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width - 20, owner->height);
+	theme->font.Print(global_x + owner->x + 3, global_y + owner->y + 4, nullptr, cur_string != -1 ? items[cur_string].c_str() : "");
+
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->Draw("ComboBoxDownArrow", global_x + owner->x + owner->width - 20, global_y + owner->y + 3, 15, 15);
+
+	if (is_opened)
+	{
+		theme->SetClampBorder(global_x + owner->x, global_y + owner->y + owner->height, owner->width, (int)fmin(6 + items.size() * 15, Owner()->list_height));
+		theme->Draw("ComboBoxList", global_x + owner->x, global_y + owner->y + owner->height, owner->width, (int)fmin(6 + items.size() * 15, Owner()->list_height));
+
+		int pos_y = global_y + owner->y + owner->height + 3;
+
+		if (pre_sel_item != -1)
+		{
+			float color[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+			theme->Draw(nullptr, color, global_x + owner->x + 3, pos_y + pre_sel_item * 15, owner->width - 6, 15);
+		}
+
+		for (auto& item : items)
+		{
+			theme->font.Print(global_x + owner->x + 3, pos_y + 2, nullptr, item.c_str());
+			pos_y += 15;
+		}
+	}
+
+	NativeComboBox::Draw();
+}
+
+bool WinDX11ComboBox::IsHitted(int ms_x, int ms_y)
+{
+	int list_height = is_opened ? (int)fmin(6 + items.size() * 15, Owner()->list_height) : 0;
+
+	if (global_x + owner->x < ms_x && ms_x < global_x + owner->x + owner->width &&
+		global_y + owner->y < ms_y && ms_y < global_y + owner->y + owner->height + list_height)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void WinDX11ComboBox::OnFocusLost()
+{
+	is_focused = false;
+
+	if (is_opened)
+	{
+		is_opened = false;
+		((WinDX11Widget*)owner->GetRoot()->nativeWidget)->over_widget = nullptr;
+	}
+}
+
+void WinDX11ComboBox::OnMouseMove(int ms_x, int ms_y)
+{
+	pre_sel_item = -1;
+
+	if (is_opened)
+	{
+		if (ms_y > owner->height)
+		{
+			pre_sel_item = (int)(((float)ms_y - 3.0f - owner->height) / 15.0f);
+
+			if (pre_sel_item > items.size() - 1)
+			{
+				pre_sel_item = -1;
+			}
+		}
+	}
+
+	NativeComboBox::OnMouseMove(ms_x, ms_y);
+}
+
+void WinDX11ComboBox::OnLeftMouseDown(int ms_x, int ms_y)
+{
+	is_opened = !is_opened;
+
+	((WinDX11Widget*)owner->GetRoot()->nativeWidget)->over_widget = is_opened ? this : nullptr;
+
+	NativeComboBox::OnLeftMouseDown(ms_x, ms_y);
+}
+
+void WinDX11ComboBox::OnLeftMouseUp(int ms_x, int ms_y)
+{
+	if (pre_sel_item != -1 && pre_sel_item != cur_string)
+	{
+		cur_string = pre_sel_item;
+
+		Owner()->text = cur_string != -1 ? items[cur_string] : "";
+
+		if (Owner()->listener)
+		{
+			Owner()->listener->OnComboBoxSelChange(Owner(), cur_string);
+		}
+	}
+
+	NativeComboBox::OnLeftMouseUp(ms_x, ms_y);
+}
+
 #endif

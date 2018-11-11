@@ -3,80 +3,121 @@
 
 #ifdef PLATFORM_WIN_DX11
 
-#include "windows.h"
+#include "d3d11.h"
 #include <map>
 #include "EUITheme.h"
+#include "WinDX11Font.h"
 
 class WinDX11Theme : public EUITheme
 {
-	struct Color
-	{
-		HPEN     pen;
-		HBRUSH   brush;
-		COLORREF color;
+public:
 
-		Color()
-		{
-			pen = 0;
-			brush = 0;
-			color = 0;
-		}
+	ID3D11Device*           pd3dDevice = nullptr;
+	IDXGIFactory1*          factory = nullptr;
+	ID3D11DeviceContext*    immediateContext = nullptr;
+
+	struct WindowData
+	{
+		IDXGISwapChain*         swapChain = nullptr;
+		ID3D11RenderTargetView* renderTargetView = nullptr;
+		ID3D11Texture2D*        depthStencil = nullptr;
+		ID3D11DepthStencilView* depthStencilView = nullptr;
 	};
 
-	struct Font
-	{
-		HFONT font;
-		LOGFONT logFont;
-		TEXTMETRIC textMetrics;
+	ID3D11Buffer* buffer = nullptr;
+	ID3D11InputLayout* layout = nullptr;
+	ID3D11VertexShader* vshader;
+	ID3D11PixelShader*  pshader;
+	ID3D11Buffer* struct_buffer = nullptr;
+	ID3D11ShaderResourceView* sbuffer_srview;
 
-		Font()
-		{
-			font = 0;
-			textMetrics.tmHeight = 0;
-		}
+	ID3D11Texture2D* texture;
+	ID3D11ShaderResourceView* srview;
+	ID3D11SamplerState* sampler;
+
+	uint32_t scr_width = 0;
+	uint32_t scr_height = 0;
+
+
+	struct Elem
+	{
+		float u, v, du, dv;
+		float offset_u = -1;
+		float offset_v = -1;
 	};
+
+	std::map<std::string, Elem> elems;
+
+	enum
+	{
+		MaxInstCount = 1000
+	};
+
+	struct Params
+	{
+		float x, y, width, height;
+		float u, v, du, dv;
+		float scr_width, scr_height;
+		int   texture, dummy1;
+		float r, g, b, a;
+		float dummy[16];
+	};
+
+	int inst_count = 0;
+	Params* data_buffer = nullptr;
+
+	WinDX11Font font;
+	int clamp_x = 0;
+	int clamp_y = 0;
+	int clamp_x2 = 0;
+	int clamp_y2 = 0;
+
+	std::map<std::string, HCURSOR> cursors;
 
 public:
 
-	std::map<std::string, Color> colors;
-	std::map<std::string, Font> fonts;
-	std::map<std::string, HBITMAP> images;
-	std::map<std::string, HCURSOR> cursors;
-
-	DWORD prevColors[2];
-
 	WinDX11Theme();
 
-	virtual void ReadTheme(const char* name);
-	virtual void Ulnload();
+	void* GetRenderDevice() override;
+	void ReadTheme(JSONParser& parser) override;
+	void Ulnload() override;
 
-	HPEN        GetPen(const char* color);
-	HFONT       GetFont(const char* font);
-	HBRUSH      GetBrush(const char* color);
-	COLORREF    GetColor(const char* color);
-	HBITMAP     GetImage(const char* image);
-	HCURSOR     GetCursor(const char* name);
-	TEXTMETRIC& GetFontInfo(HDC hdc, const char* font);
+	void SetOutputWnd(WindowData& data, HWND hwnd, int wgt, int hgt);
 
-	void DrawRect(HDC hDC, RECT rc, const char* color);
-	void DrawRect(HDC hDC, RECT rc, COLORREF clrFill);
+	HCURSOR GetCursor(const char* name);
 
-	void DrawGradient(HDC hDC, RECT rc, COLORREF from, COLORREF to, bool vertical, int steps);
-	void DrawText(HDC hDC, RECT& rc, LPCTSTR pstrText, const char* textColor, const char* backColor, UINT uStyle);
-	void DrawFrame(HDC hDC, RECT rc, const char* light, const char* dark, const char* back);
-	void DrawImage(HDC hDC, RECT rc, const char* image);
+	void SetClampBorder(int x, int y, int w, int h);
+	void SetScreenSize(WindowData& data, int scr_width, int scr_height);
+	bool ClampRect(Params* param);
+	void Draw(const char* elem, int x, int y, int width, int height);
+	void Draw(void* texture, float* color, int x, int y, int width, int height, float u = 0.0f, float v = 0.0f, float du = 1.0f, float dv = 1.0f);
 
-	void DrawButton(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UINT uStyle);
-	void DrawLabel(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UINT uStyle);
-	void DrawCheckBox(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UINT uStyle);
-	void DrawCategory(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UINT uStyle);
-	void DrawScrollBar(HDC hDC, RECT rc, int pos, int size, UINT uState);
+	inline void Start()
+	{
+		D3D11_MAPPED_SUBRESOURCE res;
+		immediateContext->Map(struct_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+		data_buffer = (Params*)res.pData;
+		inst_count = 0;
+	}
 
-protected:
-	COLORREF ReadColor(JSONParser* reader, const char* name);
-	void LoadColors(JSONParser* reader) override;
-	void LoadFonts(JSONParser* reader) override;
-	void LoadCursors(JSONParser* reader) override;
+	inline void GetNext()
+	{
+		inst_count++;
+
+		if (inst_count >= MaxInstCount)
+		{
+			immediateContext->Unmap(struct_buffer, 0);
+
+			immediateContext->DrawInstanced(4, inst_count, 0, 0);
+
+			Start();
+		}
+		else
+		{
+			data_buffer++;
+		}
+	}
+	void Present(WindowData& data);
 };
 
 extern WinDX11Theme* theme;

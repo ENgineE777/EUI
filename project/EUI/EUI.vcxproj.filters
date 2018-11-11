@@ -195,6 +195,9 @@
     <ClCompile Include="..\..\src\native\win_dx11\WinDX11Window.cpp">
       <Filter>Source\native\win_dx11</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11Font.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\native\win\WinButton.h">
@@ -422,5 +425,19 @@
     <ClInclude Include="..\..\include\native\NativeInclude.h">
       <Filter>Source\native</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\ui_ps.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\ui_vs.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\native\win_dx11\WinDX11Font.h">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\native\win_dx11\ui.shader">
+      <Filter>Source\native\win_dx11</Filter>
+    </None>
   </ItemGroup>
 </Project>

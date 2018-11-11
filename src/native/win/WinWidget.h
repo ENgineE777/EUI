@@ -63,7 +63,7 @@ public:
 
 	void CreateTooltip();
 
-	bool IsHoveredByMouse() override;
+	bool IsHoveredByMouse();
 	WinWidget* GetHoveredWidget();
 	void GetMousePos(int& x, int& y) override;
 

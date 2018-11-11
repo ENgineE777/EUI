@@ -4,22 +4,22 @@
 std::map<wchar_t, int> UTFConv::upper2lower;
 std::map<wchar_t, int> UTFConv::lower2upper;
 
-void UTFConv::Init(JSONParser* reader)
+void UTFConv::Init(JSONParser& reader)
 {
 	std::string str;
 
-	while (reader->EnterBlock("table"))
+	while (reader.EnterBlock("table"))
 	{
-		reader->Read("lo", str);
+		reader.Read("lo", str);
 		unsigned int lo = std::stoul(str.c_str(), nullptr, 16);
 
-		reader->Read("hi", str);
+		reader.Read("hi", str);
 		unsigned int hi = std::stoul(str.c_str(), nullptr, 16);
 
 		upper2lower[lo] = hi;
 		lower2upper[hi] = lo;
 
-		reader->LeaveBlock();
+		reader.LeaveBlock();
 	}
 }
 

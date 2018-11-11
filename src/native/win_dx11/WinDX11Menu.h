@@ -9,6 +9,8 @@ class EUIMenu;
 
 class WinDX11Menu : public NativeMenu
 {
+	friend class WinDX11Window;
+
 	HMENU menu;
 
 	int cur_depth;
@@ -23,7 +25,7 @@ public:
 
 	EUIMenu* Owner();
 
-	virtual bool ProcessWidget(long msg, WPARAM wParam, LPARAM lParam);
+	void Process(int id);
 	void Show(bool set) override;
 
 	void AttachToWidget(EUIWidget* widget);

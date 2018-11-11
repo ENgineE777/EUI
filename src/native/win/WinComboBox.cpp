@@ -8,7 +8,7 @@
 WinComboBox::WinComboBox(EUIWidget* owner) : NativeComboBox(owner)
 {
 	handle = CreateWindowW(L"COMBOBOX", L"", WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_AUTOHSCROLL,
-	                       (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
+	                       (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height + Owner()->list_height,
 	                       ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
 	win_id++;
 

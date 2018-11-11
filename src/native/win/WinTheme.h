@@ -36,7 +36,71 @@ class WinTheme : public EUITheme
 		}
 	};
 
+	struct ButtonColors
+	{
+		char backFromColor[32];
+		char backToColor[32];
+		char borderFromColor[32];
+		char borderToColor[32];
+		char textColor[32];
+		char font[32];
+	};
+
+	struct CheckBoxColors
+	{
+		char boxBorderColor[32];
+		char boxBackColor[32];
+		char boxCheckColor[32];
+		char textColor[32];
+		char font[32];
+	};
+
+	struct CategoriesColors
+	{
+		char borderColor[32];
+		char backColor[32];
+		char openedImage[32];
+		char closedImage[32];
+		char textColor[32];
+		char font[32];
+	};
+
+	struct ScrollbarColors
+	{
+		char topBorderColor[32];
+		char topBackColor[32];
+		char topImage[32];
+		char middleBorderColor[32];
+		char middleBackColor[32];
+		char bottomBorderColor[32];
+		char bottomBackColor[32];
+		char bottomImage[32];
+		char thumbBorderColor[32];
+		char thumbBackColor[32];
+	};
+
 public:
+
+	char             fontSelecetd[32];
+	char             fontBackSeleceted[32];
+	char             buttonFocusColor[32];
+	ButtonColors     buttonColors[4];
+	int              checkBoxSize;
+	CheckBoxColors   checkBoxColors[2];
+	CategoriesColors categoriesColors[2];
+	int              scrollbarThin;
+	int              scrollbarPaddingX;
+	int              scrollbarPaddingY;
+	ScrollbarColors  scrollbarColors[2];
+
+	enum State
+	{
+		UISTATE_NORMAL = 1,
+		UISTATE_HOWERED = 2,
+		UISTATE_PUSHED = 4,
+		UISTATE_DISABLED = 8,
+		UISTATE_FOCUSED = 16
+	};
 
 	std::map<std::string, Color> colors;
 	std::map<std::string, Font> fonts;
@@ -47,8 +111,8 @@ public:
 
 	WinTheme();
 
-	virtual void ReadTheme(const char* name);
-	virtual void Ulnload();
+	void ReadTheme(JSONParser& parser) override;
+	void Ulnload() override;
 
 	HPEN        GetPen(const char* color);
 	HFONT       GetFont(const char* font);
@@ -73,10 +137,10 @@ public:
 	void DrawScrollBar(HDC hDC, RECT rc, int pos, int size, UINT uState);
 
 protected:
-	COLORREF ReadColor(JSONParser* reader, const char* name);
-	void LoadColors(JSONParser* reader) override;
-	void LoadFonts(JSONParser* reader) override;
-	void LoadCursors(JSONParser* reader) override;
+	COLORREF ReadColor(JSONParser& reader, const char* name);
+	void LoadColors(JSONParser& reader);
+	void LoadFonts(JSONParser& reader);
+	void LoadCursors(JSONParser& reader);
 };
 
 extern WinTheme* theme;

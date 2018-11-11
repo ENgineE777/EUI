@@ -1,8 +1,10 @@
 # EUI
 
-This is a cross-platform GUI Library, currently only Windows supported. Windows realization are using
-raw Winapi that is why windows widget very fast with low memory footprint. Also library have simple skin
-system and layout system based on horizontal and verticcal dividers.
+This is a cross-platform GUI Library, currently only Windows supported. Windows realization have
+two imlementaions. First one are using raw Winapi that is why this implemntation are very fast with low
+memory footprint. Second implmentation is completely stand alone implementation with rendering
+based on DX11. Both implementation have skin system and layout system based on horizontal and verticcal
+dividers.
 
 Currently library support follow controls:
 - button
@@ -12,10 +14,11 @@ Currently library support follow controls:
 - vettical & horizontal linear layout
 - label
 - listbox
-- menu
+- menu/popup
 - panel
 - vertical & horizontal scroolbar
 - tab/tab sheet
+- treeview
 - window
 - wrapped File dialog
 - wrapped Color dialog

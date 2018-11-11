@@ -5,14 +5,6 @@
 
 WinDX11CheckBox::WinDX11CheckBox(EUIWidget* owner) : NativeCheckBox(owner)
 {
-	/*handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
-	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
-	win_id++;
-
-	MakeSubClassing();
-
-	SendMessage(handle, WM_SETFONT, (WPARAM)theme->GetFont("FONT_NORMAL"), MAKELPARAM(TRUE, 0));*/
 }
 
 WinDX11CheckBox::~WinDX11CheckBox()
@@ -31,25 +23,62 @@ void WinDX11CheckBox::SetText(const char* txt)
 
 void WinDX11CheckBox::SetChecked(bool set)
 {
-	Redraw();
 }
 
 void WinDX11CheckBox::Draw()
 {
-	UINT uState = EUITheme::UISTATE_NORMAL;
+	const char* elem = "CheckBoxMarkNormal";
 
-	if (!Owner()->IsEnabled())
+	if (!owner->IsEnabled())
 	{
-		uState = EUITheme::UISTATE_DISABLED;
+		elem = "CheckBoxMarkDisabled";
+	}
+	else
+	if (is_howered)
+	{
+		if (mouse_pressed && is_howered)
+		{
+			elem = "CheckBoxMarkPressed";
+		}
+		else
+		if (is_howered || mouse_pressed)
+		{
+			elem = "CheckBoxMarkHowered";
+		}
 	}
 
-	if (Owner()->checked)
-	{
-		uState |= EUITheme::UISTATE_PUSHED;
-	}
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->Draw(elem, global_x + owner->x, global_y + owner->y, 19, 19);
+	theme->Draw((Owner()->checked) ? "CheckBoxMarkOn" : "CheckBoxMarkOff", global_x + owner->x, global_y + owner->y, 19, 19);
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->font.Print(global_x + owner->x + 22, global_y + owner->y, nullptr, owner->GetText());
 
-	RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
-
-	//theme->DrawCheckBox(GetDC(handle), rc, Owner()->text.c_str(), uState, DT_SINGLELINE);
+	NativeCheckBox::Draw();
 }
+
+void WinDX11CheckBox::OnMouseMove(int ms_x, int ms_y)
+{
+	if (0 < ms_x && ms_x < 19 &&
+		0 < ms_x && ms_x < 19)
+	{
+		is_howered = true;
+	}
+	else
+	{
+		is_howered = false;
+	}
+
+	NativeCheckBox::OnMouseMove(ms_x, ms_y);
+}
+
+void WinDX11CheckBox::OnLeftMouseUp(int ms_x, int ms_y)
+{
+	if (is_howered)
+	{
+		Owner()->checked = !Owner()->checked;
+	}
+
+	NativeCheckBox::OnLeftMouseUp(ms_x, ms_y);
+}
+
 #endif

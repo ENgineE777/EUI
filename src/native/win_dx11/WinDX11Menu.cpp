@@ -1,6 +1,8 @@
 
 #include "EUIMenu.h"
 #include "WinDX11Menu.h"
+#include "EUIWindow.h"
+#include "WinDX11Window.h"
 
 #ifdef PLATFORM_WIN_DX11
 
@@ -22,28 +24,23 @@ EUIMenu* WinDX11Menu::Owner()
 	return (EUIMenu*)owner;
 }
 
-bool WinDX11Menu::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
+void WinDX11Menu::Process(int id)
 {
-	if (msg == WM_COMMAND)
+	if (Owner()->listener)
 	{
-		if (Owner()->listener)
-		{
-			Owner()->listener->OnMenuItem(Owner(), LOWORD(wParam));
-		}
+		Owner()->listener->OnMenuItem(Owner(), id);
 	}
-
-	return true;
 }
 
 void WinDX11Menu::Show(bool set)
 {
 	if (set)
 	{
-		//SetMenu(((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), menu );
+		SetMenu(*((HWND*)Owner()->parent->GetNative()), menu );
 	}
 	else
 	{
-		//SetMenu(((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), nullptr );
+		SetMenu(*((HWND*)Owner()->parent->GetNative()), nullptr );
 	}
 
 	NativeMenu::Show(set);
@@ -51,18 +48,19 @@ void WinDX11Menu::Show(bool set)
 
 void WinDX11Menu::AttachToWidget(EUIWidget* widget)
 {
-	//((WinWidget*)widget->nativeWidget)->menu_wiget = this;
-	//SetMenu(((WinWidget*)widget->nativeWidget)->GetHandle(), menu);
+	((WinDX11Window*)widget->nativeWidget)->menu_wiget = this;
+	SetMenu(*((HWND*)widget->GetNative()), menu);
 }
 
 void WinDX11Menu::ShowAsPopup(EUIWidget* parent, int x, int y)
 {
-	//((WinWidget*)parent->nativeWidget)->menu_wiget = this;
-	HWND handle;// = ((WinWidget*)parent->nativeWidget)->GetHandle();
+	WinDX11Widget* widget = (WinDX11Widget*)(parent)->nativeWidget;
+	//widget->popup_menu_wiget = this;
+	HWND handle = ((WinDX11Window*)parent->GetRoot()->nativeWidget)->handle;
 
 	POINT p;
-	p.x = x;
-	p.y = y;
+	p.x = widget->global_x + widget->owner->x + x;
+	p.y = widget->global_y + widget->owner->y + y;
 	ClientToScreen(handle, &p);
 	SetForegroundWindow(handle);
 	TrackPopupMenuEx(menu, TPM_TOPALIGN | TPM_LEFTALIGN, p.x, p.y, handle, 0);

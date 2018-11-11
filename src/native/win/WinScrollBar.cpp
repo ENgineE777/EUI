@@ -96,7 +96,7 @@ bool WinScrollBar::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (Owner()->listener)
 		{
-			Owner()->listener->OnSrollerPosChange(Owner(), last_pos);
+			Owner()->listener->OnSrollerPosChange(Owner(), Owner()->cur_pos);
 		}
 	}
 

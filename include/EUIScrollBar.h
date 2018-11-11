@@ -8,6 +8,7 @@ class EUIScrollBar : public EUIWidget
 {
 	friend class WinScrollBar;
 	friend class WinCategories;
+	friend class WinDX11ScrollBar;
 
 	int cur_pos;
 	int max_pos;

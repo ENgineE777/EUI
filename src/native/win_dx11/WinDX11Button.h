@@ -9,8 +9,6 @@ class EUIButton;
 
 class WinDX11Button : public NativeButton
 {
-	bool is_howered;
-
 public:
 
 	WinDX11Button(EUIWidget* owner);
@@ -18,14 +16,9 @@ public:
 
 	EUIButton* Owner();
 
-	void Enable(bool set) override;
-
 	void SetImage(int img, const char* image_name) override;
-	void SetText(const char* txt) override;
-
-	void NotifyMouseOver() override;
-	void OnMouseLeave() override;
 
 	void Draw() override;
+	void OnLeftMouseUp(int ms_x, int ms_y) override;
 };
 #endif

@@ -9,5 +9,6 @@ public:
 
 	NativeCategories(EUIWidget* owner) : WidgetImpl(owner) {};
 
+	virtual void CalcThumb() = 0;
 	virtual void UpdateChildPos() = 0;
 };

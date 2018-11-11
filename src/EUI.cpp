@@ -17,7 +17,17 @@ std::vector<EUIWindow*> EUI::wnds;
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name = 'Microsoft.Windows.Common-Controls' version = '6.0.0.0' processorArchitecture = '*' publicKeyToken = '6595b64144ccf1df' language = '*'\"")
 
-void EUI::Init(const char* themeName)
+const char* EUI::GetName()
+{
+#ifdef PLATFORM_WIN
+	return "EUI_WinApi";
+#endif
+#ifdef PLATFORM_WIN_DX11
+	return "EUI_DX11";
+#endif
+}
+
+void EUI::Init(const char* theme_path, const char* theme_name)
 {
 	InitCommonControls();
 
@@ -28,12 +38,12 @@ void EUI::Init(const char* themeName)
 	theme = new WinDX11Theme();
 #endif
 
-	ReloadTheme(themeName);
+	theme->Init(theme_path, theme_name);
 }
 
-void EUI::ReloadTheme(const char* themeName)
+void* EUI::GetRenderDevice()
 {
-	theme->ReadTheme(themeName);
+	return theme->GetRenderDevice();
 }
 
 int EUI::Run()
@@ -51,6 +61,9 @@ int EUI::Run()
 		for (int i = 0; i < (int)wnds.size(); i++)
 		{
 			wnds[i]->Update();
+#ifdef PLATFORM_WIN_DX11
+			((WinDX11Widget*)wnds[i]->nativeWidget)->Draw();
+#endif
 		}
 	}
 

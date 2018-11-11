@@ -16,7 +16,7 @@ class EUICategories : public EUIWidget
 		char  name[128];
 		std::vector<EUIWidget*> childs;
 		std::vector<bool> childsVis;
-		float y;
+		int y;
 
 		Category()
 		{
@@ -38,6 +38,7 @@ public:
 	EUICategories(EUIWidget* parent, int x, int y, int w, int h);
 	virtual ~EUICategories();
 
+	void AddChild(EUIWidget* child) override;
 	virtual void OnChildShow(int index, bool set);
 	virtual void RegisterChildInCategory(const char* name, EUIWidget* widget);
 };

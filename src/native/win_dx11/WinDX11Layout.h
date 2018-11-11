@@ -11,6 +11,8 @@ class WinDX11Layout : public NativeLayout
 {
 public:
 
+	bool in_resize = false;
+
 	WinDX11Layout(EUIWidget* owner);
 	~WinDX11Layout() override;
 

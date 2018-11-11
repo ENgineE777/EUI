@@ -23,7 +23,7 @@ LRESULT CALLBACK WinWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-WinWindow::WinWindow(EUIWidget* owner, EUIWindow::Style style, bool adjust) : NativeWindow(owner)
+WinWindow::WinWindow(EUIWidget* owner, const char* icon, EUIWindow::Style style, bool adjust) : NativeWindow(owner)
 {
 	EUI::wnds.push_back(Owner());
 
@@ -48,6 +48,17 @@ WinWindow::WinWindow(EUIWidget* owner, EUIWindow::Style style, bool adjust) : Na
 		winClass.lpszClassName = class_name;
 		winClass.lpszMenuName = NULL;
 		winClass.style = CS_CLASSDC | CS_DBLCLKS;
+
+		winClass.hIcon = (HICON)LoadImage( // returns a HANDLE so we have to cast to HICON
+			NULL,             // hInstance must be NULL when loading from a file
+			icon,   // the icon file name
+			IMAGE_ICON,       // specifies that the file is an icon
+			0,                // width of the image (we'll specify default later on)
+			0,                // height of the image
+			LR_LOADFROMFILE |  // we want to load a file (as opposed to a resource)
+			LR_DEFAULTSIZE |   // default metrics based on the type (IMAGE_ICON, 32x32)
+			LR_SHARED         // let the system release the handle when it's no longer used
+		);
 
 		RegisterClass(&winClass);
 

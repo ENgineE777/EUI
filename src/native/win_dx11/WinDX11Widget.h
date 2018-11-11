@@ -17,11 +17,17 @@ class WinDX11Widget : public NativeWidget
 {
 protected:
 
-	static WinDX11Widget* mouse_over;
-
 public:
 
-	WinDX11Widget* menu_wiget = nullptr;
+	bool is_focused = false;
+	bool is_howered = false;
+	bool mouse_pressed = false;
+	int global_x = 0;
+	int global_y = 0;
+	bool drag_on = false;
+	WinDX11Widget* focused_widget = nullptr;
+	WinDX11Widget* over_widget = nullptr;
+	WinDX11Widget* mouse_over = nullptr;
 
 	WinDX11Widget(EUIWidget* owner);
 	virtual ~WinDX11Widget();
@@ -48,13 +54,23 @@ public:
 	virtual void NotifyMouseOver();
 	virtual void OnMouseLeave();
 
+	virtual void OnFocusLost();
+
 	virtual void SetFocused();
 	virtual bool IsFocused();
 
-	bool IsHoveredByMouse() override;
-	WinDX11Widget* GetHoveredWidget();
 	void GetMousePos(int& x, int& y) override;
 
 	virtual bool IsTreeView();
+
+	virtual void OnKeyDown(int key);
+	virtual void OnTimer();
+	virtual bool IsHitted(int ms_x, int ms_y);
+	virtual void OnMouseMove(int ms_x, int ms_y);
+	virtual void OnLeftMouseDown(int ms_x, int ms_y);
+	virtual void OnLeftMouseUp(int ms_x, int ms_y);
+	virtual void OnRightMouseUp(int ms_x, int ms_y);
+
+	void CalcGlopalPos();
 };
 #endif

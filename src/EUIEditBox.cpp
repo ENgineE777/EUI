@@ -50,7 +50,25 @@ void EUIEditBox::SetText(int value)
 void EUIEditBox::SetText(float value)
 {
 	char str[128];
-	sprintf(str, "%4.3f", value);
+	sprintf(str, "%.5f", value);
+
+	if (strstr(str, "."))
+	{
+		int index = (int)strlen(str) - 1;
+
+		while (str[index] == '0')
+		{
+			str[index] = 0;
+			index--;
+		}
+
+		if (str[index] == '.')
+		{
+			str[index + 1] = '0';
+			str[index + 2] = 0;
+		}
+	}
+
 	SetText(str);
 }
 

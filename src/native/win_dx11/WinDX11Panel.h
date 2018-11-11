@@ -9,6 +9,7 @@ class EUIPanel;
 
 class WinDX11Panel : public NativePanel
 {
+	void* texture = nullptr;
 
 public:
 
@@ -18,5 +19,7 @@ public:
 	EUIPanel* Owner();
 
 	void Draw() override;
+
+	void SetTexture(void* texture) override;
 };
 #endif

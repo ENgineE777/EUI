@@ -16,7 +16,6 @@ public:
 
 	EUILabel* Owner();
 
-	void SetText(const char* txt) override;
 	void Draw() override;
 };
 #endif

@@ -83,19 +83,12 @@ void WinTabPanel::DeleteTab(int index)
 		return;
 	}
 
-	//TODO:
-	//need delete child
 	owner->childs.erase(owner->childs.begin() + index);
 	TabCtrl_DeleteItem(handle, index);
 }
 
 void WinTabPanel::ClearTabs()
 {
-	//TODO:
-	//need delete childs
-
-	owner->childs.clear();
-
 	curTab = -1;
 	TabCtrl_DeleteAllItems(handle);
 }

@@ -122,11 +122,11 @@ void WinCategories::UpdateChildPos()
 {
 	Owner()->allowCallOnChildShow = false;
 
-	float pos = 0;
+	int pos = 0;
 
 	if (scrollbar && scrollbar->IsVisible())
 	{
-		pos = -(float)scrollbar->GetPosition();
+		pos = -scrollbar->GetPosition();
 	}
 
 	for (int i = 0; i < (int)Owner()->categories.size(); i++)
@@ -188,11 +188,11 @@ void WinCategories::Resize()
 
 void WinCategories::Draw()
 {
-	UINT state = EUITheme::UISTATE_NORMAL;
+	UINT state = WinTheme::UISTATE_NORMAL;
 
 	if (!Owner()->IsEnabled())
 	{
-		state = EUITheme::UISTATE_DISABLED;
+		state = WinTheme::UISTATE_DISABLED;
 	}
 
 	COLORREF color = theme->GetColor("LABEL_BACK");
@@ -213,7 +213,7 @@ void WinCategories::Draw()
 
 		if (category.opened)
 		{
-			sub_state = EUITheme::UISTATE_PUSHED;
+			sub_state = WinTheme::UISTATE_PUSHED;
 		}
 
 		theme->DrawCategory(GetDC(handle), rc, category.name, state | sub_state, DT_SINGLELINE);

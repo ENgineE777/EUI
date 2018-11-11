@@ -13,70 +13,70 @@ WinTheme::WinTheme() : EUITheme()
 	LoadLibrary("msimg32.dll");
 }
 
-void WinTheme::LoadColors(JSONParser* reader)
+void WinTheme::LoadColors(JSONParser& reader)
 {
-	while (reader->EnterBlock("colors"))
+	while (reader.EnterBlock("colors"))
 	{
 		char name[128];
 
-		reader->Read("name", name, 128);
+		reader.Read("name", name, 128);
 
 		Color& clr = colors[name];
 
 		clr.color = ReadColor(reader, "color");
 
-		reader->LeaveBlock();
+		reader.LeaveBlock();
 	}
 }
 
-void WinTheme::LoadFonts(JSONParser* reader)
+void WinTheme::LoadFonts(JSONParser& reader)
 {
 	LOGFONT lf = { 0 };
 	::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
 
-	while (reader->EnterBlock("fonts"))
+	while (reader.EnterBlock("fonts"))
 	{
 		char name[128];
 
-		reader->Read("name", name, 128);
+		reader.Read("name", name, 128);
 
 		Font& fnt = fonts[name];
 
 		fnt.logFont = lf;
 
-		reader->Read("font", fnt.logFont.lfFaceName, 32);
+		reader.Read("font", fnt.logFont.lfFaceName, 32);
 
 		int height;
-		reader->Read("height", height);
+		reader.Read("height", height);
 		fnt.logFont.lfHeight = -height;
 
 		bool val = false;
 
-		if (reader->Read("bold", val) && val)
+		if (reader.Read("bold", val) && val)
 		{
 			fnt.logFont.lfWeight += FW_BOLD;
 		}
 
-		if (reader->Read("underline", val))
+		if (reader.Read("underline", val))
 		{
 			fnt.logFont.lfUnderline = val;
 		}
 
-		reader->LeaveBlock();
+		reader.LeaveBlock();
 	}
 }
 
-void WinTheme::LoadCursors(JSONParser* reader)
+void WinTheme::LoadCursors(JSONParser& reader)
 {
 	cursors[""] = LoadCursor(NULL, IDC_ARROW);
 
-	while (reader->EnterBlock("cursors"))
+	while (reader.EnterBlock("cursors"))
 	{
 		char name[128];
-		reader->Read("name", name, 128);
+		reader.Read("name", name, 128);
 
 		char filename[128];
-		reader->Read("filename", filename, 128);
+		reader.Read("filename", filename, 128);
 
 		char path[512];
 		strcpy(path, themePath);
@@ -84,31 +84,145 @@ void WinTheme::LoadCursors(JSONParser* reader)
 
 		cursors[name] = (HCURSOR)LoadImage(0, path, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);;
 
-		reader->LeaveBlock();
+		reader.LeaveBlock();
 	}
 }
 
-COLORREF WinTheme::ReadColor(JSONParser* reader, const char* name)
+COLORREF WinTheme::ReadColor(JSONParser& reader, const char* name)
 {
 	COLORREF color = RGB(0, 0, 0);
 
-	if (reader->EnterBlock("color"))
+	if (reader.EnterBlock("color"))
 	{
 		int r, g, b;
-		reader->Read("R", r);
-		reader->Read("G", g);
-		reader->Read("B", b);
+		reader.Read("R", r);
+		reader.Read("G", g);
+		reader.Read("B", b);
 
 		color = RGB(r, g, b);
-		reader->LeaveBlock();
+		reader.LeaveBlock();
 	}
 
 	return color;
 }
 
-void WinTheme::ReadTheme(const char* name)
+void WinTheme::ReadTheme(JSONParser& reader)
 {
-	EUITheme::ReadTheme(name);
+	LoadColors(reader);
+	LoadFonts(reader);
+	LoadCursors(reader);
+
+	reader.Read("FONT_SELECTED", fontSelecetd, 32);
+	reader.Read("FONT_BACK_SELECTED", fontBackSeleceted, 32);
+
+	if (reader.EnterBlock("BUTTON"))
+	{
+		reader.Read("BORDER_FOCUS", buttonFocusColor, 32);
+
+		const char* names[] = { "BUTTON_NORMAL", "BUTTON_HOVERED", "BUTTON_PUSHED", "BUTTON_DISABLED" };
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (reader.EnterBlock(names[i]))
+			{
+				ButtonColors& btn = buttonColors[i];
+
+				reader.Read("BACK_FROM_COLOR", btn.backFromColor, 32);
+				reader.Read("BACK_TO_COLOR", btn.backToColor, 32);
+				reader.Read("BORDER_FROM_COLOR", btn.borderFromColor, 32);
+				reader.Read("BORDER_TO_COLOR", btn.borderToColor, 32);
+				reader.Read("TEXT_COLOR", btn.textColor, 32);
+				reader.Read("TEXT_FONT", btn.font, 32);
+
+				reader.LeaveBlock();
+			}
+		}
+
+		reader.LeaveBlock();
+	}
+
+	if (reader.EnterBlock("CHECKBOX"))
+	{
+		reader.Read("BOX_SIZE", checkBoxSize);
+
+		const char* names[] = { "CHECKBOX_NORMAL", "CHECKBOX_DISABLED" };
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (reader.EnterBlock(names[i]))
+			{
+				CheckBoxColors& chk = checkBoxColors[i];
+
+				reader.Read("BOX_BORDER_COLOR", chk.boxBorderColor, 32);
+				reader.Read("BOX_BACK_COLOR", chk.boxBackColor, 32);
+				reader.Read("BOX_CHECK_COLOR", chk.boxCheckColor, 32);
+				reader.Read("TEXT_COLOR", chk.textColor, 32);
+				reader.Read("TEXT_FONT", chk.font, 32);
+
+				reader.LeaveBlock();
+			}
+		}
+
+		reader.LeaveBlock();
+	}
+
+	if (reader.EnterBlock("CATEGORIES"))
+	{
+		reader.Read("CATEGORY_HEIGHT", categoryHeight);
+
+		const char* names[] = { "CATEGORY_NORMAL", "CATEGORY_DISABLED" };
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (reader.EnterBlock(names[i]))
+			{
+				CategoriesColors& chk = categoriesColors[i];
+
+				reader.Read("BORDER_COLOR", chk.borderColor, 32);
+				reader.Read("BACK_COLOR", chk.backColor, 32);
+				reader.Read("OPENED_IMAGE", chk.openedImage, 32);
+				reader.Read("CLOSED_IMAGE", chk.closedImage, 32);
+				reader.Read("TEXT_COLOR", chk.textColor, 32);
+				reader.Read("TEXT_FONT", chk.font, 32);
+
+				reader.LeaveBlock();
+			}
+		}
+
+		reader.LeaveBlock();
+	}
+
+	if (reader.EnterBlock("SCROLLBAR"))
+	{
+		reader.Read("THIN", scrollbarThin);
+		reader.Read("THUMB_PADDING_X", scrollbarPaddingX);
+		reader.Read("THUMB_PADDING_Y", scrollbarPaddingY);
+
+		const char* names[] = { "SCROLLBAR_NORMAL", "SCROLLBAR_DISABLED" };
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (reader.EnterBlock(names[i]))
+			{
+				ScrollbarColors& scrl = scrollbarColors[i];
+
+				reader.Read("TOP_BORDER_COLOR", scrl.topBorderColor, 32);
+				reader.Read("TOP_BACK_COLOR", scrl.topBackColor, 32);
+				reader.Read("TOP_IMAGE", scrl.topImage, 32);
+				reader.Read("MIDDLE_BORDER_COLOR", scrl.middleBorderColor, 32);
+				reader.Read("MIDDLE_BACK_COLOR", scrl.middleBackColor, 32);
+				reader.Read("BOTTOM_BORDER_COLOR", scrl.bottomBorderColor, 32);
+				reader.Read("BOTTOM_BACK_COLOR", scrl.bottomBackColor, 32);
+				reader.Read("BOTTOM_IMAGE", scrl.bottomImage, 32);
+				reader.Read("THUMB_BORDER_COLOR", scrl.thumbBorderColor, 32);
+				reader.Read("THUMB_BACK_COLOR", scrl.thumbBackColor, 32);
+
+				reader.LeaveBlock();
+			}
+		}
+
+		reader.LeaveBlock();
+	}
 
 	int elements[2] = { COLOR_HIGHLIGHT, COLOR_HIGHLIGHTTEXT };
 	DWORD newColors[2];

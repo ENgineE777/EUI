@@ -49,16 +49,16 @@ void WinCheckBox::SetChecked(bool set)
 
 void WinCheckBox::Draw()
 {
-	UINT uState = EUITheme::UISTATE_NORMAL;
+	UINT uState = WinTheme::UISTATE_NORMAL;
 
 	if (!Owner()->IsEnabled())
 	{
-		uState = EUITheme::UISTATE_DISABLED;
+		uState = WinTheme::UISTATE_DISABLED;
 	}
 
 	if (Owner()->checked)
 	{
-		uState |= EUITheme::UISTATE_PUSHED;
+		uState |= WinTheme::UISTATE_PUSHED;
 	}
 
 	RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };

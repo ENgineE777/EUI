@@ -22,5 +22,8 @@ public:
 
 	void SetText(const char* txt) override;
 	const char* GetText() override;
+	void Draw() override;
+	void OnKeyDown(int key) override;
+	void OnTimer();
 };
 #endif

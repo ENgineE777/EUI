@@ -6,7 +6,6 @@
 
 WinDX11Button::WinDX11Button(EUIWidget* owner) : NativeButton(owner)
 {
-	is_howered = false;
 }
 
 WinDX11Button::~WinDX11Button()
@@ -16,13 +15,6 @@ WinDX11Button::~WinDX11Button()
 EUIButton* WinDX11Button::Owner()
 {
 	return (EUIButton*)owner;
-}
-
-void WinDX11Button::SetText(const char* txt)
-{
-	//WinWidget::SetText(txt);
-	//Button_SetText(handle, txt);
-	//InvalidateRect(handle, NULL, false);
 }
 
 void WinDX11Button::SetImage(int img, const char* image_name)
@@ -39,80 +31,44 @@ void WinDX11Button::SetImage(int img, const char* image_name)
 
 void WinDX11Button::Draw()
 {
-	/*UINT uState = EUITheme::UISTATE_NORMAL;
-	EUIButton::Image img = EUIButton::Normal;
+	const char* elem = "ButtonNormal";
 
-	if (!Owner()->IsEnabled())
+	if (!owner->IsEnabled())
 	{
-		uState = EUITheme::UISTATE_DISABLED;
-		img = EUIButton::Disabled;
+		elem = "ButtonDisabled";
 	}
 	else
 	{
-		if (is_howered)
+		if (mouse_pressed && is_howered)
 		{
-			uState = EUITheme::UISTATE_HOWERED;
-			img = EUIButton::Howered;
+			elem = "ButtonPressed";
 		}
-
+		else
+		if (is_howered || mouse_pressed)
+		{
+			elem = "ButtonHowered";
+		}
+		else
 		if (Owner()->is_pushed)
 		{
-			uState = EUITheme::UISTATE_PUSHED;
-			img = EUIButton::Pushed;
-		}
-
-		if (IsFocused())
-		{
-			uState |= EUITheme::UISTATE_FOCUSED;
+			elem = "ButtonPressed";
 		}
 	}
 
-	if (images[img])
-	{
-		HDC hDC = GetDC(handle);
-		HDC memDC = CreateCompatibleDC(hDC);
-
-		SelectObject(memDC, images[img]);
-		BitBlt(hDC, 0, 0, (int)Owner()->width, (int)Owner()->height, memDC, 0, 0, SRCCOPY);
-
-		DeleteDC(memDC);
-	}
-	else
-	{
-		RECT rcItem = { 0, 0,(LONG)Owner()->width, (LONG)Owner()->height };
-		theme->DrawButton(GetDC(handle), rcItem, Owner()->text.c_str(), uState, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-	}*/
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->Draw(elem, global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->font.Print(global_x + owner->x + theme->font.CalcOffset(owner->GetText(), owner->width), global_y + owner->y + 4, nullptr, owner->GetText());
+	NativeButton::Draw();
 }
 
-void WinDX11Button::NotifyMouseOver()
+void WinDX11Button::OnLeftMouseUp(int ms_x, int ms_y)
 {
-	if (!is_howered)
+	if (Owner()->is_pushable && is_howered)
 	{
-		is_howered = true;
-		Redraw();
+		Owner()->is_pushed = !Owner()->is_pushed;
 	}
 
-	NativeButton::NotifyMouseOver();
+	NativeButton::OnLeftMouseUp(ms_x, ms_y);
 }
 
-void WinDX11Button::OnMouseLeave()
-{
-	/*if (is_howered)
-	{
-		if (!Owner()->is_pushable)
-		{
-			Owner()->is_pushed = false;
-		}
-
-		is_howered = false;
-		InvalidateRect(handle, NULL, false);
-	}*/
-}
-
-void WinDX11Button::Enable(bool set)
-{
-	WinDX11Widget::Enable(set);
-
-	//InvalidateRect(handle, NULL, false);
-}
 #endif

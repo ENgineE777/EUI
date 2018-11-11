@@ -27,11 +27,11 @@ void WinPanel::Draw()
 {
 	RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
 
-	UINT uState = EUITheme::UISTATE_NORMAL;
+	UINT uState = WinTheme::UISTATE_NORMAL;
 
 	if (!Owner()->IsEnabled())
 	{
-		uState = EUITheme::UISTATE_DISABLED;
+		uState = WinTheme::UISTATE_DISABLED;
 	}
 
 	COLORREF color = theme->GetColor("LABEL_BACK");

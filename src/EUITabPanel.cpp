@@ -3,10 +3,10 @@
 #include "EUITabSheet.h"
 
 #ifdef PLATFORM_WIN
-#include "native/win/WinPanel.h"
+#include "native/win/WinTabPanel.h"
 #endif
 #ifdef PLATFORM_WIN_DX11
-#include "native/win_dx11/WinDX11Panel.h"
+#include "native/win_dx11/WinDX11TabPanel.h"
 #endif
 
 EUITabPanel::EUITabPanel(EUIWidget* prnt, int set_x, int set_y, int set_w, int set_h) : EUIWidget(prnt, "")
@@ -17,10 +17,10 @@ EUITabPanel::EUITabPanel(EUIWidget* prnt, int set_x, int set_y, int set_w, int s
 	height = set_h;
 
 #ifdef PLATFORM_WIN
-	nativeWidget = new WinPanel(this);
+	nativeWidget = new WinTabPanel(this);
 #endif
 #ifdef PLATFORM_WIN_DX11
-	nativeWidget = new WinDX11Panel(this);
+	nativeWidget = new WinDX11TabPanel(this);
 #endif
 }
 
@@ -37,10 +37,7 @@ EUITabSheet* EUITabPanel::AddTab(const char* txt)
 {
 	EUITabSheet* sheet = new EUITabSheet(this, txt);
 
-	if (childs.size() == 1)
-	{
-		sheet->Show(true);
-	}
+	sheet->Show(childs.size() == 1);
 
 	return sheet;
 }
@@ -58,9 +55,11 @@ int EUITabPanel::GetCurrentTabIndex()
 void EUITabPanel::DeleteTab(int index)
 {
 	Native()->DeleteTab(index);
+	DelChild(childs[index]);
 }
 
 void EUITabPanel::ClearTabs()
 {
 	Native()->ClearTabs();
+	DeleteChilds();
 }

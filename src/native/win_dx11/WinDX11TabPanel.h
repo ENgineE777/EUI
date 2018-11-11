@@ -11,12 +11,15 @@ class WinDX11TabPanel : public NativeTabPanel
 {
 	friend class WinDX11TabSheet;
 	
-	void AddTab(const char* txt, HWND hnd);
+	void AddTab(const char* txt);
 	void SetTabName(int index, const char* name);
 	void ShowTab(int index, bool show);
 	void SetCurrentTab(int index);
 
-	int curTab;
+	int howeredTab = -1;
+	int curTab = -1;
+
+	std::vector<std::string> tab_names;
 
 public:
 
@@ -25,10 +28,15 @@ public:
 
 	EUITabPanel* Owner();
 
+	void Draw() override;
 	void Resize() override;
 
 	int  GetCurrentTabIndex() override;
 	void DeleteTab(int index) override;
 	void ClearTabs() override;
+
+	void OnMouseMove(int ms_x, int ms_y) override;
+	void OnMouseLeave() override;
+	void OnLeftMouseUp(int ms_x, int ms_y) override;
 };
 #endif

@@ -6,16 +6,6 @@
 
 WinDX11TabPanel::WinDX11TabPanel(EUIWidget* owner) : NativeTabPanel(owner)
 {
-	/*handle = CreateWindow(WC_TABCONTROL, "", WS_CHILD | WS_VISIBLE,
-	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
-	win_id++;
-
-	MakeSubClassing();
-
-	SendMessage(handle, WM_SETFONT, (WPARAM)theme->GetFont("FONT_NORMAL"), MAKELPARAM(TRUE, 0));*/
-
-	curTab = -1;
 }
 
 WinDX11TabPanel::~WinDX11TabPanel()
@@ -27,49 +17,52 @@ EUITabPanel* WinDX11TabPanel::Owner()
 	return (EUITabPanel*)owner;
 }
 
-/*
-bool WinTabPanel::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
+void WinDX11TabPanel::Draw()
 {
-	NativeTabPanel::ProcessWidget(msg, wParam, lParam);
+	int capption_height = 27;
 
-	if (msg == WM_NOTIFY)
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->Draw("TabPanelLine", global_x + owner->x, global_y + owner->y + capption_height - 6, owner->width, 6);
+
+	for (int i = 0; i < (int)owner->childs.size(); i++)
 	{
-		if (((LPNMHDR)lParam)->code == TCN_SELCHANGE)
-		{
-			SetCurrentTab(TabCtrl_GetCurSel(handle));
+		const char* elem = (i == curTab) ? "TabPanelCaptionActive" : "TabPanelCaption";
 
-			if (Owner()->listener)
-			{
-				Owner()->listener->OnTabChange(Owner(), curTab);
-			}
+		if (i == howeredTab)
+		{
+			elem = (i == curTab || mouse_pressed) ? "TabPanelCaptionActiveSelected" : "TabPanelCaptionSelected";
 		}
+
+		theme->Draw(elem, global_x + owner->x + 3 + 50 * i, global_y + owner->y, 48, capption_height);
+		theme->SetClampBorder(global_x + owner->x + 3 + 50 * i, global_y + owner->y, 48, capption_height);
+		theme->font.Print(global_x + owner->x + 3 + 50 * i + theme->font.CalcOffset(tab_names[i].c_str(), 48), global_y + owner->y + 7, nullptr, tab_names[i].c_str());
+		theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 	}
 
-	return true;
-}*/
+	theme->Draw("TabPanelSheet", global_x + owner->x, global_y + owner->y + capption_height, owner->width, owner->height - capption_height);
+
+	NativeTabPanel::Draw();
+}
 
 void WinDX11TabPanel::Resize()
 {
 	for (int i = 0; i < (int)owner->childs.size(); i++)
 	{
-		owner->childs[i]->SetSize(Owner()->width - 12, Owner()->height - 30);
+		owner->childs[i]->SetPos(4, 31);
+		owner->childs[i]->SetSize(Owner()->width - 8, Owner()->height - 35);
 	}
 
 	NativeTabPanel::Resize();
 }
 
-void WinDX11TabPanel::AddTab(const char* txt, HWND hnd)
+void WinDX11TabPanel::AddTab(const char* txt)
 {
-	/*if (owner->childs.size() == 1)
+	if (owner->childs.size() == 1)
 	{
 		curTab = 0;
 	}
 
-	TCITEM tie; 
-	tie.mask = TCIF_TEXT; 
-	tie.iImage = -1; 
-	tie.pszText = (LPSTR)txt;
-	TabCtrl_InsertItem(handle, owner->childs.size()-1, &tie);*/
+	tab_names.push_back(txt);
 }
 
 int WinDX11TabPanel::GetCurrentTabIndex()
@@ -79,60 +72,70 @@ int WinDX11TabPanel::GetCurrentTabIndex()
 
 void WinDX11TabPanel::DeleteTab(int index)
 {
-	/*if (index < 0 || index >= (int)owner->childs.size())
-	{
-		return;
-	}
-
-	//TODO:
-	//need delete child
-	owner->childs.erase(owner->childs.begin() + index);
-	TabCtrl_DeleteItem(handle, index);*/
+	tab_names.erase(tab_names.begin() + index);
 }
 
 void WinDX11TabPanel::ClearTabs()
 {
-	//TODO:
-	//need delete childs
-
-	owner->childs.clear();
+	tab_names.clear();
 
 	curTab = -1;
-	//TabCtrl_DeleteAllItems(handle);
 }
 
 void WinDX11TabPanel::SetTabName(int index, const char* name)
 {
-	/*if (index < (int)owner->childs.size())
-	{
-		TCITEM tie; 
-		tie.mask = TCIF_TEXT; 
-		tie.iImage = -1; 
-		tie.pszText = (LPSTR)name;
-		TabCtrl_SetItem(handle, index, &tie);
-	}*/
+	tab_names[index] = name;
 }
 
 void WinDX11TabPanel::SetCurrentTab(int index)
 {
-	/*if (index >= 0)
-	{
-		if (curTab == index || index < 0 || index >= (int)owner->childs.size())
-		{
-			return;
-		}
-
-		TabCtrl_SetCurSel(handle,index);
-		ShowTab(curTab, false);
-		curTab = index;
-		ShowTab(curTab, true);
-	}*/
+	ShowTab(curTab, false);
+	curTab = index;
+	ShowTab(curTab, true);
 }
 
 void WinDX11TabPanel::ShowTab(int index, bool show)
 {
-	//if (index<0 || index>= (int)owner->childs.size()) return;
-
-	//owner->childs[index]->Show(show);
+	owner->childs[index]->Show(show);
 }
+
+void WinDX11TabPanel::OnMouseMove(int ms_x, int ms_y)
+{
+	howeredTab = -1;
+
+	if (0 < ms_y && ms_y < 27)
+	{
+		for (int i = 0; i < (int)owner->childs.size(); i++)
+		{
+			if (3 + 50 * i < ms_x && ms_x < 3 + 50 * i + 48)
+			{
+				howeredTab = i;
+			}
+		}
+	}
+
+	NativeTabPanel::OnMouseMove(ms_x, ms_y);
+}
+
+void WinDX11TabPanel::OnMouseLeave()
+{
+	howeredTab = -1;
+	NativeTabPanel::OnMouseLeave();
+}
+
+void WinDX11TabPanel::OnLeftMouseUp(int ms_x, int ms_y)
+{
+	if (howeredTab != -1)
+	{
+		SetCurrentTab(howeredTab);
+
+		if (Owner()->listener)
+		{
+			Owner()->listener->OnTabChange(Owner(), curTab);
+		}
+	}
+
+	NativeTabPanel::OnLeftMouseUp(ms_x, ms_y);
+}
+
 #endif

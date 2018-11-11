@@ -43,8 +43,27 @@ NativeCategories* EUICategories::Native()
 	return (NativeCategories*)nativeWidget;
 }
 
+void EUICategories::AddChild(EUIWidget* child)
+{
+	childs.push_back(child);
+
+	if (childs.size() > 1)
+	{
+		int index = (int)childs.size() - 1;
+
+		EUIWidget* tmp = childs[index];
+		childs[index] = childs[index - 1];
+		childs[index - 1] = tmp;
+	}
+}
+
 void EUICategories::OnChildShow(int index, bool set)
 {
+	if (index == (int)childs.size() - 1)
+	{
+		return;
+	}
+
 	if (!allowCallOnChildShow)
 	{
 		return;
@@ -65,6 +84,7 @@ void EUICategories::OnChildShow(int index, bool set)
 	}
 
 	Native()->UpdateChildPos();
+	Native()->CalcThumb();
 }
 
 void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
@@ -85,7 +105,7 @@ void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
 		categories.push_back(Category());
 		category = &categories[categories.size() - 1];
 		strcpy(category->name, name);
-		category->y = ((float)categories.size() - 1.0f) * 25.0f;
+		category->y = ((int)categories.size() - 1) * 25;
 		category->opened = true;
 	}
 	

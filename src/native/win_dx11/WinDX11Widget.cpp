@@ -1,10 +1,10 @@
 
 #include "EUIWidget.h"
 #include "WinDX11Widget.h"
+#include "EUIWindow.h"
+#include "WinDX11Window.h"
 
 #ifdef PLATFORM_WIN_DX11
-
-WinDX11Widget* WinDX11Widget::mouse_over = nullptr;
 
 WinDX11Widget::WinDX11Widget(EUIWidget* set_owner) : NativeWidget(set_owner)
 {
@@ -12,42 +12,35 @@ WinDX11Widget::WinDX11Widget(EUIWidget* set_owner) : NativeWidget(set_owner)
 
 WinDX11Widget::~WinDX11Widget()
 {
-    //DestroyWindow(handle);
 }
 
 void* WinDX11Widget::GetNative()
 {
-	return nullptr;
+	return &((WinDX11Window*)owner->GetRoot()->nativeWidget)->handle;
 }
 
 void WinDX11Widget::Show(bool set)
 {
-	/*ShowWindow(handle, set);
-
 	if (set)
 	{
-		Redraw();
-	}*/
+		CalcGlopalPos();
+	}
 }
 
 void WinDX11Widget::Enable(bool set)
 {
-	//EnableWindow(handle, set);
 }
 
 void WinDX11Widget::SetPos(int set_x, int set_y)
 {
-	//SetWindowPos(handle, 0, set_x, set_y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 void WinDX11Widget::SetSize(int w, int h)
 {
-	//SetWindowPos(handle, 0, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 void WinDX11Widget::SetText(const char* txt)
 {
-	//CreateTooltip();
 }
 
 void WinDX11Widget::Release()
@@ -57,20 +50,34 @@ void WinDX11Widget::Release()
 
 void WinDX11Widget::Draw()
 {
-	for (auto child : owner->childs)
+	for (auto widget : owner->childs)
 	{
-		((WinDX11Widget*)child->nativeWidget)->Draw();
+		if (widget->IsVisible())
+		{
+			WinDX11Widget* nativeWidget = (WinDX11Widget*)widget->nativeWidget;
+
+			if (nativeWidget->global_y + nativeWidget->owner->y + nativeWidget->owner->height < global_y + owner->y)
+			{
+				continue;
+			}
+
+			if (global_y + owner->y + owner->height < nativeWidget->global_y + nativeWidget->owner->y)
+			{
+				continue;
+			}
+
+			nativeWidget->Draw();
+		}
 	}
 }
 
 void WinDX11Widget::Redraw()
 {
-	//InvalidateRect(handle, NULL, true);
 }
 
 void WinDX11Widget::CaptureMouse()
 {
-	//SetCapture(handle);
+	SetCapture(((WinDX11Window*)owner->GetRoot()->nativeWidget)->handle);
 }
 
 void WinDX11Widget::ReleaseMouse()
@@ -93,83 +100,128 @@ void WinDX11Widget::Resize()
 
 void WinDX11Widget::NotifyMouseOver()
 {
-	if (mouse_over != this)
-	{
-		if (mouse_over) mouse_over->OnMouseLeave();
-		mouse_over = this;
-	}
+	is_howered = true;
 }
 
 void WinDX11Widget::OnMouseLeave()
 {
+	is_howered = false;
+}
+
+void WinDX11Widget::OnFocusLost()
+{
+	is_focused = false;
 }
 
 void WinDX11Widget::SetFocused()
 {
-	//SetFocus(handle);
+	WinDX11Widget* root = (WinDX11Widget*)owner->GetRoot()->nativeWidget;
+
+	if (root->focused_widget && root->focused_widget != this)
+	{
+		root->focused_widget->OnFocusLost();
+	}
+	
+	is_focused = true;
+	root->focused_widget = this;
 }
 
 bool WinDX11Widget::IsFocused()
 {
-	return false;// (GetFocus() == handle);
-}
-
-bool WinDX11Widget::IsHoveredByMouse()
-{
-	/*POINT point;
-
-	if (GetCursorPos(&point))
-	{
-		RECT rect;
-		GetWindowRect(handle, &rect);
-
-		return PtInRect(&rect, point) ? true : false;
-	}*/
-
-	return false;
-}
-
-WinDX11Widget* WinDX11Widget::GetHoveredWidget()
-{
-	if (!IsHoveredByMouse())
-	{
-		return nullptr;
-	}
-
-	for (auto child : owner->childs)
-	{
-		WinDX11Widget* res = ((WinDX11Widget*)child->nativeWidget)->GetHoveredWidget();
-		
-		if (res)
-		{
-			return res;
-		}
-	}
-
-	return this;
+	return is_focused;
 }
 
 void WinDX11Widget::GetMousePos(int& x, int& y)
 {
-	/*POINT point;
+	WinDX11Window* root = (WinDX11Window*)owner->GetRoot()->nativeWidget;
 
-	if (GetCursorPos(&point))
-	{
-		RECT rect;
-		GetWindowRect(handle, &rect);
-
-		x = point.x - rect.left;
-		y = point.y - rect.top;
-	}
-	else
-	{
-		x = 0;
-		y = 0;
-	}*/
+	x = root->ms_x - (global_x + owner->x);
+	y = root->ms_y - (global_y + owner->y);
 }
 
 bool WinDX11Widget::IsTreeView()
 {
 	return false;
 }
+
+void WinDX11Widget::OnKeyDown(int key)
+{
+	if (owner->listener)
+	{
+		owner->listener->OnKey(owner, key);
+	}
+}
+
+void WinDX11Widget::OnTimer()
+{
+
+}
+
+bool WinDX11Widget::IsHitted(int ms_x, int ms_y)
+{
+	if (global_x + owner->x < ms_x && ms_x < global_x + owner->x + owner->width &&
+		global_y + owner->y < ms_y && ms_y < global_y + owner->y + owner->height)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void WinDX11Widget::OnMouseMove(int ms_x, int ms_y)
+{
+	if (owner->listener)
+	{
+		owner->listener->OnMouseMove(owner, ms_x, ms_y);
+	}
+}
+
+void WinDX11Widget::OnLeftMouseDown(int ms_x, int ms_y)
+{
+	mouse_pressed = true;
+
+	if (owner->listener)
+	{
+		owner->listener->OnLeftMouseDown(owner, ms_x, ms_y);
+	}
+}
+
+void WinDX11Widget::OnLeftMouseUp(int ms_x, int ms_y)
+{
+	mouse_pressed = false;
+
+	if (owner->listener)
+	{
+		owner->listener->OnLeftMouseUp(owner, ms_x, ms_y);
+	}
+}
+
+void WinDX11Widget::OnRightMouseUp(int ms_x, int ms_y)
+{
+	if (owner->listener)
+	{
+		owner->listener->OnRightMouseUp(owner, ms_x, ms_y);
+	}
+}
+
+void WinDX11Widget::CalcGlopalPos()
+{
+	if (!owner->parent || (owner->parent && !owner->parent->parent))
+	{
+		global_x = 0;
+		global_y = 0;
+	}
+	else
+	{
+		WinDX11Widget* prnt = (WinDX11Widget*)owner->parent->nativeWidget;
+		global_x = prnt->global_x + prnt->owner->x;
+		global_y = prnt->global_y + prnt->owner->y;
+	}
+
+	for (int i = 0; i<(int)owner->childs.size(); i++)
+	{
+		((WinDX11Widget*)owner->childs[i]->nativeWidget)->CalcGlopalPos();
+	}
+}
+
 #endif

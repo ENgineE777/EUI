@@ -6,6 +6,17 @@
 #include "CommCtrl.h"
 #include "TCHAR.H"
 
+#include "ui_vs.h"
+#include "ui_ps.h"
+
+#define STBI_NO_GIF
+#define STBI_NO_HDR
+#define STBI_NO_PIC
+#define STBI_NO_PNM
+
+
+#include "stb/stb_image.h"
+
 WinDX11Theme* theme = nullptr;
 
 WinDX11Theme::WinDX11Theme() : EUITheme()
@@ -14,70 +25,36 @@ WinDX11Theme::WinDX11Theme() : EUITheme()
 	LoadLibrary("msimg32.dll");
 }
 
-void WinDX11Theme::LoadColors(JSONParser* reader)
+void WinDX11Theme::ReadTheme(JSONParser& parser)
 {
-	while (reader->EnterBlock("colors"))
+	parser.Read("CATEGORY_HEIGHT", categoryHeight);
+
+	while (parser.EnterBlock("Elems"))
 	{
 		char name[128];
+		parser.Read("name", name, 128);
 
-		reader->Read("name", name, 128);
+		Elem& elem = elems[name];
 
-		Color& clr = colors[name];
+		parser.Read("u", elem.u);
+		parser.Read("v", elem.v);
+		parser.Read("du", elem.du);
+		parser.Read("dv", elem.dv);
+		parser.Read("offset_u", elem.offset_u);
+		parser.Read("offset_v", elem.offset_v);
 
-		clr.color = ReadColor(reader, "color");
-
-		reader->LeaveBlock();
+		parser.LeaveBlock();
 	}
-}
 
-void WinDX11Theme::LoadFonts(JSONParser* reader)
-{
-	LOGFONT lf = { 0 };
-	::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
-
-	while (reader->EnterBlock("fonts"))
-	{
-		char name[128];
-
-		reader->Read("name", name, 128);
-
-		Font& fnt = fonts[name];
-
-		fnt.logFont = lf;
-
-		reader->Read("font", fnt.logFont.lfFaceName, 32);
-
-		int height;
-		reader->Read("height", height);
-		fnt.logFont.lfHeight = -height;
-
-		bool val = false;
-
-		if (reader->Read("bold", val) && val)
-		{
-			fnt.logFont.lfWeight += FW_BOLD;
-		}
-
-		if (reader->Read("underline", val))
-		{
-			fnt.logFont.lfUnderline = val;
-		}
-
-		reader->LeaveBlock();
-	}
-}
-
-void WinDX11Theme::LoadCursors(JSONParser* reader)
-{
 	cursors[""] = LoadCursor(NULL, IDC_ARROW);
 
-	while (reader->EnterBlock("cursors"))
+	while (parser.EnterBlock("cursors"))
 	{
 		char name[128];
-		reader->Read("name", name, 128);
+		parser.Read("name", name, 128);
 
 		char filename[128];
-		reader->Read("filename", filename, 128);
+		parser.Read("filename", filename, 128);
 
 		char path[512];
 		strcpy(path, themePath);
@@ -85,117 +62,257 @@ void WinDX11Theme::LoadCursors(JSONParser* reader)
 
 		cursors[name] = (HCURSOR)LoadImage(0, path, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);;
 
-		reader->LeaveBlock();
+		parser.LeaveBlock();
+	}
+
+	UINT createDeviceFlags = 0;
+#ifdef _DEBUG
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+	D3D_DRIVER_TYPE driverTypes[] =
+	{
+		D3D_DRIVER_TYPE_HARDWARE,
+		D3D_DRIVER_TYPE_WARP,
+		D3D_DRIVER_TYPE_REFERENCE,
+	};
+	UINT numDriverTypes = ARRAYSIZE(driverTypes);
+
+	D3D_FEATURE_LEVEL featureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0,
+	};
+	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
+
+	D3D_DRIVER_TYPE   driverType;
+	D3D_FEATURE_LEVEL featureLevel;
+	HRESULT hr;
+
+	CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&factory));
+
+	for (UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++)
+	{
+		driverType = driverTypes[driverTypeIndex];
+		hr = D3D11CreateDevice(NULL, driverType, NULL, createDeviceFlags, featureLevels, numFeatureLevels,
+			D3D11_SDK_VERSION, &pd3dDevice, &featureLevel, &immediateContext);
+
+		if (SUCCEEDED(hr))
+		{
+			break;
+		}
+	}
+
+	float v[] = { 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f };
+
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof(v);
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	pd3dDevice->CreateBuffer(&bd, NULL, &buffer);
+
+	D3D11_MAPPED_SUBRESOURCE res;
+	immediateContext->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+
+	memcpy(res.pData, v, sizeof(v));
+
+	immediateContext->Unmap(buffer, 0);
+
+	hr = pd3dDevice->CreateVertexShader(g_VS, sizeof(g_VS), nullptr, &vshader);
+	hr = pd3dDevice->CreatePixelShader(g_PS, sizeof(g_PS), nullptr, &pshader);
+
+	D3D11_INPUT_ELEMENT_DESC elementDesc;
+
+	elementDesc.SemanticIndex = 0;
+	elementDesc.InputSlot = 0;
+	elementDesc.AlignedByteOffset = 0;
+	elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	elementDesc.InstanceDataStepRate = 0;
+	elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+	elementDesc.SemanticName = "POSITION";
+
+	hr = pd3dDevice->CreateInputLayout(&elementDesc, 1, g_VS, sizeof(g_VS), &layout);
+
+	immediateContext->VSSetShader(vshader, 0, 0);
+	immediateContext->PSSetShader(pshader, 0, 0);
+
+	immediateContext->IASetInputLayout(layout);
+
+	ZeroMemory(&bd, sizeof(bd));
+
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = 128 * MaxInstCount;
+	bd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	bd.StructureByteStride = 128;
+
+	pd3dDevice->CreateBuffer(&bd, NULL, &struct_buffer);
+
+	{
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		ZeroMemory(&srvDesc, sizeof(srvDesc));
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		srvDesc.Buffer.ElementWidth = MaxInstCount;
+		pd3dDevice->CreateShaderResourceView(struct_buffer, &srvDesc, &sbuffer_srview);
+	}
+
+	std::string tex_name;
+	parser.Read("SKIN_TEXTURE", tex_name);
+
+	uint32_t tex_size = 0;
+	uint8_t* tex_buffer = LoadFile(tex_name.c_str(), tex_size);
+
+	int bytes;
+	int width;
+	int height;
+	uint8_t* data = stbi_load_from_memory(tex_buffer, tex_size, &width, &height, &bytes, STBI_rgb_alpha);
+
+	D3D11_TEXTURE2D_DESC desc;
+
+	desc.Width = width;
+	desc.Height = height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+
+	desc.Usage = D3D11_USAGE_DEFAULT;
+
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	pd3dDevice->CreateTexture2D(&desc, NULL, &texture);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+
+	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	pd3dDevice->CreateShaderResourceView(texture, &srvDesc, &srview);
+
+	UINT index = D3D11CalcSubresource(0, 0, 1);
+	immediateContext->UpdateSubresource(texture, index, nullptr, data, width * 4, 0);
+
+	free(data);
+	free(tex_buffer);
+
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	pd3dDevice->CreateSamplerState(&sampDesc, &sampler);
+
+	{
+		std::string font_name;
+		parser.Read("FONT_FILENAME", font_name);
+
+		int font_height = 0;
+		parser.Read("FONT_HEIGHT", font_height);
+
+		uint32_t font_size = 0;
+		uint8_t* font_buffer = LoadFile(font_name.c_str(), tex_size);
+		font.Load(font_buffer, font_height);
 	}
 }
 
-COLORREF WinDX11Theme::ReadColor(JSONParser* reader, const char* name)
+void* WinDX11Theme::GetRenderDevice()
 {
-	COLORREF color = RGB(0, 0, 0);
-
-	if (reader->EnterBlock("color"))
-	{
-		int r, g, b;
-		reader->Read("R", r);
-		reader->Read("G", g);
-		reader->Read("B", b);
-
-		color = RGB(r, g, b);
-		reader->LeaveBlock();
-	}
-
-	return color;
+	return pd3dDevice;
 }
 
-void WinDX11Theme::ReadTheme(const char* name)
+void WinDX11Theme::SetOutputWnd(WindowData& data, HWND hwnd, int wgt, int hgt)
 {
-	EUITheme::ReadTheme(name);
-
-	int elements[2] = { COLOR_HIGHLIGHT, COLOR_HIGHLIGHTTEXT };
-	DWORD newColors[2];
-
-	for (int i = 0; i < 2; i++)
+	if (data.depthStencilView)
 	{
-		prevColors[i] = GetSysColor(elements[i]);
+		data.depthStencilView->Release();
 	}
 
-	newColors[0] = GetColor(fontBackSeleceted);
-	newColors[1] = GetColor(fontSelecetd);
+	if (data.depthStencil)
+	{
+		data.depthStencil->Release();
+	}
 
-	SetSysColors(2, elements, newColors);
+	if (data.renderTargetView)
+	{
+		data.renderTargetView->Release();
+	}
 
+	if (data.swapChain)
+	{
+		data.swapChain->Release();
+	}
+
+	DXGI_SWAP_CHAIN_DESC sd;
+	ZeroMemory(&sd, sizeof(sd));
+	sd.BufferCount = 1;
+	sd.BufferDesc.Width = wgt;
+	sd.BufferDesc.Height = hgt;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.OutputWindow = hwnd;
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
+	sd.Windowed = TRUE;
+
+	factory->CreateSwapChain(pd3dDevice, &sd, &data.swapChain);
+
+	ID3D11Texture2D* pBackBuffer = NULL;
+	HRESULT hr = data.swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+
+	hr = pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &data.renderTargetView);
+	pBackBuffer->Release();
+
+	if (FAILED(hr))
+	{
+		return;
+	}
+
+	D3D11_TEXTURE2D_DESC descDepth;
+	ZeroMemory(&descDepth, sizeof(descDepth));
+	descDepth.Width = wgt;
+	descDepth.Height = hgt;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+	hr = pd3dDevice->CreateTexture2D(&descDepth, NULL, &data.depthStencil);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+	ZeroMemory(&descDSV, sizeof(descDSV));
+	descDSV.Format = descDepth.Format;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+	hr = pd3dDevice->CreateDepthStencilView(data.depthStencil, &descDSV, &data.depthStencilView);
 }
 
 void WinDX11Theme::Ulnload()
 {
-	int elements[3] = { COLOR_HIGHLIGHT, COLOR_HIGHLIGHTTEXT };
-
-	SetSysColors(2, elements, prevColors);
-}
-
-HPEN WinDX11Theme::GetPen(const char* color)
-{
-	if (colors.find(color) == colors.end())
-	{
-		return NULL;
-	}
-
-	Color& clr = colors[color];
-
-	if (clr.pen == NULL)
-	{
-		clr.pen = ::CreatePen(PS_SOLID, 1, clr.color);
-	}
-
-	return clr.pen;
-}
-
-HFONT WinDX11Theme::GetFont(const char* font)
-{
-	if (fonts.find(font) == fonts.end())
-	{
-		return NULL;
-	}
-
-	Font& fnt = fonts[font];
-
-	if (fnt.font == NULL)
-	{
-		fnt.font = ::CreateFontIndirect(&fnt.logFont);
-	}
-
-	return fnt.font;
-}
-
-HBRUSH WinDX11Theme::GetBrush(const char* color)
-{
-	if (colors.find(color) == colors.end())
-	{
-		return NULL;
-	}
-
-	Color& clr = colors[color];
-
-	if (clr.brush == NULL)
-	{
-		clr.brush = ::CreateSolidBrush(clr.color);
-	}
-
-	return clr.brush;
-}
-
-HBITMAP WinDX11Theme::GetImage(const char* image)
-{
-	if (images.find(image) != images.end())
-	{
-		char imagePath[512];
-		strcpy(imagePath, themePath);
-		strcat(imagePath, image);
-
-		images[image] = (HBITMAP)LoadImage(0, imagePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	}
-
-	return images[image];
 }
 
 HCURSOR WinDX11Theme::GetCursor(const char* name)
@@ -203,536 +320,292 @@ HCURSOR WinDX11Theme::GetCursor(const char* name)
 	return cursors[name];
 }
 
-TEXTMETRIC& WinDX11Theme::GetFontInfo(HDC hdc, const char* font)
+void WinDX11Theme::SetClampBorder(int x, int y, int w, int h)
 {
-	if (fonts.find(font) == fonts.end())
+	clamp_x = x;
+	clamp_y = y;
+	clamp_x2 = x + w;
+	clamp_y2 = y + h;
+}
+
+void WinDX11Theme::SetScreenSize(WindowData& data, int set_scr_width, int set_scr_height)
+{
+	scr_width = set_scr_width;
+	scr_height = set_scr_height;
+
+	float color[4] = { 0.75f, 1.0f, 0.25f, 1.0f };
+	//immediateContext->ClearRenderTargetView(data.renderTargetView, color);
+
+	immediateContext->OMSetRenderTargets(1, &data.renderTargetView, nullptr);
+
 	{
-		return fonts.begin()->second.textMetrics;
+		D3D11_VIEWPORT vp;
+		vp.Width = (float)scr_width;
+		vp.Height = (float)scr_height;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0.0f;
+		vp.TopLeftY = 0.0f;
+
+		immediateContext->RSSetViewports(1, &vp);
 	}
 
-	Font& fnt = fonts[font];
+	immediateContext->VSSetShader(vshader, 0, 0);
+	immediateContext->PSSetShader(pshader, 0, 0);
 
-	if (fnt.textMetrics.tmHeight == 0)
+	immediateContext->IASetInputLayout(layout);
+
+	immediateContext->PSSetSamplers(0, 1, &sampler);
+	immediateContext->PSSetSamplers(1, 1, &sampler);
+	immediateContext->PSSetSamplers(2, 1, &sampler);
+
+	immediateContext->PSSetShaderResources(0, 1, &srview);
+	immediateContext->PSSetShaderResources(1, 1, &font.srview);
+
+	immediateContext->VSSetShaderResources(0, 1, &sbuffer_srview);
+
+	Start();
+
+	unsigned int stride = 4 * 2;
+	unsigned int offset = 0;
+	immediateContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+}
+
+bool WinDX11Theme::ClampRect(Params* param)
+{
+	if (clamp_x > param->x + param->width)
 	{
-		HFONT hOldFont = (HFONT) ::SelectObject(hdc, GetFont(font));
-		::GetTextMetrics(hdc, &fnt.textMetrics);
-		::SelectObject(hdc, hOldFont);
+		return false;
 	}
 
-	return fnt.textMetrics;
-}
-
-COLORREF WinDX11Theme::GetColor(const char* color)
-{
-	if (colors.find(color) == colors.end())
+	if (param->x  > clamp_x2)
 	{
-		return RGB(0, 0, 0);
+		return false;
 	}
 
-	Color& clr = colors[color];
-
-	return clr.color;
-}
-
-void WinDX11Theme::DrawRect(HDC hDC, RECT rcItem, const char* Color)
-{
-	DrawRect(hDC, rcItem, GetColor(Color));
-}
-
-void WinDX11Theme::DrawRect(HDC hDC, RECT rcItem, COLORREF clrFill)
-{
-	::SetBkColor(hDC, clrFill);
-	::ExtTextOut(hDC, 0, 0, ETO_OPAQUE, &rcItem, NULL, 0, NULL);
-}
-
-void WinDX11Theme::DrawFrame(HDC hDC, RECT rc, const char* light, const char* dark, const char* back)
-{
-	if (back)
+	if (clamp_y > param->y + param->height)
 	{
-		DrawRect(hDC, rc, back);
+		return false;
 	}
 
-	POINT ptTemp;
-	::SelectObject(hDC, GetPen(light));
-	::MoveToEx(hDC, rc.left, rc.bottom - 1, &ptTemp);
-	::LineTo(hDC, rc.left, rc.top);
-	::LineTo(hDC, rc.right - 1, rc.top);
-	::SelectObject(hDC, GetPen(dark));
-	::LineTo(hDC, rc.right - 1, rc.bottom - 1);
-	::LineTo(hDC, rc.left, rc.bottom - 1);
-}
-
-void WinDX11Theme::DrawImage(HDC hDC, RECT rc, const char* image)
-{
-	HDC memDC = CreateCompatibleDC(hDC);
-
-	SelectObject(memDC, GetImage(image));
-
-	BitBlt(hDC, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, memDC, 0, 0, SRCCOPY);
-
-	DeleteDC(memDC);
-}
-
-void WinDX11Theme::DrawGradient(HDC hDC, RECT rc, COLORREF clrFirst, COLORREF clrSecond, bool bVertical, int nSteps)
-{
-	typedef BOOL(WINAPI *PGradientFill)(HDC, PTRIVERTEX, ULONG, PVOID, ULONG, ULONG);
-	static PGradientFill lpGradientFill = (PGradientFill) ::GetProcAddress(::GetModuleHandle("msimg32.dll"), "GradientFill");
-	if (lpGradientFill != NULL)
+	if (param->y  > clamp_y2 + param->height)
 	{
-		TRIVERTEX triv[2] =
+		return false;
+	}
+
+	if (clamp_x > param->x)
+	{
+		float k = (clamp_x - param->x) / param->width;
+		param->width *= (1.0f - k);
+		param->x = (float)clamp_x;
+
+		param->u += param->du * k;
+		param->du *= (1.0f - k);
+	}
+
+	if (param->x + param->width > clamp_x2)
+	{
+		float k = (clamp_x2 - param->x) / param->width;
+		param->width *= k;
+
+		param->du *= k;
+	}
+
+	if (clamp_y > param->y)
+	{
+		float k = (clamp_y - param->y) / param->height;
+		param->height *= (1.0f - k);
+		param->y = (float)clamp_y;
+
+		param->v += param->dv * k;
+		param->dv *= (1.0f - k);
+	}
+
+	if (param->y + param->height > clamp_y2)
+	{
+		float k = (clamp_y2 - param->y) / param->height;
+		param->height *= k;
+
+		param->dv *= k;
+	}
+
+	return true;
+}
+
+void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int height)
+{
+	if (elems.count(elem_name) == 0)
+	{
+		return;
+	}
+
+	Elem& elem = elems[elem_name];
+
+	if (elem.offset_u == -1 && elem.offset_v == -1)
+	{
+		data_buffer->x = (float)x;
+		data_buffer->y = (float)y;
+
+		data_buffer->width = (float)width;
+		data_buffer->height = (float)height;
+
+		data_buffer->u = elem.u / 512.0f;
+		data_buffer->v = elem.v / 256.0f;
+
+		data_buffer->du = elem.du / 512.0f;
+		data_buffer->dv = elem.dv / 256.0f;
+
+		data_buffer->scr_width = (float)scr_width;
+		data_buffer->scr_height = (float)scr_height;
+
+		data_buffer->texture = 0;
+
+		data_buffer->r = data_buffer->g = data_buffer->b = data_buffer->a = 1.0f;
+
+		if (ClampRect(data_buffer))
 		{
-			{ rc.left, rc.top, (COLOR16)(GetRValue(clrFirst) << 8), (COLOR16)(GetGValue(clrFirst) << 8), (COLOR16)(GetBValue(clrFirst) << 8), (COLOR16)0xFF00 },
-			{ rc.right, rc.bottom, (COLOR16)(GetRValue(clrSecond) << 8), (COLOR16)(GetGValue(clrSecond) << 8), (COLOR16)(GetBValue(clrSecond) << 8), (COLOR16)0xFF00 }
-		};
-		GRADIENT_RECT grc = { 0, 1 };
-		lpGradientFill(hDC, triv, 2, &grc, 1, bVertical ? GRADIENT_FILL_RECT_V : GRADIENT_FILL_RECT_H);
+			GetNext();
+		}
 	}
 	else
+	if (elem.offset_u != -1 && elem.offset_v == -1)
 	{
-		int nShift = 1;
-		if (nSteps >= 64) nShift = 6;
-		else if (nSteps >= 32) nShift = 5;
-		else if (nSteps >= 16) nShift = 4;
-		else if (nSteps >= 8) nShift = 3;
-		else if (nSteps >= 4) nShift = 2;
-		int nLines = 1 << nShift;
-		for (int i = 0; i < nLines; i++)
+		float xs[] = { 0, elem.offset_u, (float)width - elem.offset_u, (float)width };
+		float ys[] = { 0, (float)height };
+
+		float us[] = { 0, elem.offset_u, elem.du - elem.offset_u, elem.du };
+		float vs[] = { 0, elem.dv };
+
+		for (int j = 0; j < 3; j++)
 		{
-			// Do a little alpha blending
-			BYTE bR = (BYTE)((GetRValue(clrSecond) * (nLines - i) + GetRValue(clrFirst) * i) >> nShift);
-			BYTE bG = (BYTE)((GetGValue(clrSecond) * (nLines - i) + GetGValue(clrFirst) * i) >> nShift);
-			BYTE bB = (BYTE)((GetBValue(clrSecond) * (nLines - i) + GetBValue(clrFirst) * i) >> nShift);
-			// ... then paint with the resulting color
-			HBRUSH hBrush = ::CreateSolidBrush(RGB(bR, bG, bB));
-			RECT r2 = rc;
-			if (bVertical) {
-				r2.bottom = rc.bottom - ((i * (rc.bottom - rc.top)) >> nShift);
-				r2.top = rc.bottom - (((i + 1) * (rc.bottom - rc.top)) >> nShift);
-				if ((r2.bottom - r2.top) > 0) ::FillRect(hDC, &r2, hBrush);
+			data_buffer->x = (float)x + xs[j];
+			data_buffer->y = (float)y + ys[0];
+
+			data_buffer->width = xs[j + 1] - xs[j];
+			data_buffer->height = ys[1] - ys[0];
+
+			data_buffer->u = (elem.u + us[j]) / 512.0f;
+			data_buffer->v = (elem.v + vs[0]) / 256.0f;
+
+			data_buffer->du = (us[j + 1] - us[j]) / 512.0f;
+			data_buffer->dv = (vs[1] - vs[0]) / 256.0f;
+
+			data_buffer->scr_width = (float)scr_width;
+			data_buffer->scr_height = (float)scr_height;
+
+			data_buffer->texture = 0;
+
+			data_buffer->r = data_buffer->g = data_buffer->b = data_buffer->a = 1.0f;
+
+			if (ClampRect(data_buffer))
+			{
+				GetNext();
 			}
-			else {
-				r2.left = rc.right - (((i + 1) * (rc.right - rc.left)) >> nShift);
-				r2.right = rc.right - ((i * (rc.right - rc.left)) >> nShift);
-				if ((r2.right - r2.left) > 0) ::FillRect(hDC, &r2, hBrush);
-			}
-			::DeleteObject(hBrush);
 		}
 	}
-}
-
-void WinDX11Theme::DrawText(HDC hDC, RECT& rc, LPCTSTR pstrText, const char* iTextColor, const char* iBackColor, UINT uStyle)
-{
-	// The string formatter supports a kind of "mini-html" that consists of various short tags:
-	//
-	//   Link:             <a>text</a>
-	//   Bold:             <b>text</b>
-	//   Color:            <c #xxxxxx>  where x = RGB in hex
-	//                     <c x>        where x = color id
-
-	if (::IsRectEmpty(&rc)) return;
-
-	bool bDraw = (uStyle & DT_CALCRECT) == 0;
-
-	RECT rcClip = { 0 };
-	::GetClipBox(hDC, &rcClip);
-	HRGN hOldRgn = ::CreateRectRgnIndirect(&rcClip);
-	HRGN hRgn = ::CreateRectRgnIndirect(&rc);
-	if (bDraw) ::ExtSelectClipRgn(hDC, hRgn, RGN_AND);
-
-	HFONT hOldFont = (HFONT) ::SelectObject(hDC, GetFont("FONT_NORMAL"));
-	::SetBkMode(hDC, TRANSPARENT);
-	::SetTextColor(hDC, GetColor(iTextColor));
-
-	if ((uStyle & DT_SINGLELINE) != 0 && (uStyle & DT_VCENTER) != 0 && (uStyle & DT_CALCRECT) == 0) {
-		RECT rcText = { 0, 0, 9999, 100 };
-		int nLinks = 0;
-		DrawText(hDC, rcText, pstrText, iTextColor, iBackColor, uStyle | DT_CALCRECT);
-		rc.top = rc.top + ((rc.bottom - rc.top) / 2) - ((rcText.bottom - rcText.top) / 2);
-		rc.bottom = rc.top + (rcText.bottom - rcText.top);
-	}
-	if ((uStyle & DT_SINGLELINE) != 0 && (uStyle & DT_CENTER) != 0 && (uStyle & DT_CALCRECT) == 0) {
-		RECT rcText = { 0, 0, 9999, 100 };
-		int nLinks = 0;
-		DrawText(hDC, rcText, pstrText, iTextColor, iBackColor, uStyle | DT_CALCRECT);
-		::OffsetRect(&rc, (rc.right - rc.left) / 2 - (rcText.right - rcText.left) / 2, 0);
-	}
-	if ((uStyle & DT_SINGLELINE) != 0 && (uStyle & DT_RIGHT) != 0 && (uStyle & DT_CALCRECT) == 0) {
-		RECT rcText = { 0, 0, 9999, 100 };
-		int nLinks = 0;
-		DrawText(hDC, rcText, pstrText, iTextColor, iBackColor, uStyle | DT_CALCRECT);
-		rc.left = rc.right - (rcText.right - rcText.left);
-	}
-
-	if (iBackColor)
+	else
+	if (elem.offset_u != -1 && elem.offset_v != -1)
 	{
-		DrawRect(hDC, rc, iBackColor);
-	}
+		float xs[] = { 0, elem.offset_u, (float)width - elem.offset_u, (float)width};
+		float ys[] = { 0, elem.offset_v, (float)height - elem.offset_v, (float)height };
 
-	POINT ptMouse;
-	GetCursorPos(&ptMouse);
-	
-	TEXTMETRIC tm = GetFontInfo(hDC, "FONT_NORMAL");
-	POINT pt = { rc.left, rc.top };
-	int iLineIndent = 0;
-	int iLinkIndex = 0;
-	int cyLine = tm.tmHeight + tm.tmExternalLeading;
-	int cyMinHeight = 0;
-	POINT ptLinkStart = { 0 };
-	bool bInLink = false;
+		float us[] = { 0, elem.offset_u, elem.du - elem.offset_u, elem.du };
+		float vs[] = { 0, elem.offset_v, elem.dv - elem.offset_v, elem.dv };
 
-	while (*pstrText != '\0')
-	{
-		if (pt.x >= rc.right || *pstrText == '\n')
+		for (int i = 0; i < 3; i++)
 		{
-			if ((uStyle & DT_SINGLELINE) != 0) break;
-			if (*pstrText == '\n') pstrText++;
-			pt.x = rc.left + iLineIndent;
-			pt.y += cyLine - tm.tmDescent;
-			ptLinkStart = pt;
-			cyLine = tm.tmHeight + tm.tmExternalLeading;
-			if (pt.x >= rc.right) break;
-			while (*pstrText == ' ') pstrText++;
-		}
-		else if (*pstrText == '<'
-			&& (pstrText[1] >= 'a' && pstrText[1] <= 'z')
-			&& (pstrText[2] == ' ' || pstrText[2] == '>'))
-		{
-			pstrText++;
-			switch (*pstrText++)
+			for (int j = 0; j < 3; j++)
 			{
-			case 'a':
-			{
-				::SelectObject(hDC, GetFont("FONT_LINK"));
-				tm = GetFontInfo(hDC, "FONT_LINK");
-				cyLine = fmax(cyLine, tm.tmHeight + tm.tmExternalLeading);
-				ptLinkStart = pt;
-				bInLink = true;
-			}
-			break;
-			case 'b':
-			{
-				::SelectObject(hDC, GetFont("FONT_BOLD"));
-				tm = GetFontInfo(hDC, "FONT_BOLD");
-				cyLine = fmax(cyLine, tm.tmHeight + tm.tmExternalLeading);
-			}
-			break;
-			case 'c':
-			{
-				if (*pstrText == ' ') pstrText++;
-				if (*pstrText == '#')
+				data_buffer->x = (float)x + xs[j];
+				data_buffer->y = (float)y + ys[i];
+
+				data_buffer->width = xs[j + 1] - xs[j];
+				data_buffer->height = ys[i + 1] - ys[i];
+
+				data_buffer->u = (elem.u + us[j]) / 512.0f;
+				data_buffer->v = (elem.v + vs[i]) / 256.0f;
+
+				data_buffer->du = (us[j + 1] - us[j]) / 512.0f;
+				data_buffer->dv = (vs[i + 1] - vs[i]) / 256.0f;
+
+				data_buffer->scr_width = (float)scr_width;
+				data_buffer->scr_height = (float)scr_height;
+
+				data_buffer->texture = 0;
+
+				data_buffer->r = data_buffer->g = data_buffer->b = data_buffer->a = 1.0f;
+
+				if (ClampRect(data_buffer))
 				{
-					pstrText++;
-					COLORREF clrColor = _tcstol(pstrText, const_cast<LPTSTR*>(&pstrText), 16);
-					clrColor = RGB(GetBValue(clrColor), GetGValue(clrColor), GetRValue(clrColor));
-					::SetTextColor(hDC, clrColor);
-				}
-				else
-				{
-					//UITYPE_COLOR Color = (UITYPE_COLOR)_tcstol(pstrText, const_cast<LPTSTR*>(&pstrText), 10);
-					//::SetTextColor(hDC, GetColor(Color));
+					GetNext();
 				}
 			}
-			break;
-			}
-			while (*pstrText != '\0' && *pstrText != '>') pstrText++;
-			pstrText++;
-		}
-		else
-		if (*pstrText == '<' && pstrText[1] == '/')
-		{
-			pstrText += 2;
-			switch (*pstrText++)
-			{
-				case 'a':
-					::SelectObject(hDC, GetFont("FONT_NORMAL"));
-					tm = GetFontInfo(hDC, "FONT_NORMAL");
-					bInLink = false;
-				break;
-				case 'f':
-				case 'b':
-					::SelectObject(hDC, GetFont("FONT_NORMAL"));
-					tm = GetFontInfo(hDC, "FONT_NORMAL");
-				break;
-				case 'c':
-					::SetTextColor(hDC, GetColor(iTextColor));
-				break;
-			}
-			while (*pstrText != '\0' && *pstrText != '>') pstrText++;
-			pstrText++;
-		}
-		else
-		if (*pstrText == '&')
-		{
-			if ((uStyle & DT_NOPREFIX) == 0)
-			{
-				::TextOut(hDC, pt.x, pt.y, "_", 1);
-			}
-			else
-			{
-				SIZE szChar = { 0 };
-				::GetTextExtentPoint32(hDC, "&", 1, &szChar);
-				if (bDraw) ::TextOut(hDC, pt.x, pt.y, "&", 1);
-				pt.x += szChar.cx;
-			}
-			pstrText++;
-		}
-		else
-		if (*pstrText == ' ')
-		{
-			SIZE szSpace = { 0 };
-			::GetTextExtentPoint32(hDC, " ", 1, &szSpace);
-			if (bDraw) ::TextOut(hDC, pt.x, pt.y, " ", 1);
-			pt.x += szSpace.cx;
-			pstrText++;
-		}
-		else
-		{
-			POINT ptPos = pt;
-			int cchChars = 0;
-			int cchLastGoodWord = 0;
-			LPCTSTR p = pstrText;
-			SIZE szText = { 0 };
-			if (*p == '<') p++, cchChars++;
-			while (*p != '\0' && *p != '<' && *p != '\n' && *p != '&')
-			{
-				cchChars++;
-				szText.cx = cchChars * tm.tmMaxCharWidth;
-				if (pt.x + szText.cx >= rc.right)
-				{
-					::GetTextExtentPoint32(hDC, pstrText, cchChars, &szText);
-				}
-				if (pt.x + szText.cx >= rc.right)
-				{
-					if ((uStyle & DT_WORDBREAK) != 0 && cchLastGoodWord > 0)
-					{
-						cchChars = cchLastGoodWord;
-						pt.x = rc.right;
-					}
-					if ((uStyle & DT_END_ELLIPSIS) != 0 && cchChars > 2)
-					{
-						cchChars -= 2;
-						pt.x = rc.right;
-					}
-					break;
-				}
-				if (*p == ' ') cchLastGoodWord = cchChars;
-				p = ::CharNext(p);
-			}
-			if (cchChars > 0)
-			{
-				::GetTextExtentPoint32(hDC, pstrText, cchChars, &szText);
-				if (bDraw)
-				{
-					::TextOut(hDC, ptPos.x, ptPos.y, pstrText, cchChars);
-					if (pt.x == rc.right && (uStyle & DT_END_ELLIPSIS) != 0) ::TextOut(hDC, rc.right - 10, ptPos.y, "...", 3);
-				}
-				pt.x += szText.cx;
-				pstrText += cchChars;
-			}
 		}
 	}
-
-	if ((uStyle & DT_CALCRECT) != 0)
-	{
-		rc.bottom = fmax(cyMinHeight, pt.y + cyLine);
-		if (rc.right >= 9999)
-		{
-			if (_tcslen(pstrText) > 0) pt.x += 3;
-			rc.right = pt.x;
-		}
-	}
-
-	if (bDraw) ::SelectClipRgn(hDC, hOldRgn);
-	::DeleteObject(hOldRgn);
-	::DeleteObject(hRgn);
-
-	::SelectObject(hDC, hOldFont);
 }
 
-void WinDX11Theme::DrawButton(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UINT uStyle)
+void WinDX11Theme::Draw(void* texture, float* color, int x, int y, int width, int height, float u, float v, float du, float dv)
 {
-	ButtonColors* btn;
-	
-	if (uState & UISTATE_HOWERED)
+	data_buffer->x = (float)x;
+	data_buffer->y = (float)y;
+	data_buffer->width = (float)width;
+	data_buffer->height = (float)height;
+
+	data_buffer->u = u;
+	data_buffer->v = v;
+	data_buffer->du = du;
+	data_buffer->dv = dv;
+
+	data_buffer->scr_width = (float)scr_width;
+	data_buffer->scr_height = (float)scr_height;
+
+	if (color)
 	{
-		btn = &buttonColors[1];
+		data_buffer->r = color[0];
+		data_buffer->g = color[1];
+		data_buffer->b = color[2];
+		data_buffer->a = color[3];
 	}
 	else
-	if (uState & UISTATE_PUSHED)
 	{
-		btn = &buttonColors[2];
+		data_buffer->r = data_buffer->g = data_buffer->b = data_buffer->a = 1.0f;
+	}
+
+	ID3D11ShaderResourceView* tex_srview = (ID3D11ShaderResourceView*)texture;
+
+	if (!tex_srview)
+	{
+		data_buffer->texture = 3;
 	}
 	else
-	if (uState & UISTATE_DISABLED)
+	if (font.srview != tex_srview)
 	{
-		btn = &buttonColors[3];
+		immediateContext->PSSetShaderResources(2, 1, &tex_srview);
+		data_buffer->texture = 2;
 	}
 	else
 	{
-		btn = &buttonColors[0];
+		data_buffer->texture = 1;
 	}
 
-	DrawFrame(hDC, rc, btn->borderFromColor, btn->borderToColor, NULL);
-	::InflateRect(&rc, -1, -1);
-	DrawGradient(hDC, rc, GetColor(btn->backFromColor), GetColor(btn->backToColor), true, 32);
-
-	RECT rcText = rc;
-	::InflateRect(&rcText, -1, -1);
-
-	DrawText(hDC, rcText, pstrText, btn->textColor, NULL, DT_SINGLELINE | uStyle);
-
-	if (uState & UISTATE_FOCUSED)
+	if (ClampRect(data_buffer))
 	{
-		DrawFrame(hDC, rc, buttonFocusColor, buttonFocusColor, NULL);
-		::InflateRect(&rc, -1, -1);
+		GetNext();
 	}
 }
 
-void WinDX11Theme::DrawLabel(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UINT uStyle)
+void WinDX11Theme::Present(WindowData& data)
 {
-	ButtonColors* btn;
+	immediateContext->Unmap(struct_buffer, 0);
 
-	if (uState & UISTATE_DISABLED)
+	if (inst_count > 0)
 	{
-		btn = &buttonColors[3];
-	}
-	else
-	{
-		btn = &buttonColors[0];
+		immediateContext->DrawInstanced(4, inst_count, 0, 0);
 	}
 
-	RECT rcText = rc;
-	::InflateRect(&rcText, -1, -1);
-
-	DrawText(hDC, rcText, pstrText, btn->textColor, NULL, DT_SINGLELINE | uStyle);
+	data.swapChain->Present(0, 0);
 }
 
-void WinDX11Theme::DrawCheckBox(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UINT uStyle)
-{
-	CheckBoxColors* chk;
-
-	if (uState & UISTATE_DISABLED)
-	{
-		chk = &checkBoxColors[1];
-	}
-	else
-	{
-		chk = &checkBoxColors[0];
-	}
-
-	RECT box_rc = rc;
-
-	box_rc.left += 2;
-	float box_y = (rc.top + rc.bottom) * 0.5f - checkBoxSize * 0.5f;
-	box_rc.top = (int)box_y;
-	box_rc.bottom = (int)box_y + checkBoxSize;
-
-	box_rc.right = box_rc.left + checkBoxSize;
-
-	DrawFrame(hDC, box_rc, chk->boxBorderColor, chk->boxBorderColor, NULL);
-	::InflateRect(&box_rc, -1, -1);
-
-	if (uState & UISTATE_PUSHED)
-	{
-		DrawFrame(hDC, box_rc, chk->boxBackColor, chk->boxBackColor, NULL);
-		::InflateRect(&box_rc, -1, -1);
-		DrawGradient(hDC, box_rc, GetColor(chk->boxCheckColor), GetColor(chk->boxCheckColor), true, 32);
-	}
-	else
-	{
-		DrawGradient(hDC, box_rc, GetColor(chk->boxBackColor), GetColor(chk->boxBackColor), true, 32);
-	}
-
-	RECT rcText = rc;
-
-	rcText.left += rc.left + checkBoxSize + 4;
-	::InflateRect(&rcText, -1, -1);
-
-	DrawText(hDC, rcText, pstrText, chk->textColor, NULL, DT_VCENTER | DT_SINGLELINE | uStyle);
-}
-
-void WinDX11Theme::DrawCategory(HDC hDC, RECT rc, LPCTSTR pstrText, UINT uState, UINT uStyle)
-{
-	CategoriesColors* cat;
-
-	if (uState & UISTATE_DISABLED)
-	{
-		cat = &categoriesColors[1];
-	}
-	else
-	{
-		cat = &categoriesColors[0];
-	}
-
-	DrawFrame(hDC, rc, cat->borderColor, cat->borderColor, NULL);
-	::InflateRect(&rc, -1, -1);
-	DrawGradient(hDC, rc, GetColor(cat->backColor), GetColor(cat->backColor), true, 32);
-
-	RECT rcText = rc;
-	::InflateRect(&rcText, -1, -1);
-
-	if (strlen(pstrText) > 1)
-	{
-		int thin = rcText.bottom - rcText.top;
-		RECT rcImage = rcText;
-
-		rcImage.right = rcImage.left + thin;
-
-		if (uState & UISTATE_PUSHED)
-		{
-			DrawImage(hDC, rcImage, cat->openedImage);
-		}
-		else
-		{
-			DrawImage(hDC, rcImage, cat->closedImage);
-		}
-
-		rcText.left += thin;
-	}
-
-	DrawText(hDC, rcText, pstrText, cat->textColor, NULL, DT_SINGLELINE | uStyle);
-}
-
-void WinDX11Theme::DrawScrollBar(HDC hDC, RECT rc, int pos, int size, UINT uState)
-{
-	RECT rcItem = { rc.right - scrollbarThin, 0, rc.right, scrollbarThin };
-
-	ScrollbarColors* scrl;
-
-	if (uState & UISTATE_DISABLED)
-	{
-		scrl = &scrollbarColors[1];
-	}
-	else
-	{
-		scrl = &scrollbarColors[0];
-	}
-
-	DrawFrame(hDC, rcItem, scrl->topBorderColor, scrl->topBorderColor, scrl->topBorderColor);
-
-	RECT rcImage = rcItem;
-	::InflateRect(&rcImage, -2, -2);
-	DrawImage(hDC, rcImage, scrl->topImage);
-
-	rcItem.top = scrollbarThin;
-	rcItem.bottom = rc.bottom - scrollbarThin;
-
-	DrawFrame(hDC, rcItem, scrl->middleBorderColor, scrl->middleBackColor, scrl->topBorderColor);
-
-	rcItem.top = rc.bottom - scrollbarThin;
-	rcItem.bottom = rc.bottom;
-
-	DrawFrame(hDC, rcItem, scrl->bottomBorderColor, scrl->bottomBackColor, scrl->topBorderColor);
-
-	rcImage = rcItem;
-	::InflateRect(&rcImage, -2, -2);
-	DrawImage(hDC, rcImage, scrl->bottomImage);
-
-	rcItem.top = scrollbarThin + scrollbarPaddingY + pos;
-	rcItem.bottom = rcItem.top + size;
-	rcItem.left += scrollbarPaddingX;
-	rcItem.right -= scrollbarPaddingX;
-
-	DrawFrame(hDC, rcItem, scrl->thumbBorderColor, scrl->thumbBorderColor, scrl->thumbBackColor);
-}
 #endif

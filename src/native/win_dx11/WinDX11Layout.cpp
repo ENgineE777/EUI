@@ -26,8 +26,17 @@ EUILayout* WinDX11Layout::Owner()
 
 void WinDX11Layout::Resize()
 {
-	//Owner()->Resize();
-	//NativeLayout::Resize();
+	if (in_resize)
+	{
+		return;
+	}
+
+	in_resize = true;
+
+	Owner()->Resize();
+	NativeLayout::Resize();
+
+	in_resize = false;
 }
 #endif
 

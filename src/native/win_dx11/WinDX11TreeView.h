@@ -13,44 +13,47 @@ class WinDX11TreeView : public NativeTreeView
 
 	struct Node
 	{
-		//HTREEITEM item = 0;
 		void* ptr = nullptr;
 		std::string text;
-		std::wstring wtext;
-		std::wstring tooltip;
 		int image;
 		bool  can_have_childs = true;
+		bool  opened = false;
 		Node* parent = nullptr;
 		int   child_index = -1;
+		int   x = 0;
+		int   y = 0;
 		std::vector<Node*> childs;
 		bool abc_sort_childs = false;
 
-		void ReCreateItem(WinDX11TreeView* tree_view);
 		void DeleteNodeChilds(WinDX11TreeView* tree_view);
 		void AddChild(WinDX11TreeView* tree_view, Node* node, int insert_index);
+		void Draw(WinDX11TreeView* tree_view, int pos_x, int& pos_y);
+		void CalcHeight(int& height);
+		Node* CheckSelection(int& pos_y, int ms_y);
 	};
 
 	bool def_abs_sort_childs = false;
-	HWND selection = 0;
+	Node* prev_selected = nullptr;
+	Node* selected = nullptr;
+	Node* target = nullptr;
 
 	static WinDX11TreeView* dragged_source_tree;
 	static WinDX11Widget* dragged_target_widget;
 	static Node* dragged_item;
 	static Node* dragged_target;
-	static bool  drag_on;
 	static bool  drag_into_item;
+
+	class EUIScrollBar* scrollbar = nullptr;
 
 	Node root_node;
 
-	void StartDrag(LPNMTREEVIEW lpnmtv);
-	void Drag();
+	void StartDrag();
+	void Drag(int ms_x, int ms_y);
 	void EndDrag();
 
-	Node* FindNode(Node* root, void* ptr);
-	Node* GetNode(HTREEITEM item);
-	void  ReCreateChilds(Node* parent);
-	bool  ContainNode(Node* parent, Node* node);
-	void  MoveDraggedItem();
+	bool ContainNode(Node* parent, Node* node);
+	void MoveDraggedItem();
+	void InnerSelection(Node* node);
 
 public:
 
@@ -59,7 +62,6 @@ public:
 
 	EUITreeView* Owner();
 
-	void  DrawSelection();
 	void  AddImage(const char* name) override;
 	void  DeleteItem(void* item) override;
 	void  ClearTree() override;
@@ -73,7 +75,15 @@ public:
 	void* GetItemParent(void* item) override;
 	int   GetItemChildCount(void* item) override;
 	void* GetItemChild(void* item, int index) override;
-	void  NotifyMouseOver() override;
-	bool IsTreeView() override;
+	bool  IsTreeView() override;
+	void  Draw() override;
+
+	void CalcThumb();
+	void Resize() override;
+
+	void OnMouseMove(int ms_x, int ms_y) override;
+	void OnLeftMouseDown(int ms_x, int ms_y) override;
+	void OnLeftMouseUp(int ms_x, int ms_y) override;
+	void OnRightMouseUp(int ms_x, int ms_y) override;
 };
 #endif

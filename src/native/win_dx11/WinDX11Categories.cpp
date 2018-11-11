@@ -10,20 +10,13 @@ WinDX11Categories::WinDX11Categories(EUIWidget* owner) : NativeCategories(owner)
 {
 	overallHeight = 0;
 
-	/*handle = CreateWindow("STATIC", "", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
-	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
-	win_id++;
-
 	if (!Owner()->auto_size)
 	{
 		Owner()->nativeWidget = this;
-		scrollbar = new EUIScrollBar(Owner(), false, Owner()->width - 20, 0, 20, Owner()->height);
+		scrollbar = new EUIScrollBar(Owner(), false, Owner()->width - 15, 0, 15, Owner()->height);
 		scrollbar->Show(false);
 		scrollbar->SetListener(0, this, 0);
 	}
-
-	MakeSubClassing();*/
 }
 
 WinDX11Categories::~WinDX11Categories()
@@ -49,10 +42,20 @@ void WinDX11Categories::CalcThumb()
 	{
 		EUICategories::Category& category = Owner()->categories[i];
 
+		if (!category.visible)
+		{
+			continue;
+		}
+
 		overallHeight += theme->categoryHeight;
 
 		for (int j = 0; j < (int)category.childs.size(); j++)
 		{
+			if (!category.childsVis[j])
+			{
+				continue;
+			}
+
 			if (category.opened)
 			{
 				overallHeight += category.childs[j]->GetHeight();
@@ -62,8 +65,8 @@ void WinDX11Categories::CalcThumb()
 
 	if (!Owner()->auto_size)
 	{
-		scrollbar->SetPos(Owner()->width - 20, 0);
-		scrollbar->SetSize(20, Owner()->height);
+		scrollbar->SetPos(Owner()->width - 15, 0);
+		scrollbar->SetSize(15, Owner()->height);
 
 		float delta = overallHeight - Owner()->height;
 		scrollbar->Show(delta > 0.0f);
@@ -79,11 +82,11 @@ void WinDX11Categories::UpdateChildPos()
 {
 	Owner()->allowCallOnChildShow = false;
 
-	float pos = 0;
+	int pos = 0;
 
 	if (scrollbar && scrollbar->IsVisible())
 	{
-		pos = -(float)scrollbar->GetPosition();
+		pos = -scrollbar->GetPosition();
 	}
 
 	for (int i = 0; i < (int)Owner()->categories.size(); i++)
@@ -108,6 +111,7 @@ void WinDX11Categories::UpdateChildPos()
 			if (category.opened)
 			{
 				category.childs[j]->SetPos(category.childs[j]->GetX(), (int)pos);
+				((WinDX11Widget*)category.childs[j]->nativeWidget)->CalcGlopalPos();
 				pos += category.childs[j]->GetHeight();
 			}
 		}
@@ -145,15 +149,8 @@ void WinDX11Categories::Resize()
 
 void WinDX11Categories::Draw()
 {
-	/*UINT state = EUITheme::UISTATE_NORMAL;
-
-	if (!Owner()->IsEnabled())
-	{
-		state = EUITheme::UISTATE_DISABLED;
-	}
-
-	COLORREF color = theme->GetColor("LABEL_BACK");
-	//theme->DrawGradient(GetDC(handle), { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height }, color, color, false, 2);
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->Draw("CategoriesView", global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 
 	for (int i = 0; i < (int)Owner()->categories.size(); i++)
 	{
@@ -164,22 +161,63 @@ void WinDX11Categories::Draw()
 			continue;
 		}
 
-		RECT rc = { 0, (LONG)category.y, (LONG)Owner()->width, (LONG)(category.y + theme->categoryHeight) };
+		theme->Draw(i == howered_category ? "CategoriesCategoryHowered" : "CategoriesCategory", global_x + owner->x + 3, global_y + owner->y + category.y, owner->width - 6, theme->categoryHeight);
+		theme->Draw(category.opened ? "CategoriesCategoryMinus" : "CategoriesCategoryPlus", global_x + owner->x + 5, global_y + owner->y + category.y + 3, 15, 15);
 
-		UINT sub_state = 0;
-
-		if (category.opened)
-		{
-			sub_state = EUITheme::UISTATE_PUSHED;
-		}
-
-		//theme->DrawCategory(GetDC(handle), rc, category.name, state | sub_state, DT_SINGLELINE);
+		theme->SetClampBorder(global_x + owner->x + 3, global_y + owner->y + category.y, owner->width - 6, theme->categoryHeight);
+		theme->font.Print(global_x + owner->x + 3 + 22, global_y + owner->y + category.y + 4, nullptr, category.name);
+		theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 	}
 
-	if (thumbHeight > 0)
+	NativeCategories::Draw();
+}
+
+void WinDX11Categories::OnMouseMove(int ms_x, int ms_y)
+{
+	howered_category = -1;
+
+	int index = 0;
+	for (auto& category : Owner()->categories)
 	{
-		RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
-		theme->DrawScrollBar(GetDC(handle), rc, (int)thumbPos, (int)thumbHeight, state);
-	}*/
+		if (!category.visible)
+		{
+			index++;
+			continue;
+		}
+
+		if (category.y < ms_y && ms_y < category.y + theme->categoryHeight)
+		{
+			howered_category = index;
+
+			break;
+		}
+
+		index++;
+	}
+
+	NativeCategories::OnMouseMove(ms_x, ms_y);
+}
+
+void WinDX11Categories::OnMouseLeave()
+{
+	howered_category = -1;
+	NativeCategories::OnMouseLeave();
+}
+
+void WinDX11Categories::OnLeftMouseDown(int ms_x, int ms_y)
+{
+	NativeCategories::OnLeftMouseDown(ms_x, ms_y);
+}
+
+void WinDX11Categories::OnLeftMouseUp(int ms_x, int ms_y)
+{
+	if (howered_category != -1)
+	{
+		Owner()->categories[howered_category].opened = !Owner()->categories[howered_category].opened;
+		CalcThumb();
+		UpdateChildPos();
+	}
+
+	NativeCategories::OnLeftMouseUp(ms_x, ms_y);
 }
 #endif

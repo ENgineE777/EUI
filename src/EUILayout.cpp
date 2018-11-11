@@ -55,7 +55,7 @@ void EUILayout::Resize()
 	{
 		if (childs_size[i].size > 0)
 		{
-			sz += (childs_size[i].absolute ? childs_size[i].size * size : childs_size[i].size);
+			sz += (int)(childs_size[i].absolute ? childs_size[i].size * size : childs_size[i].size);
 		}
 		else
 		{
@@ -70,26 +70,26 @@ void EUILayout::Resize()
 		size = 0;
 	}
 
-	float pos = 0;
+	int pos = 0;
 
 	for (int i = 0; i < (int)childs.size(); i++)
 	{
-		float sz = elem_size;
+		int sz = (int)elem_size;
 
 		if (childs_size[i].size > 0)
 		{
-			sz = (childs_size[i].absolute ? childs_size[i].size * size : childs_size[i].size);
+			sz = (int)(childs_size[i].absolute ? childs_size[i].size * size : childs_size[i].size);
 		}
 		
 		if (vertical)
 		{
-			childs[i]->SetSize(parent->GetWidth(), (int)sz);
-			childs[i]->SetPos(0, (int)pos);
+			childs[i]->SetSize(parent->GetWidth(), sz);
+			childs[i]->SetPos(0, pos);
 		}
 		else
 		{
-			childs[i]->SetSize((int)sz, parent->GetHeight());
-			childs[i]->SetPos((int)pos, 0);
+			childs[i]->SetSize(sz, parent->GetHeight());
+			childs[i]->SetPos(pos, 0);
 		}
 
 		childs[i]->Redraw();

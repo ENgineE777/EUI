@@ -6,12 +6,6 @@
 
 WinDX11Label::WinDX11Label(EUIWidget* owner) : NativeLabel(owner)
 {
-	/*handle = CreateWindow("STATIC", "Static", SS_LEFT | WS_CHILD | WS_VISIBLE | SS_OWNERDRAW | SS_NOTIFY,
-	                      (int)Owner()->x, (int)Owner()->y, (int)Owner()->width, (int)Owner()->height,
-	                      ((WinWidget*)Owner()->parent->nativeWidget)->GetHandle(), win_id, NULL, NULL);
-	win_id++;
-
-	MakeSubClassing();*/
 }
 
 WinDX11Label::~WinDX11Label()
@@ -23,32 +17,23 @@ EUILabel* WinDX11Label::Owner()
 	return (EUILabel*)owner;
 }
 
-void WinDX11Label::SetText(const char* txt)
-{
-	/*WinWidget::SetText(txt);
-	Static_SetText(handle, txt);
-	Redraw();*/
-}
-
 void WinDX11Label::Draw()
 {
-	/*RECT rc = { 0, 0, (LONG)Owner()->width, (LONG)Owner()->height };
-
-	UINT uState = EUITheme::UISTATE_NORMAL;
-
-	if (!Owner()->IsEnabled())
-	{
-		uState = EUITheme::UISTATE_DISABLED;
-	}
-
-	COLORREF color = theme->GetColor("LABEL_BACK");
+	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
+	theme->font.Print(global_x + owner->x + 2, global_y + owner->y + 3, nullptr, owner->GetText());
 
 	if (Owner()->bck_use)
 	{
-		color = RGB(Owner()->bck_color[0], Owner()->bck_color[1], Owner()->bck_color[2]);
+		float color[4];
+		color[0] = Owner()->bck_color[0] / 255.0f;
+		color[1] = Owner()->bck_color[1] / 255.0f;
+		color[2] = Owner()->bck_color[2] / 255.0f;
+		color[3] = 1.0f;
+
+		theme->Draw(nullptr, color, global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 	}
 
-	theme->DrawGradient(GetDC(handle), rc, color, color, false, 2);
-	theme->DrawLabel(GetDC(handle), rc, Owner()->text.c_str(), uState, DT_SINGLELINE);*/
+	NativeLabel::Draw();
 }
+
 #endif

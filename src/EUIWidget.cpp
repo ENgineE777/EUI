@@ -1,6 +1,8 @@
 
 #include "EUIWidget.h"
 
+#include "native/win_dx11/WinDX11Widget.h"
+
 EUIWidget::EUIWidget(EUIWidget* prnt, const char* txt)
 {
 	x = 0;
@@ -157,10 +159,28 @@ void EUIWidget::DelChild(EUIWidget* child)
 	{
 		if (childs[i] == child)
 		{
+			child->DeleteChilds();
+			
+			delete child->nativeWidget;
+			delete child;
+
 			childs.erase(childs.begin() + i);
 			break;
 		}
 	}
+}
+
+void EUIWidget::DeleteChilds()
+{
+	for (auto& child : childs)
+	{
+		child->DeleteChilds();
+
+		delete child->nativeWidget;
+		delete child;
+	}
+
+	childs.clear();
 }
 
 int EUIWidget::GetIndexAsChild()
@@ -260,11 +280,4 @@ void EUIWidget::SetFocused()
 bool EUIWidget::IsFocused()
 {
 	return nativeWidget->IsFocused();
-}
-
-bool EUIWidget::IsHoveredByMouse()
-{
-	if (!IsVisible()) return false;
-
-	return nativeWidget->IsHoveredByMouse();
 }

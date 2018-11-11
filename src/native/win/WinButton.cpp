@@ -72,31 +72,31 @@ void WinButton::SetImage(int img, const char* image_name)
 
 void WinButton::Draw()
 {
-	UINT uState = EUITheme::UISTATE_NORMAL;
+	UINT uState = WinTheme::UISTATE_NORMAL;
 	EUIButton::Image img = EUIButton::Normal;
 
 	if (!Owner()->IsEnabled())
 	{
-		uState = EUITheme::UISTATE_DISABLED;
+		uState = WinTheme::UISTATE_DISABLED;
 		img = EUIButton::Disabled;
 	}
 	else
 	{
 		if (is_howered)
 		{
-			uState = EUITheme::UISTATE_HOWERED;
+			uState = WinTheme::UISTATE_HOWERED;
 			img = EUIButton::Howered;
 		}
 
 		if (Owner()->is_pushed)
 		{
-			uState = EUITheme::UISTATE_PUSHED;
+			uState = WinTheme::UISTATE_PUSHED;
 			img = EUIButton::Pushed;
 		}
 
 		if (IsFocused())
 		{
-			uState |= EUITheme::UISTATE_FOCUSED;
+			uState |= WinTheme::UISTATE_FOCUSED;
 		}
 	}
 

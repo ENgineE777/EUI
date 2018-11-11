@@ -31,3 +31,8 @@ NativePanel* EUIPanel::Native()
 {
 	return (NativePanel*)nativeWidget;
 }
+
+void EUIPanel::SetTexture(void* texture)
+{
+	Native()->SetTexture(texture);
+}
