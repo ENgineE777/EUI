@@ -215,8 +215,11 @@ void WinDX11TreeView::Drag(int ms_x, int ms_y)
 	{
 		drag_into_item = (target->y + 7 < ms_y && target->can_have_childs);
 	}
-
-	//SetCursor(theme->GetCursor("DRAG_CURSOR"));
+	else
+	{
+		target = &root_node;
+		drag_into_item = false;
+	}
 }
 
 void WinDX11TreeView::EndDrag()

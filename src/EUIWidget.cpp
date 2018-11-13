@@ -215,7 +215,7 @@ void EUIWidget::Update()
 
 	for (int i = 0; i < (int)childs.size(); i++)
 	{
-		if (childs[i]->IsVisible())
+		if (childs[i]->IsVisible() && childs[i]->IsEnabled())
 		{
 			childs[i]->Update();
 		}

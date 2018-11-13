@@ -60,6 +60,11 @@ int EUI::Run()
 
 		for (int i = 0; i < (int)wnds.size(); i++)
 		{
+			if (!wnds[i]->IsVisible() || !wnds[i]->IsEnabled())
+			{
+				continue;
+			}
+
 			wnds[i]->Update();
 #ifdef PLATFORM_WIN_DX11
 			((WinDX11Widget*)wnds[i]->nativeWidget)->Draw();

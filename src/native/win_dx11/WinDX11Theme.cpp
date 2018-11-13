@@ -221,6 +221,38 @@ void WinDX11Theme::ReadTheme(JSONParser& parser)
 
 	pd3dDevice->CreateSamplerState(&sampDesc, &sampler);
 
+	D3D11_RASTERIZER_DESC raster_desc;// = new D3D11_RASTERIZER_DESC();
+	ZeroMemory(&raster_desc, sizeof(D3D11_RASTERIZER_DESC));
+
+	raster_desc.AntialiasedLineEnable = false;
+	raster_desc.CullMode = D3D11_CULL_BACK;
+	raster_desc.DepthBias = 0;
+	raster_desc.DepthBiasClamp = 0.0f;
+	raster_desc.DepthClipEnable = false;
+
+	raster_desc.FillMode = D3D11_FILL_SOLID;
+	raster_desc.FrontCounterClockwise = false;
+	raster_desc.MultisampleEnable = false;
+	raster_desc.ScissorEnable = false;
+	raster_desc.SlopeScaledDepthBias = 0.0f;
+
+	pd3dDevice->CreateRasterizerState(&raster_desc, &raster_state);
+
+	D3D11_BLEND_DESC blend_desc;
+	ZeroMemory(&blend_desc, sizeof(D3D11_BLEND_DESC));
+	
+	blend_desc.RenderTarget[0].BlendEnable = true;
+
+	blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	pd3dDevice->CreateBlendState(&blend_desc, &blend_state);
+
 	{
 		std::string font_name;
 		parser.Read("FONT_FILENAME", font_name);
@@ -333,9 +365,9 @@ void WinDX11Theme::SetScreenSize(WindowData& data, int set_scr_width, int set_sc
 	scr_width = set_scr_width;
 	scr_height = set_scr_height;
 
-	float color[4] = { 0.75f, 1.0f, 0.25f, 1.0f };
-	//immediateContext->ClearRenderTargetView(data.renderTargetView, color);
-
+	immediateContext->OMSetDepthStencilState(nullptr, 255);
+	immediateContext->RSSetState(raster_state);
+	immediateContext->OMSetBlendState(blend_state, 0, 0xffffffff);
 	immediateContext->OMSetRenderTargets(1, &data.renderTargetView, nullptr);
 
 	{
@@ -373,67 +405,6 @@ void WinDX11Theme::SetScreenSize(WindowData& data, int set_scr_width, int set_sc
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 }
 
-bool WinDX11Theme::ClampRect(Params* param)
-{
-	if (clamp_x > param->x + param->width)
-	{
-		return false;
-	}
-
-	if (param->x  > clamp_x2)
-	{
-		return false;
-	}
-
-	if (clamp_y > param->y + param->height)
-	{
-		return false;
-	}
-
-	if (param->y  > clamp_y2 + param->height)
-	{
-		return false;
-	}
-
-	if (clamp_x > param->x)
-	{
-		float k = (clamp_x - param->x) / param->width;
-		param->width *= (1.0f - k);
-		param->x = (float)clamp_x;
-
-		param->u += param->du * k;
-		param->du *= (1.0f - k);
-	}
-
-	if (param->x + param->width > clamp_x2)
-	{
-		float k = (clamp_x2 - param->x) / param->width;
-		param->width *= k;
-
-		param->du *= k;
-	}
-
-	if (clamp_y > param->y)
-	{
-		float k = (clamp_y - param->y) / param->height;
-		param->height *= (1.0f - k);
-		param->y = (float)clamp_y;
-
-		param->v += param->dv * k;
-		param->dv *= (1.0f - k);
-	}
-
-	if (param->y + param->height > clamp_y2)
-	{
-		float k = (clamp_y2 - param->y) / param->height;
-		param->height *= k;
-
-		param->dv *= k;
-	}
-
-	return true;
-}
-
 void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int height)
 {
 	if (elems.count(elem_name) == 0)
@@ -445,26 +416,26 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 
 	if (elem.offset_u == -1 && elem.offset_v == -1)
 	{
-		data_buffer->x = (float)x;
-		data_buffer->y = (float)y;
+		params.x = (float)x;
+		params.y = (float)y;
 
-		data_buffer->width = (float)width;
-		data_buffer->height = (float)height;
+		params.width = (float)width;
+		params.height = (float)height;
 
-		data_buffer->u = elem.u / 512.0f;
-		data_buffer->v = elem.v / 256.0f;
+		params.u = elem.u / 512.0f;
+		params.v = elem.v / 256.0f;
 
-		data_buffer->du = elem.du / 512.0f;
-		data_buffer->dv = elem.dv / 256.0f;
+		params.du = elem.du / 512.0f;
+		params.dv = elem.dv / 256.0f;
 
-		data_buffer->scr_width = (float)scr_width;
-		data_buffer->scr_height = (float)scr_height;
+		params.scr_width = (float)scr_width;
+		params.scr_height = (float)scr_height;
 
-		data_buffer->texture = 0;
+		params.texture = 0;
 
-		data_buffer->r = data_buffer->g = data_buffer->b = data_buffer->a = 1.0f;
+		params.r = params.g = params.b = params.a = 1.0f;
 
-		if (ClampRect(data_buffer))
+		if (ClampRect())
 		{
 			GetNext();
 		}
@@ -480,26 +451,26 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 
 		for (int j = 0; j < 3; j++)
 		{
-			data_buffer->x = (float)x + xs[j];
-			data_buffer->y = (float)y + ys[0];
+			params.x = (float)x + xs[j];
+			params.y = (float)y + ys[0];
 
-			data_buffer->width = xs[j + 1] - xs[j];
-			data_buffer->height = ys[1] - ys[0];
+			params.width = xs[j + 1] - xs[j];
+			params.height = ys[1] - ys[0];
 
-			data_buffer->u = (elem.u + us[j]) / 512.0f;
-			data_buffer->v = (elem.v + vs[0]) / 256.0f;
+			params.u = (elem.u + us[j]) / 512.0f;
+			params.v = (elem.v + vs[0]) / 256.0f;
 
-			data_buffer->du = (us[j + 1] - us[j]) / 512.0f;
-			data_buffer->dv = (vs[1] - vs[0]) / 256.0f;
+			params.du = (us[j + 1] - us[j]) / 512.0f;
+			params.dv = (vs[1] - vs[0]) / 256.0f;
 
-			data_buffer->scr_width = (float)scr_width;
-			data_buffer->scr_height = (float)scr_height;
+			params.scr_width = (float)scr_width;
+			params.scr_height = (float)scr_height;
 
-			data_buffer->texture = 0;
+			params.texture = 0;
 
-			data_buffer->r = data_buffer->g = data_buffer->b = data_buffer->a = 1.0f;
+			params.r = params.g = params.b = params.a = 1.0f;
 
-			if (ClampRect(data_buffer))
+			if (ClampRect())
 			{
 				GetNext();
 			}
@@ -518,26 +489,26 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 		{
 			for (int j = 0; j < 3; j++)
 			{
-				data_buffer->x = (float)x + xs[j];
-				data_buffer->y = (float)y + ys[i];
+				params.x = (float)x + xs[j];
+				params.y = (float)y + ys[i];
 
-				data_buffer->width = xs[j + 1] - xs[j];
-				data_buffer->height = ys[i + 1] - ys[i];
+				params.width = xs[j + 1] - xs[j];
+				params.height = ys[i + 1] - ys[i];
 
-				data_buffer->u = (elem.u + us[j]) / 512.0f;
-				data_buffer->v = (elem.v + vs[i]) / 256.0f;
+				params.u = (elem.u + us[j]) / 512.0f;
+				params.v = (elem.v + vs[i]) / 256.0f;
 
-				data_buffer->du = (us[j + 1] - us[j]) / 512.0f;
-				data_buffer->dv = (vs[i + 1] - vs[i]) / 256.0f;
+				params.du = (us[j + 1] - us[j]) / 512.0f;
+				params.dv = (vs[i + 1] - vs[i]) / 256.0f;
 
-				data_buffer->scr_width = (float)scr_width;
-				data_buffer->scr_height = (float)scr_height;
+				params.scr_width = (float)scr_width;
+				params.scr_height = (float)scr_height;
 
-				data_buffer->texture = 0;
+				params.texture = 0;
 
-				data_buffer->r = data_buffer->g = data_buffer->b = data_buffer->a = 1.0f;
+				params.r = params.g = params.b = params.a = 1.0f;
 
-				if (ClampRect(data_buffer))
+				if (ClampRect())
 				{
 					GetNext();
 				}
@@ -548,49 +519,49 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 
 void WinDX11Theme::Draw(void* texture, float* color, int x, int y, int width, int height, float u, float v, float du, float dv)
 {
-	data_buffer->x = (float)x;
-	data_buffer->y = (float)y;
-	data_buffer->width = (float)width;
-	data_buffer->height = (float)height;
+	params.x = (float)x;
+	params.y = (float)y;
+	params.width = (float)width;
+	params.height = (float)height;
 
-	data_buffer->u = u;
-	data_buffer->v = v;
-	data_buffer->du = du;
-	data_buffer->dv = dv;
+	params.u = u;
+	params.v = v;
+	params.du = du;
+	params.dv = dv;
 
-	data_buffer->scr_width = (float)scr_width;
-	data_buffer->scr_height = (float)scr_height;
+	params.scr_width = (float)scr_width;
+	params.scr_height = (float)scr_height;
 
 	if (color)
 	{
-		data_buffer->r = color[0];
-		data_buffer->g = color[1];
-		data_buffer->b = color[2];
-		data_buffer->a = color[3];
+		params.r = color[0];
+		params.g = color[1];
+		params.b = color[2];
+		params.a = color[3];
 	}
 	else
 	{
-		data_buffer->r = data_buffer->g = data_buffer->b = data_buffer->a = 1.0f;
+		params.r = params.g = params.b = params.a = 1.0f;
 	}
 
 	ID3D11ShaderResourceView* tex_srview = (ID3D11ShaderResourceView*)texture;
 
 	if (!tex_srview)
 	{
-		data_buffer->texture = 3;
+		params.texture = 3;
 	}
 	else
 	if (font.srview != tex_srview)
 	{
 		immediateContext->PSSetShaderResources(2, 1, &tex_srview);
-		data_buffer->texture = 2;
+		params.texture = 2;
 	}
 	else
 	{
-		data_buffer->texture = 1;
+		params.texture = 1;
 	}
 
-	if (ClampRect(data_buffer))
+	if (ClampRect())
 	{
 		GetNext();
 	}
