@@ -104,7 +104,9 @@ void WinDX11TreeView::Node::Draw(WinDX11TreeView* tree_view, int pos_x, int& pos
 
 	x = pos_x;
 	y = pos_y;
-	theme->font.Print(pos_x + ((childs.size() > 0)? 15 : 0), pos_y + 2, nullptr, text.c_str());
+
+	theme->Draw(tree_view->imageList[image].c_str(), pos_x + ((childs.size() > 0) ? 15 : 0), pos_y, 20, 15);
+	theme->font.Print(pos_x + ((childs.size() > 0)? 15 : 0) + 20, pos_y + 2, nullptr, text.c_str());
 
 	pos_y += 15;
 
@@ -159,6 +161,8 @@ WinDX11TreeView::WinDX11TreeView(EUIWidget* owner, bool set_abs_sort, bool allow
 {
 	def_abs_sort_childs = set_abs_sort;
 
+	SetTimer(150);
+
 	Owner()->nativeWidget = this;
 	scrollbar = new EUIScrollBar(Owner(), false, Owner()->width - 15, 0, 15, Owner()->height);
 	scrollbar->Show(false);
@@ -199,7 +203,10 @@ void WinDX11TreeView::Drag(int ms_x, int ms_y)
 	}
 
 	target = nullptr;
-	int selection_y = 3;
+	int selection_y = 3 - (scrollbar->IsVisible() ? scrollbar->GetPosition() : 0);
+
+	ms_at_top = (global_y + owner->y < ms_y && ms_y < global_y + owner->y + 20);
+	ms_at_bottom = (global_y + owner->y + owner->height - 20 < ms_y && ms_y < global_y + owner->y + owner->height);
 
 	for (auto& child : root_node.childs)
 	{
@@ -381,6 +388,8 @@ bool WinTreeView::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
 
 void WinDX11TreeView::AddImage(const char* name)
 {
+	imageList[(int)imageList.size()] = name;
+	theme->LoadImage(name);
 }
 
 void WinDX11TreeView::DeleteItem(void* item)
@@ -550,7 +559,15 @@ void WinDX11TreeView::MoveDraggedItem()
 
 	dragged_item->parent = dragged_target;
 
-	dragged_target->AddChild(this, dragged_item, insert_index);
+	if (dragged_target)
+	{
+		dragged_target->AddChild(this, dragged_item, insert_index);
+		dragged_target->opened = true;
+	}
+	else
+	{
+		root_node.AddChild(this, dragged_item, insert_index);
+	}
 
 	CalcThumb();
 }
@@ -617,6 +634,30 @@ void WinDX11TreeView::Draw()
 	NativeTreeView::Draw();
 }
 
+void WinDX11TreeView::OnTimer()
+{
+	if (drag_on)
+	{
+		if (scrollbar->IsVisible())
+		{
+			if (dragged_target_widget->IsTreeView())
+			{
+				WinDX11TreeView* win_target = (WinDX11TreeView*)dragged_target_widget;
+
+				if (win_target->ms_at_top)
+				{
+					((WinDX11ScrollBar*)win_target->scrollbar->nativeWidget)->ChangeValue(-20);
+				}
+
+				if (win_target->ms_at_bottom)
+				{
+					((WinDX11ScrollBar*)win_target->scrollbar->nativeWidget)->ChangeValue(20);
+				}
+			}
+		}
+	}
+}
+
 void WinDX11TreeView::OnMouseMove(int ms_x, int ms_y)
 {
 	if (mouse_pressed && selected && !drag_on)
@@ -630,6 +671,14 @@ void WinDX11TreeView::OnMouseMove(int ms_x, int ms_y)
 	}
 
 	NativeTreeView::OnMouseMove(ms_x, ms_y);
+}
+
+void WinDX11TreeView::OnMouseWheel(int delta)
+{
+	if (scrollbar->IsVisible())
+	{
+		((WinDX11ScrollBar*)scrollbar->nativeWidget)->ChangeValue(delta);
+	}
 }
 
 void WinDX11TreeView::OnLeftMouseDown(int ms_x, int ms_y)

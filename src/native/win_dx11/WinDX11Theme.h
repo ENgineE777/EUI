@@ -46,6 +46,8 @@ public:
 		float u, v, du, dv;
 		float offset_u = -1;
 		float offset_v = -1;
+		float offset_du = -1;
+		float offset_dv = -1;
 	};
 
 	std::map<std::string, Elem> elems;
@@ -69,12 +71,16 @@ public:
 	Params params;
 	Params* data_buffer = nullptr;
 
+	int skin_width = 0;
+	int skin_height = 0;
+
 	WinDX11Font font;
 	int clamp_x = 0;
 	int clamp_y = 0;
 	int clamp_x2 = 0;
 	int clamp_y2 = 0;
 
+	int image_index = 0;
 	std::map<std::string, HCURSOR> cursors;
 
 public:
@@ -85,6 +91,7 @@ public:
 	void ReadTheme(JSONParser& parser) override;
 	void Ulnload() override;
 
+	void LoadImage(const char* name);
 	void SetOutputWnd(WindowData& data, HWND hwnd, int wgt, int hgt);
 
 	HCURSOR GetCursor(const char* name);

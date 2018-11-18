@@ -173,6 +173,14 @@ void WinDX11ListBox::Draw()
 	NativeListBox::Draw();
 }
 
+void WinDX11ListBox::OnMouseWheel(int delta)
+{
+	if (scrollbar->IsVisible())
+	{
+		((WinDX11ScrollBar*)scrollbar->nativeWidget)->ChangeValue(delta);
+	}
+}
+
 void WinDX11ListBox::OnLeftMouseDown(int ms_x, int ms_y)
 {
 	prev_sel_item = sel_item;

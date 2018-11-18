@@ -6,6 +6,7 @@
 
 WinDX11ScrollBar::WinDX11ScrollBar(EUIWidget* owner) : NativeScrollBar(owner)
 {
+	SetTimer(150);
 	SetLimitImpl();
 }
 
@@ -43,6 +44,23 @@ void WinDX11ScrollBar::SetLimitImpl()
 void WinDX11ScrollBar::SetLimit()
 {
 	SetLimitImpl();
+}
+
+void WinDX11ScrollBar::ChangeValue(int delta)
+{
+	Owner()->cur_pos += delta;
+
+	if (Owner()->cur_pos < 0)
+	{
+		Owner()->cur_pos = 0;
+	}
+
+	if (Owner()->cur_pos >= Owner()->max_pos)
+	{
+		Owner()->cur_pos = Owner()->max_pos;
+	}
+
+	SetPosition(Owner()->cur_pos);
 }
 
 void WinDX11ScrollBar::Draw()
@@ -162,6 +180,27 @@ void WinDX11ScrollBar::Draw()
 
 	
 	NativeScrollBar::Draw();
+}
+
+void WinDX11ScrollBar::OnTimer()
+{
+	if (mouse_pressed)
+	{
+		if (sel_elem == 0)
+		{
+			ChangeValue(1);
+		}
+		else
+		if (sel_elem == 2)
+		{
+			ChangeValue(-1);
+		}
+	}
+}
+
+void WinDX11ScrollBar::OnMouseWheel(int delta)
+{
+	ChangeValue(delta);
 }
 
 void WinDX11ScrollBar::OnMouseMove(int ms_x, int ms_y)

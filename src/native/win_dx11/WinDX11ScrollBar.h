@@ -25,8 +25,11 @@ public:
 	void SetPosition(int pos) override;
 	void SetLimitImpl();
 	void SetLimit() override;
+	void ChangeValue(int delta);
 
 	void Draw() override;
+	void OnTimer() override;
+	void OnMouseWheel(int delta) override;
 	void OnMouseMove(int ms_x, int ms_y) override;
 	void OnMouseLeave() override;
 	void OnLeftMouseUp(int ms_x, int ms_y) override;

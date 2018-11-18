@@ -60,7 +60,8 @@ public:
 	bool Load(uint8_t* font_buffer, int hgt);
 	Glyph* GenerateChar(int ch);
 
-	int CalcWidth(const char* text);
+	int GetIndex(int pos_x, const char* text);
+	int CalcWidth(const char* text, int index = -1);
 	int CalcOffset(const char* text, int width);
 	void Print(int x, int y, float* color, const char* text);
 

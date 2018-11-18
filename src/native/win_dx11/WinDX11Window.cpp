@@ -197,10 +197,27 @@ LRESULT WinDX11Window::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 		}
 		case WM_KEYDOWN:
 		{
+			if (wParam == VK_LEFT || wParam == VK_RIGHT || wParam == VK_DELETE)
+			{
+				if (focused_widget)
+				{
+					focused_widget->OnKeyDown((int)wParam);
+				}
+			}
+
 			if (mouse_over && mouse_over->owner->listener)
 			{
 				mouse_over->owner->listener->OnKey(mouse_over->owner, (int)wParam);
 			}
+			break;
+		}
+		case WM_MOUSEWHEEL:
+		{
+			if (mouse_over)
+			{
+				mouse_over->OnMouseWheel( -(int)(GET_WHEEL_DELTA_WPARAM(wParam) / 20));
+			}
+
 			break;
 		}
 		case WM_LBUTTONDOWN:

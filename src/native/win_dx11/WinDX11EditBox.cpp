@@ -2,34 +2,12 @@
 #include "EUIEditBox.h"
 #include "WinDX11EditBox.h"
 #include "UTFConv.h"
-#include "EUIWindow.h"
-#include "WinDX11Window.h"
 
 #ifdef PLATFORM_WIN_DX11
 
-int WinDX11EditBox::timerID = 0;
-
-std::vector<WinDX11EditBox*> win_dx11_boxes;
-
-VOID CALLBACK WinDX11EditBoxTimerProc(HWND hwnd, UINT message, UINT idTimer, DWORD dwTime)
-{
-	for (auto edit_box : win_dx11_boxes)
-	{
-		if (edit_box->cur_timerID == idTimer)
-		{
-			edit_box->OnTimer();
-			break;
-		}
-	}
-}
-
 WinDX11EditBox::WinDX11EditBox(EUIWidget* owner) : NativeEditBox(owner)
 {
-	cur_timerID = timerID;
-	SetTimer(((WinDX11Window*)owner->GetRoot()->nativeWidget)->handle, cur_timerID, 10, (TIMERPROC)WinDX11EditBoxTimerProc);
-	timerID++;
-
-	win_dx11_boxes.push_back(this);
+	SetTimer(10);
 }
 
 WinDX11EditBox::~WinDX11EditBox()
@@ -41,8 +19,28 @@ EUIEditBox* WinDX11EditBox::Owner()
 	return (EUIEditBox*)owner;
 }
 
+void WinDX11EditBox::SetSel(int sel)
+{
+	start_sel = sel;
+	start_sel_offset = theme->font.CalcWidth(owner->GetText(), start_sel);
+
+	if (start_sel_offset > owner->width - 6 + offset)
+	{
+		offset += 30;
+	}
+	else
+	if (start_sel_offset < - 6 + offset)
+	{
+		offset -= 30;
+	}
+}
+
 void WinDX11EditBox::SetText(const char* txt)
 {
+	start_sel = -1;
+	start_sel_offset = 0;
+	offset = 0;
+
 	/*int pos = LOWORD(Edit_GetSel(handle));
 
 	if (pos > (int)Owner()->text.length())
@@ -82,13 +80,11 @@ void WinDX11EditBox::Draw()
 	font_color[2] = (time2callback < -0.01f) ? 1.0f : 0.0f;
 	font_color[3] = 1.0f;
 
-	theme->font.Print(global_x + owner->x + 3, global_y + owner->y + 5, font_color, owner->GetText());
+	theme->font.Print(global_x + owner->x + 3 - offset, global_y + owner->y + 5, font_color, owner->GetText());
 
 	if (is_focused)
 	{
-		int offset = theme->font.CalcWidth(owner->GetText());
-
-		theme->Draw(nullptr, font_color, global_x + owner->x + 3 + offset + 1, global_y + owner->y + 2, 1, owner->height - 4);
+		theme->Draw(nullptr, font_color, global_x + owner->x + 3 + start_sel_offset + 1 - offset, global_y + owner->y + 2, 1, owner->height - 4);
 	}
 
 	NativeEditBox::Draw();
@@ -110,17 +106,45 @@ void WinDX11EditBox::OnKeyDown(int key)
 	else
 	if (key == VK_SPACE)
 	{
-		Owner()->text += " ";
+		Owner()->text.insert(start_sel, " ");
+		SetSel(start_sel+1);
 
 		time2callback = 1.0f;
 		Redraw();
 	}
 	else
+	if (key == VK_LEFT)
+	{
+		if (start_sel > 0)
+		{
+			SetSel(start_sel - 1);
+		}
+	}
+	else
+	if (key == VK_RIGHT)
+	{
+		if (strlen(Owner()->text.c_str()) > start_sel)
+		{
+			SetSel(start_sel + 1);
+		}
+	}
+	else
+	if (key == VK_DELETE)
+	{
+		if (strlen(Owner()->text.c_str()) > start_sel)
+		{
+			Owner()->text.erase(start_sel, 1);
+			time2callback = 1.0f;
+		}
+	}
+	else
 	if (key == VK_BACK)
 	{
-		if (Owner()->text.size() > 0)
+		if (start_sel > 0)
 		{
-			Owner()->text.pop_back();
+			Owner()->text.erase(start_sel - 1, 1);
+			SetSel(start_sel-1);
+
 			time2callback = 1.0f;
 		}
 	}
@@ -177,7 +201,8 @@ void WinDX11EditBox::OnKeyDown(int key)
 			std::string str;
 			UTFConv::UTF16to8(str, add);
 
-			Owner()->text += str;
+			Owner()->text.insert(start_sel, str);
+			SetSel(start_sel + (int)strlen(str.c_str()));
 
 			time2callback = 1.0f;
 			Redraw();
@@ -203,7 +228,18 @@ void WinDX11EditBox::OnTimer()
 			Redraw();
 		}
 	}
-
-
 }
+
+void WinDX11EditBox::OnLeftMouseDown(int ms_x, int ms_y)
+{
+	SetSel(theme->font.GetIndex(ms_x - 3 + offset, owner->GetText()));
+	start_sel_offset = theme->font.CalcWidth(owner->GetText(), start_sel);
+	NativeEditBox::OnLeftMouseDown(ms_x, ms_y);
+}
+
+void WinDX11EditBox::OnLeftMouseUp(int ms_x, int ms_y)
+{
+	NativeEditBox::OnLeftMouseUp(ms_x, ms_y);
+}
+
 #endif

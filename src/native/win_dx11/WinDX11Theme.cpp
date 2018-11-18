@@ -60,7 +60,7 @@ void WinDX11Theme::ReadTheme(JSONParser& parser)
 		strcpy(path, themePath);
 		strcat(path, filename);
 
-		cursors[name] = (HCURSOR)LoadImage(0, path, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);;
+		cursors[name] = (HCURSOR)::LoadImage(0, path, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);;
 
 		parser.LeaveBlock();
 	}
@@ -169,14 +169,12 @@ void WinDX11Theme::ReadTheme(JSONParser& parser)
 	uint8_t* tex_buffer = LoadFile(tex_name.c_str(), tex_size);
 
 	int bytes;
-	int width;
-	int height;
-	uint8_t* data = stbi_load_from_memory(tex_buffer, tex_size, &width, &height, &bytes, STBI_rgb_alpha);
+	uint8_t* data = stbi_load_from_memory(tex_buffer, tex_size, &skin_width, &skin_height, &bytes, STBI_rgb_alpha);
 
 	D3D11_TEXTURE2D_DESC desc;
 
-	desc.Width = width;
-	desc.Height = height;
+	desc.Width = skin_width;
+	desc.Height = skin_height;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
 	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -203,10 +201,20 @@ void WinDX11Theme::ReadTheme(JSONParser& parser)
 	pd3dDevice->CreateShaderResourceView(texture, &srvDesc, &srview);
 
 	UINT index = D3D11CalcSubresource(0, 0, 1);
-	immediateContext->UpdateSubresource(texture, index, nullptr, data, width * 4, 0);
+	immediateContext->UpdateSubresource(texture, index, nullptr, data, skin_width * 4, 0);
 
 	free(data);
 	free(tex_buffer);
+
+	for (auto& elem : elems)
+	{
+		elem.second.u /= (float)skin_width;
+		elem.second.v /= (float)skin_height;
+		elem.second.du /= (float)skin_width;
+		elem.second.dv /= (float)skin_height;
+		elem.second.offset_du = elem.second.offset_u / (float)skin_width;
+		elem.second.offset_dv = elem.second.offset_v / (float)skin_height;
+	}
 
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -269,6 +277,61 @@ void WinDX11Theme::ReadTheme(JSONParser& parser)
 void* WinDX11Theme::GetRenderDevice()
 {
 	return pd3dDevice;
+}
+
+void WinDX11Theme::LoadImage(const char* name)
+{
+	if (elems.count(name) > 0)
+	{
+		return;
+	}
+
+	FILE* file = fopen(name, "rb");
+
+	uint8_t* buffer = nullptr;
+	int size = 0;
+
+	if (file)
+	{
+		fseek(file, 0, SEEK_END);
+		size = ftell(file);
+		fseek(file, 0, SEEK_SET);
+
+		buffer = (uint8_t*)malloc(size + 1);
+		fread(buffer, size, 1, file);
+
+		buffer[size] = 0;
+
+		fclose(file);
+	}
+
+	int bytes;
+	int width;
+	int height;
+	uint8_t* data = stbi_load_from_memory(buffer, size, &width, &height, &bytes, STBI_rgb_alpha);
+
+	D3D11_BOX dest_box;
+	dest_box.left = 20 * image_index;
+	dest_box.top = 241;
+	dest_box.front = 0;
+	dest_box.right = 20 + dest_box.left;
+	dest_box.bottom = 255;
+	dest_box.back = 1;
+
+	UINT index = D3D11CalcSubresource(0, 0, 1);
+	immediateContext->UpdateSubresource(texture, index, &dest_box, data, width * 4, 0);
+
+	Elem& elem = elems[name];
+
+	elem.u = 20.0f * (float)image_index / (float)skin_width;
+	elem.v = 241.0f / (float)skin_height;
+	elem.du = 20.0f / (float)skin_width;;
+	elem.dv = 15.0f / (float)skin_height;
+
+	free(data);
+	free(buffer);
+
+	image_index++;
 }
 
 void WinDX11Theme::SetOutputWnd(WindowData& data, HWND hwnd, int wgt, int hgt)
@@ -422,11 +485,11 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 		params.width = (float)width;
 		params.height = (float)height;
 
-		params.u = elem.u / 512.0f;
-		params.v = elem.v / 256.0f;
+		params.u = elem.u;
+		params.v = elem.v;
 
-		params.du = elem.du / 512.0f;
-		params.dv = elem.dv / 256.0f;
+		params.du = elem.du;
+		params.dv = elem.dv;
 
 		params.scr_width = (float)scr_width;
 		params.scr_height = (float)scr_height;
@@ -446,7 +509,7 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 		float xs[] = { 0, elem.offset_u, (float)width - elem.offset_u, (float)width };
 		float ys[] = { 0, (float)height };
 
-		float us[] = { 0, elem.offset_u, elem.du - elem.offset_u, elem.du };
+		float us[] = { 0, elem.offset_du, elem.du - elem.offset_du, elem.du };
 		float vs[] = { 0, elem.dv };
 
 		for (int j = 0; j < 3; j++)
@@ -457,11 +520,11 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 			params.width = xs[j + 1] - xs[j];
 			params.height = ys[1] - ys[0];
 
-			params.u = (elem.u + us[j]) / 512.0f;
-			params.v = (elem.v + vs[0]) / 256.0f;
+			params.u = (elem.u + us[j]);
+			params.v = (elem.v + vs[0]);
 
-			params.du = (us[j + 1] - us[j]) / 512.0f;
-			params.dv = (vs[1] - vs[0]) / 256.0f;
+			params.du = (us[j + 1] - us[j]);
+			params.dv = (vs[1] - vs[0]);
 
 			params.scr_width = (float)scr_width;
 			params.scr_height = (float)scr_height;
@@ -482,8 +545,8 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 		float xs[] = { 0, elem.offset_u, (float)width - elem.offset_u, (float)width};
 		float ys[] = { 0, elem.offset_v, (float)height - elem.offset_v, (float)height };
 
-		float us[] = { 0, elem.offset_u, elem.du - elem.offset_u, elem.du };
-		float vs[] = { 0, elem.offset_v, elem.dv - elem.offset_v, elem.dv };
+		float us[] = { 0, elem.offset_du, elem.du - elem.offset_du, elem.du };
+		float vs[] = { 0, elem.offset_dv, elem.dv - elem.offset_dv, elem.dv };
 
 		for (int i = 0; i < 3; i++)
 		{
@@ -495,11 +558,11 @@ void WinDX11Theme::Draw(const char* elem_name, int x, int y, int width, int heig
 				params.width = xs[j + 1] - xs[j];
 				params.height = ys[i + 1] - ys[i];
 
-				params.u = (elem.u + us[j]) / 512.0f;
-				params.v = (elem.v + vs[i]) / 256.0f;
+				params.u = (elem.u + us[j]);
+				params.v = (elem.v + vs[i]);
 
-				params.du = (us[j + 1] - us[j]) / 512.0f;
-				params.dv = (vs[i + 1] - vs[i]) / 256.0f;
+				params.du = (us[j + 1] - us[j]);
+				params.dv = (vs[i + 1] - vs[i]);
 
 				params.scr_width = (float)scr_width;
 				params.scr_height = (float)scr_height;

@@ -6,12 +6,42 @@
 
 #ifdef PLATFORM_WIN_DX11
 
+int WinDX11Widget::timerID = 0;
+
+std::vector<WinDX11Widget*> win_dx11_timers;
+
+VOID CALLBACK WinDX11WidgetTimerProc(HWND hwnd, UINT message, UINT idTimer, DWORD dwTime)
+{
+	for (auto& win_dx11 : win_dx11_timers)
+	{
+		//if (!win_dx11->owner->IsVisible() || !win_dx11->owner->IsEnabled())
+		{
+			//continue;
+		}
+
+		if (win_dx11->cur_timerID == idTimer)
+		{
+			win_dx11->OnTimer();
+			break;
+		}
+	}
+}
+
 WinDX11Widget::WinDX11Widget(EUIWidget* set_owner) : NativeWidget(set_owner)
 {
 }
 
 WinDX11Widget::~WinDX11Widget()
 {
+}
+
+void WinDX11Widget::SetTimer(int tick)
+{
+	cur_timerID = timerID;
+	::SetTimer(((WinDX11Window*)owner->GetRoot()->nativeWidget)->handle, cur_timerID, 10, (TIMERPROC)WinDX11WidgetTimerProc);
+	timerID++;
+
+	win_dx11_timers.push_back(this);
 }
 
 void* WinDX11Widget::GetNative()
@@ -174,6 +204,11 @@ void WinDX11Widget::OnMouseMove(int ms_x, int ms_y)
 	{
 		owner->listener->OnMouseMove(owner, ms_x, ms_y);
 	}
+}
+
+void WinDX11Widget::OnMouseWheel(int delta)
+{
+
 }
 
 void WinDX11Widget::OnLeftMouseDown(int ms_x, int ms_y)

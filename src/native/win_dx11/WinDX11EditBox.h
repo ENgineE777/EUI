@@ -9,11 +9,14 @@ class EUIEditBox;
 
 class WinDX11EditBox : public NativeEditBox
 {
-public:
-
-	static int timerID; 
-	int cur_timerID;
+	int start_sel = -1;
+	int start_sel_offset = 0;
+	int offset = 0;
 	float time2callback = -1.0f;
+
+	void SetSel(int sel);
+
+public:
 
 	WinDX11EditBox(EUIWidget* owner);
 	~WinDX11EditBox() override;
@@ -25,5 +28,8 @@ public:
 	void Draw() override;
 	void OnKeyDown(int key) override;
 	void OnTimer();
+
+	void  OnLeftMouseDown(int ms_x, int ms_y) override;
+	void  OnLeftMouseUp(int ms_x, int ms_y) override;
 };
 #endif

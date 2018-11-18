@@ -19,6 +19,9 @@ protected:
 
 public:
 
+	static int timerID;
+	int cur_timerID = 0;
+
 	bool is_focused = false;
 	bool is_howered = false;
 	bool mouse_pressed = false;
@@ -31,6 +34,8 @@ public:
 
 	WinDX11Widget(EUIWidget* owner);
 	virtual ~WinDX11Widget();
+
+	void SetTimer(int tick);
 
 	virtual void* GetNative();
 
@@ -67,6 +72,7 @@ public:
 	virtual void OnTimer();
 	virtual bool IsHitted(int ms_x, int ms_y);
 	virtual void OnMouseMove(int ms_x, int ms_y);
+	virtual void OnMouseWheel(int delta);
 	virtual void OnLeftMouseDown(int ms_x, int ms_y);
 	virtual void OnLeftMouseUp(int ms_x, int ms_y);
 	virtual void OnRightMouseUp(int ms_x, int ms_y);

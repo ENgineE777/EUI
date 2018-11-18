@@ -116,16 +116,18 @@ WinDX11Font::Glyph* WinDX11Font::GetGlyph(int code)
 	return &glyphs[code];
 }
 
-int WinDX11Font::CalcWidth(const char* text)
+int WinDX11Font::GetIndex(int pos_x, const char* text)
 {
 	int len = (int)strlen(text);
 
-	if (len == 0) return 0;
+	if (len == 0) return -1;
 
-	float scr_x = 0;
+	float scr_x = (float)0.5f;
 
 	int w = 0;
 	int bytes = 0;
+
+	int index = -1;
 
 	for (int i = 0; i<len; i++)
 	{
@@ -156,7 +158,75 @@ int WinDX11Font::CalcWidth(const char* text)
 		Glyph* set_glyph = GetGlyph(w);
 		if (!set_glyph) continue;
 
-		if (i == len - 1 && !set_glyph->skip)
+		if (set_glyph->skip == 0)
+		{
+			int char_x = (int)(scr_x + set_glyph->x_offset);
+			int char_w = (int)(set_glyph->width * 0.5f);
+
+			if (char_x <= pos_x && pos_x <= char_x + char_w)
+			{
+				index = i;
+			}
+			else
+			if (char_x  + char_w <= pos_x && pos_x <= char_x + char_w * 2 + 1)
+			{
+				index = i + 1;
+			}
+
+		}
+
+		scr_x += set_glyph->x_advance;
+	}
+
+	return index == -1? len : index;
+}
+
+int WinDX11Font::CalcWidth(const char* text, int index)
+{
+	int len = (int)strlen(text);
+
+	if (len == 0) return 0;
+
+	float scr_x = 0;
+
+	int w = 0;
+	int bytes = 0;
+
+	for (int i = 0; i<len; i++)
+	{
+		if (!UTFConv::BuildUtf16fromUtf8(text[i], bytes, w))
+		{
+			continue;
+		}
+
+		if (w > 65000) continue;
+
+		if (i == index)
+		{
+			break;
+		}
+
+		if (w == 10)
+		{
+			continue;
+		}
+		else
+		if (w == '\\')
+		{
+			if (i <len - 1)
+			{
+				if (text[i + 1] == 'n')
+				{
+					i++;
+					continue;
+				}
+			}
+		}
+
+		Glyph* set_glyph = GetGlyph(w);
+		if (!set_glyph) continue;
+
+		if (i == (len - 1) && !set_glyph->skip)
 		{
 			scr_x += set_glyph->x_offset + set_glyph->width;
 		}
@@ -187,9 +257,7 @@ void WinDX11Font::Print(int x, int y, float* color, const char* text)
 
 	//render.DebugSprite(tex, 0.0f, 1024.0f);
 
-	int len = 0;
-
-	len = (int)strlen(text);
+	int len = (int)strlen(text);
 
 	if (len == 0) return;
 
@@ -203,9 +271,6 @@ void WinDX11Font::Print(int x, int y, float* color, const char* text)
 
 	int w = 0;
 	int bytes = 0;
-
-	int line = -1;
-	int x_offset = 0;
 
 	for (int i=0;i<len;i++)
 	{
@@ -238,7 +303,7 @@ void WinDX11Font::Print(int x, int y, float* color, const char* text)
 
 		if (set_glyph->skip == 0)
 		{
-			int char_x = (int)(scr_x + x_offset + set_glyph->x_offset);
+			int char_x = (int)(scr_x + set_glyph->x_offset);
 			int char_y = (int)(scr_y + set_glyph->y_offset - 0.5f);
 			int char_w = set_glyph->width;
 			int char_h = set_glyph->height;

@@ -9,7 +9,7 @@ class EUITreeView;
 
 class WinDX11TreeView : public NativeTreeView
 {
-	//HIMAGELIST imageList;
+	std::map<int, std::string> imageList;
 
 	struct Node
 	{
@@ -43,6 +43,8 @@ class WinDX11TreeView : public NativeTreeView
 	static Node* dragged_target;
 	static bool  drag_into_item;
 
+	bool ms_at_bottom = false;
+	bool ms_at_top = false;
 	class EUIScrollBar* scrollbar = nullptr;
 
 	Node root_node;
@@ -81,7 +83,9 @@ public:
 	void CalcThumb();
 	void Resize() override;
 
+	void OnTimer() override;
 	void OnMouseMove(int ms_x, int ms_y) override;
+	void OnMouseWheel(int delta) override;
 	void OnLeftMouseDown(int ms_x, int ms_y) override;
 	void OnLeftMouseUp(int ms_x, int ms_y) override;
 	void OnRightMouseUp(int ms_x, int ms_y) override;

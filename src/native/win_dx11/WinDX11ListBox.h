@@ -46,6 +46,7 @@ public:
 	void  DeleteItemByIndex(int index) override;
 	void  DeleteItemByData(void* data) override;
 	void  Draw() override;
+	void  OnMouseWheel(int delta) override;
 	void  OnLeftMouseDown(int ms_x, int ms_y) override;
 	void  OnLeftMouseUp(int ms_x, int ms_y) override;
 };
