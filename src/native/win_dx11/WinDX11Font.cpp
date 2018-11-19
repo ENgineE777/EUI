@@ -120,7 +120,7 @@ int WinDX11Font::GetIndex(int pos_x, const char* text)
 {
 	int len = (int)strlen(text);
 
-	if (len == 0) return -1;
+	if (len == 0) return 0;
 
 	float scr_x = (float)0.5f;
 
