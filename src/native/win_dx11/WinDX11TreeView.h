@@ -43,6 +43,7 @@ class WinDX11TreeView : public NativeTreeView
 	static Node* dragged_target;
 	static bool  drag_into_item;
 
+	int start_sel = -1;
 	bool ms_at_bottom = false;
 	bool ms_at_top = false;
 	class EUIScrollBar* scrollbar = nullptr;
@@ -82,6 +83,10 @@ public:
 
 	void CalcThumb();
 	void Resize() override;
+
+	void OnFocusLost() override;
+
+	void OnKeyDown(int key) override;
 
 	void OnTimer() override;
 	void OnMouseMove(int ms_x, int ms_y) override;

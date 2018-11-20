@@ -463,7 +463,7 @@ void WinTreeView::ClearTree()
 void* WinTreeView::AddItem(const char* text, int image, void* ptr, void* parent, int child_index, bool can_have_childs, const char* tooltip)
 {
 	Node* node = new Node();
-	node->abc_sort_childs = def_abs_sort_childs;
+
 	node->ptr = ptr;
 
 	node->text = text;
@@ -476,6 +476,7 @@ void* WinTreeView::AddItem(const char* text, int image, void* ptr, void* parent,
 
 	node->can_have_childs = can_have_childs;
 	node->parent = FindNode(nullptr, parent);
+	node->abc_sort_childs = parent ? node->parent->abc_sort_childs : def_abs_sort_childs;
 	node->image = image;
 
 	node->parent->AddChild(this, node, child_index);

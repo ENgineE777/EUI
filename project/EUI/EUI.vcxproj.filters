@@ -156,9 +156,6 @@
     <ClCompile Include="..\..\src\native\win_dx11\WinDX11Dialog.cpp">
       <Filter>Source\native\win_dx11</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\native\win_dx11\WinDX11EditBox.cpp">
-      <Filter>Source\native\win_dx11</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\native\win_dx11\WinDX11Label.cpp">
       <Filter>Source\native\win_dx11</Filter>
     </ClCompile>
@@ -196,6 +193,9 @@
       <Filter>Source\native\win_dx11</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\native\win_dx11\WinDX11Font.cpp">
+      <Filter>Source\native\win_dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\native\win_dx11\WinDX11EditBox.cpp">
       <Filter>Source\native\win_dx11</Filter>
     </ClCompile>
   </ItemGroup>

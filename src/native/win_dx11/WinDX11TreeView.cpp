@@ -79,8 +79,19 @@ void WinDX11TreeView::Node::Draw(WinDX11TreeView* tree_view, int pos_x, int& pos
 {
 	if (tree_view->selected == this)
 	{
-		float color[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-		theme->Draw(nullptr, color, tree_view->global_x + tree_view->owner->x + 3, pos_y, tree_view->owner->width - 6, 15);
+		if (tree_view->start_sel != -1)
+		{
+			float color[] = { 0.75f, 0.75f, 0.75f, 1.0f };
+			theme->Draw(nullptr, color, tree_view->global_x + tree_view->owner->x + 3, pos_y, tree_view->owner->width - 6, 15);
+
+			color[0] = color[1] = color[2] = 0.5f;
+			theme->Draw(nullptr, color, pos_x + ((childs.size() > 0) ? 15 : 0) + 20, pos_y, theme->font.CalcWidth(text.c_str()) + 2, 15);
+		}
+		else
+		{
+			float color[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+			theme->Draw(nullptr, color, tree_view->global_x + tree_view->owner->x + 3, pos_y, tree_view->owner->width - 6, 15);
+		}
 	}
 	else
 	if (tree_view->target == this)
@@ -106,7 +117,13 @@ void WinDX11TreeView::Node::Draw(WinDX11TreeView* tree_view, int pos_x, int& pos
 	y = pos_y;
 
 	theme->Draw(tree_view->imageList[image].c_str(), pos_x + ((childs.size() > 0) ? 15 : 0), pos_y, 20, 15);
+
 	theme->font.Print(pos_x + ((childs.size() > 0)? 15 : 0) + 20, pos_y + 2, nullptr, text.c_str());
+
+	if (tree_view->selected == this && tree_view->start_sel != -1)
+	{
+		theme->Draw(nullptr, nullptr, pos_x + ((childs.size() > 0) ? 15 : 0) + 20 + theme->font.CalcWidth(text.c_str(), tree_view->start_sel), pos_y + 2, 1, 11);
+	}
 
 	pos_y += 15;
 
@@ -308,84 +325,6 @@ bool WinDX11TreeView::ContainNode(Node* parent, Node* node)
 	return false;
 }
 
-/*
-bool WinTreeView::ProcessWidget(long msg, WPARAM wParam, LPARAM lParam)
-{
-	NativeTreeView::ProcessWidget(msg, wParam, lParam);
-
-	if (msg == WM_MOUSEMOVE)
-	{
-		Drag();
-	}
-	else
-	if (msg == WM_LBUTTONUP)
-	{
-		EndDrag();
-	}
-
-	if (msg == WM_NOTIFY)
-	{
-		if (((LPNMHDR)lParam)->code == TVN_GETINFOTIPA || ((LPNMHDR)lParam)->code == TVN_GETINFOTIPW)
-		{
-			LPNMTVGETINFOTIPW tip = (LPNMTVGETINFOTIPW)lParam;
-			Node* node = FindNode(nullptr, tip->hItem);
-			if (node)
-			{
-				wcscpy(tip->pszText, node->tooltip.c_str());
-			}
-		}
-		else
-		if (((LPNMHDR)lParam)->code == TVN_SELCHANGED)
-		{
-			if (Owner()->listener)
-			{
-				Owner()->listener->OnTreeViewSelChange(Owner(), GetSelectedItem());
-			}
-		}
-		else
-		if (((LPNMHDR)lParam)->code == NM_RCLICK)
-		{
-			LPNMHDR lpnmh = (LPNMHDR)lParam;
-			TVHITTESTINFO ht;
-			DWORD dwpos = GetMessagePos();
-			ht.pt.x = GET_X_LPARAM(dwpos);
-			ht.pt.y = GET_Y_LPARAM(dwpos);
-			MapWindowPoints(HWND_DESKTOP, lpnmh->hwndFrom, &ht.pt, 1);
-			TreeView_HitTest(lpnmh->hwndFrom, &ht);
-
-			if (Owner()->listener)
-			{
-				Owner()->listener->OnTreeViewRightClick(Owner(), ht.pt.x, ht.pt.y, ht.hItem, GetNode(ht.hItem)->child_index);
-			}
-		}
-		else
-		if (((LPNMHDR)lParam)->code == TVN_BEGINDRAGW || ((LPNMHDR)lParam)->code == TVN_BEGINDRAGA)
-		{
-			StartDrag((LPNMTREEVIEW)lParam);
-		}
-		else
-		if (((LPNMHDR)lParam)->code == TVN_ENDLABELEDIT)// || ((LPNMHDR)lParam)->code == TVN_ENDLABELEDITA)
-		{
-			LPNMTVDISPINFO ptvdi = (LPNMTVDISPINFO)lParam;
-			Node* node = GetNode(ptvdi->item.hItem);
-
-			if (ptvdi->item.pszText && node)
-			{
-				node->text = ptvdi->item.pszText;
-				//UTFConv::UTF16to8(node->text, ptvdi->item.pszText);
-
-				if (Owner()->listener)
-				{
-					Owner()->listener->OnTreeViewSelItemTextChanged(Owner(), ptvdi->item.hItem, node->text.c_str());
-				}
-			}
-		}
-	}
-
-	return true;
-}
-*/
-
 void WinDX11TreeView::AddImage(const char* name)
 {
 	imageList[(int)imageList.size()] = name;
@@ -430,13 +369,13 @@ void WinDX11TreeView::ClearTree()
 void* WinDX11TreeView::AddItem(const char* text, int image, void* ptr, void* parent, int child_index, bool can_have_childs, const char* tooltip)
 {
 	Node* node = new Node();
-	node->abc_sort_childs = def_abs_sort_childs;
 	node->ptr = ptr;
 
 	node->text = text;
 
 	node->can_have_childs = can_have_childs;
 	node->parent = parent? (Node*)parent : &root_node;
+	node->abc_sort_childs = parent ? node->parent->abc_sort_childs : def_abs_sort_childs;
 	node->image = image;
 
 	node->parent->AddChild(this, node, child_index);
@@ -465,7 +404,7 @@ void WinDX11TreeView::SetItemText(void* item, const char* text)
 
 	Node* node = (Node*)item;
 
-	if (node)
+	if (node && strcmp(node->text.c_str(), text))
 	{
 		node->text = text;
 		
@@ -634,6 +573,93 @@ void WinDX11TreeView::Draw()
 	NativeTreeView::Draw();
 }
 
+void WinDX11TreeView::OnFocusLost()
+{
+	if (selected && start_sel != -1)
+	{
+		start_sel = -1;
+
+		if (Owner()->listener)
+		{
+			Owner()->listener->OnTreeViewSelItemTextChanged(Owner(), selected, selected->text.c_str());
+		}
+	}
+}
+
+void WinDX11TreeView::OnKeyDown(int key)
+{
+	if (selected && start_sel != -1)
+	{
+		if (key == VK_RETURN)
+		{
+			start_sel = -1;
+
+			if (Owner()->listener)
+			{
+				Owner()->listener->OnTreeViewSelItemTextChanged(Owner(), selected, selected->text.c_str());
+			}
+
+			Redraw();
+		}
+		else
+		if (key == VK_SPACE)
+		{
+			selected->text.insert(start_sel, " ");
+			start_sel++;
+
+			Redraw();
+		}
+		else
+		if (key == VK_LEFT)
+		{
+			if (start_sel > 0)
+			{
+				start_sel--;
+			}
+		}
+		else
+		if (key == VK_RIGHT)
+		{
+			if (strlen(selected->text.c_str()) > start_sel)
+			{
+				start_sel++;
+			}
+		}
+		else
+		if (key == VK_DELETE)
+		{
+			if (strlen(selected->text.c_str()) > start_sel)
+			{
+				selected->text.erase(start_sel, 1);
+			}
+		}
+		else
+		if (key == VK_BACK)
+		{
+			if (start_sel > 0)
+			{
+				selected->text.erase(start_sel - 1, 1);
+				start_sel--;
+			}
+		}
+		else
+		if (key != VK_RETURN && key != VK_BACK)
+		{
+			wchar_t add[2];
+			add[0] = key;
+			add[1] = 0;
+
+			std::string str;
+			UTFConv::UTF16to8(str, add);
+
+			selected->text.insert(start_sel, str);
+			start_sel += (int)strlen(str.c_str());
+
+			Redraw();
+		}
+	}
+}
+
 void WinDX11TreeView::OnTimer()
 {
 	if (drag_on)
@@ -697,6 +723,19 @@ void WinDX11TreeView::OnLeftMouseDown(int ms_x, int ms_y)
 		}
 	}
 
+	if (prev_selected != selected)
+	{
+		if (prev_selected && start_sel != -1)
+		{
+			if (Owner()->listener)
+			{
+				Owner()->listener->OnTreeViewSelItemTextChanged(Owner(), prev_selected, prev_selected->text.c_str());
+			}
+		}
+
+		start_sel = -1;
+	}
+
 	NativeTreeView::OnLeftMouseDown(ms_x, ms_y);
 }
 
@@ -712,6 +751,20 @@ void WinDX11TreeView::OnLeftMouseUp(int ms_x, int ms_y)
 		if (Owner()->listener)
 		{
 			Owner()->listener->OnTreeViewSelChange(Owner(), selected);
+		}
+	}
+	else
+	{
+		start_sel = -1;
+
+		if (selected)
+		{
+			int pos_x = global_x + owner->x + ms_x - selected->x - ((selected->childs.size() > 0) ? 15 : 0) - 20;
+
+			if (pos_x >= 0 && pos_x <= theme->font.CalcWidth(selected->text.c_str()))
+			{
+				start_sel = theme->font.GetIndex(pos_x, selected->text.c_str());
+			}
 		}
 	}
 
