@@ -27,6 +27,7 @@ public:
 	const char* GetText() override;
 	void Draw() override;
 	void OnKeyDown(int key) override;
+	void OnCharDown(int key) override;
 	void OnTimer();
 
 	void  OnLeftMouseDown(int ms_x, int ms_y) override;

@@ -642,22 +642,22 @@ void WinDX11TreeView::OnKeyDown(int key)
 				start_sel--;
 			}
 		}
-		else
-		if (key != VK_RETURN && key != VK_BACK)
-		{
-			wchar_t add[2];
-			add[0] = key;
-			add[1] = 0;
-
-			std::string str;
-			UTFConv::UTF16to8(str, add);
-
-			selected->text.insert(start_sel, str);
-			start_sel += (int)strlen(str.c_str());
-
-			Redraw();
-		}
 	}
+}
+
+void WinDX11TreeView::OnCharDown(int key)
+{
+	wchar_t add[2];
+	add[0] = key;
+	add[1] = 0;
+
+	std::string str;
+	UTFConv::UTF16to8(str, add);
+
+	selected->text.insert(start_sel, str);
+	start_sel += (int)strlen(str.c_str());
+
+	Redraw();
 }
 
 void WinDX11TreeView::OnTimer()

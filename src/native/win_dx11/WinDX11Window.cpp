@@ -188,27 +188,27 @@ LRESULT WinDX11Window::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 	{
 		case WM_CHAR:
 		{
-			if (focused_widget)
+			if (focused_widget && (int)wParam >= 30)
 			{
-				focused_widget->OnKeyDown((int)wParam);
+				focused_widget->OnCharDown((int)wParam);
 			}
 
 			break;
 		}
 		case WM_KEYDOWN:
 		{
-			if (wParam == VK_LEFT || wParam == VK_RIGHT || wParam == VK_DELETE)
+			if (focused_widget)
 			{
-				if (focused_widget)
-				{
-					focused_widget->OnKeyDown((int)wParam);
-				}
+				focused_widget->OnKeyDown((int)wParam);
 			}
 
 			if (mouse_over && mouse_over->owner->listener)
 			{
 				mouse_over->owner->listener->OnKey(mouse_over->owner, (int)wParam);
 			}
+
+			skip_on_char = true;
+
 			break;
 		}
 		case WM_MOUSEWHEEL:

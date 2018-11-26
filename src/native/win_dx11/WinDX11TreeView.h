@@ -87,6 +87,7 @@ public:
 	void OnFocusLost() override;
 
 	void OnKeyDown(int key) override;
+	void OnCharDown(int key) override;
 
 	void OnTimer() override;
 	void OnMouseMove(int ms_x, int ms_y) override;

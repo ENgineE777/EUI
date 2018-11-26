@@ -69,6 +69,7 @@ public:
 	virtual bool IsTreeView();
 
 	virtual void OnKeyDown(int key);
+	virtual void OnCharDown(int key);
 	virtual void OnTimer();
 	virtual bool IsHitted(int ms_x, int ms_y);
 	virtual void OnMouseMove(int ms_x, int ms_y);

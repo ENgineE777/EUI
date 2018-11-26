@@ -182,6 +182,14 @@ void WinDX11Widget::OnKeyDown(int key)
 	}
 }
 
+void WinDX11Widget::OnCharDown(int key)
+{
+	if (owner->listener)
+	{
+		owner->listener->OnKey(owner, key);
+	}
+}
+
 void WinDX11Widget::OnTimer()
 {
 

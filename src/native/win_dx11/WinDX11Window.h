@@ -25,6 +25,7 @@ class WinDX11Window : public NativeWindow
 	bool is_minimazed;
 
 	HWND handle = 0;
+	bool skip_on_char = false;
 
 	WinDX11Widget* left_moused = nullptr;
 

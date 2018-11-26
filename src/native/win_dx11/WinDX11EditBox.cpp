@@ -148,65 +148,65 @@ void WinDX11EditBox::OnKeyDown(int key)
 			time2callback = 1.0f;
 		}
 	}
-	else
-	if (key != VK_RETURN && key != VK_BACK)
+}
+
+void WinDX11EditBox::OnCharDown(int key)
+{
+	GetText();
+
+	bool add = true;
+
+	if (key == '-')
 	{
-		GetText();
-
-		bool add = true;
-
-		if (key == '-')
-		{
-			if (Owner()->text.find('-') != std::string::npos)
-			{
-				add = false;
-			}
-
-			if (Owner()->inputType == EUIEditBox::InputUInteger || Owner()->inputType == EUIEditBox::InputUFloat)
-			{
-				add = false;
-			}
-
-			if ((Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputFloat) && strlen(owner->GetText()) > 0)
-			{
-				add = false;
-			}
-		}
-		else
-		if (key == '.')
-		{
-			if (Owner()->text.find('.') != std::string::npos)
-			{
-				add = false;
-			}
-
-			if (Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputUInteger)
-			{
-				add = false;
-			}
-		}
-		else
-		if ((key < '0' || key > '9') &&
-			(Owner()->inputType != EUIEditBox::InputText))
+		if (Owner()->text.find('-') != std::string::npos)
 		{
 			add = false;
 		}
 
-		if (add)
+		if (Owner()->inputType == EUIEditBox::InputUInteger || Owner()->inputType == EUIEditBox::InputUFloat)
 		{
-			wchar_t add[2];
-			add[0] = key;
-			add[1] = 0;
-
-			std::string str;
-			UTFConv::UTF16to8(str, add);
-
-			Owner()->text.insert(start_sel, str);
-			SetSel(start_sel + (int)strlen(str.c_str()));
-
-			time2callback = 1.0f;
-			Redraw();
+			add = false;
 		}
+
+		if ((Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputFloat) && strlen(owner->GetText()) > 0)
+		{
+			add = false;
+		}
+	}
+	else
+	if (key == '.')
+	{
+		if (Owner()->text.find('.') != std::string::npos)
+		{
+			add = false;
+		}
+
+		if (Owner()->inputType == EUIEditBox::InputInteger || Owner()->inputType == EUIEditBox::InputUInteger)
+		{
+			add = false;
+		}
+	}
+	else
+	if ((key < '0' || key > '9') &&
+		(Owner()->inputType != EUIEditBox::InputText))
+	{
+		add = false;
+	}
+
+	if (add)
+	{
+		wchar_t add[2];
+		add[0] = key;
+		add[1] = 0;
+
+		std::string str;
+		UTFConv::UTF16to8(str, add);
+
+		Owner()->text.insert(start_sel, str);
+		SetSel(start_sel + (int)strlen(str.c_str()));
+
+		time2callback = 1.0f;
+		Redraw();
 	}
 }
 
