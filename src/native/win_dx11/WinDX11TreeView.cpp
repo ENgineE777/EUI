@@ -647,6 +647,11 @@ void WinDX11TreeView::OnKeyDown(int key)
 
 void WinDX11TreeView::OnCharDown(int key)
 {
+	if (start_sel == -1)
+	{
+		return;
+	}
+
 	wchar_t add[2];
 	add[0] = key;
 	add[1] = 0;
