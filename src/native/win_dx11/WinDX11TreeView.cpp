@@ -419,6 +419,21 @@ void WinDX11TreeView::SetItemText(void* item, const char* text)
 	}
 }
 
+void WinDX11TreeView::SetItemImage(void* item, int image)
+{
+	if (!item)
+	{
+		return;
+	}
+
+	Node* node = (Node*)item;
+
+	if (node)
+	{
+		node->image = image;
+	}
+}
+
 void* WinDX11TreeView::GetSelectedItem()
 {
 	return selected;
@@ -760,15 +775,20 @@ void WinDX11TreeView::OnLeftMouseUp(int ms_x, int ms_y)
 	}
 	else
 	{
-		start_sel = -1;
-
 		if (selected)
 		{
-			int pos_x = global_x + owner->x + ms_x - selected->x - ((selected->childs.size() > 0) ? 15 : 0) - 20;
-
-			if (pos_x >= 0 && pos_x <= theme->font.CalcWidth(selected->text.c_str()))
+			if (start_sel == -1)
 			{
-				start_sel = theme->font.GetIndex(pos_x, selected->text.c_str());
+				start_sel = strlen(selected->text.c_str());
+			}
+			else
+			{
+				int pos_x = global_x + owner->x + ms_x - selected->x - ((selected->childs.size() > 0) ? 15 : 0) - 20;
+
+				if (pos_x >= 0 && pos_x <= theme->font.CalcWidth(selected->text.c_str()))
+				{
+					start_sel = theme->font.GetIndex(pos_x, selected->text.c_str());
+				}
 			}
 		}
 	}

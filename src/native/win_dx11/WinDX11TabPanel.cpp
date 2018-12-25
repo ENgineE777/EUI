@@ -35,7 +35,15 @@ void WinDX11TabPanel::Draw()
 
 		theme->Draw(elem, global_x + owner->x + 3 + 50 * i, global_y + owner->y, 48, capption_height);
 		theme->SetClampBorder(global_x + owner->x + 3 + 50 * i, global_y + owner->y, 48, capption_height);
-		theme->font.Print(global_x + owner->x + 3 + 50 * i + theme->font.CalcOffset(tab_names[i].c_str(), 48), global_y + owner->y + 7, nullptr, tab_names[i].c_str());
+
+		float font_color[4];
+		float a = owner->childs[i]->IsEnabled() ? 1.0f : 0.6f;
+		font_color[0] = a;
+		font_color[1] = a;
+		font_color[2] = a;
+		font_color[3] = 1.0f;
+
+		theme->font.Print(global_x + owner->x + 3 + 50 * i + theme->font.CalcOffset(tab_names[i].c_str(), 48), global_y + owner->y + 7, font_color, tab_names[i].c_str());
 		theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 	}
 
@@ -107,7 +115,7 @@ void WinDX11TabPanel::OnMouseMove(int ms_x, int ms_y)
 	{
 		for (int i = 0; i < (int)owner->childs.size(); i++)
 		{
-			if (3 + 50 * i < ms_x && ms_x < 3 + 50 * i + 48)
+			if (3 + 50 * i < ms_x && ms_x < 3 + 50 * i + 48 && owner->childs[i]->IsEnabled())
 			{
 				howeredTab = i;
 			}

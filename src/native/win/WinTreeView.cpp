@@ -534,6 +534,11 @@ void WinTreeView::SetItemText(void* item, const char* text)
 	}
 }
 
+void WinTreeView::SetItemImage(void* item, int image)
+{
+
+}
+
 void* WinTreeView::GetSelectedItem()
 {
 	return TreeView_GetSelection(handle);

@@ -71,6 +71,7 @@ public:
 	void* AddItem(const char* text, int image, void* ptr, void* parent, int child_index, bool can_have_childs, const char* tooltip) override;
 	void  SetABSortChilds(void* item, bool sort) override;
 	void  SetItemText(void* item, const char* text) override;
+	void  SetItemImage(void* item, int image) override;
 	void* GetSelectedItem() override;
 	void  SelectItem(void* item) override;
 	void  GetItemText(void* item, std::string& text) override;

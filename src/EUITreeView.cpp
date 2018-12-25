@@ -58,7 +58,12 @@ void EUITreeView::SetABSortChilds(void* item, bool sort)
 
 void EUITreeView::SetItemText(void* item, const char* text)
 {
-	return Native()->SetItemText(item, text);
+	Native()->SetItemText(item, text);
+}
+
+void EUITreeView::SetItemImage(void* item, int image)
+{
+	Native()->SetItemImage(item, image);
 }
 
 void* EUITreeView::GetSelectedItem()
