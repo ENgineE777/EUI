@@ -39,10 +39,13 @@ public:
 	void  AddItem(const char* str, void* data) override;
 	void  ChangeItemNameByIndex(const char* str, int index) override;
 	void  ChangeItemNameByData(const char* str, void* data) override;
+	const char* GetSelectedItemText() override;
 	int   GetSelectedItemIndex() override;
 	void* GetSelectedItemData() override;
+	void  SelectItemByText(const char* text) override;
 	void  SelectItemByIndex(int index) override;
 	void  SelectItemByData(void* data) override;
+	void  DeleteItemByText(const char* text) override;
 	void  DeleteItemByIndex(int index) override;
 	void  DeleteItemByData(void* data) override;
 	void  Draw() override;

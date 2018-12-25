@@ -105,6 +105,11 @@ void WinListBox::ChangeItemNameByData(const char* str, void* data)
 	ChangeItemNameByIndex(str, FindIndexByData(data));
 }
 
+const char* WinListBox::GetSelectedItemText()
+{
+	return nullptr;
+}
+
 int WinListBox::GetSelectedItemIndex()
 {
 	return ListBox_GetCurSel(handle);
@@ -122,6 +127,10 @@ void* WinListBox::GetSelectedItemData()
 	return (void*)ListBox_GetItemData(handle, index);
 }
 
+void WinListBox::SelectItemByText(const char* text)
+{
+}
+
 void WinListBox::SelectItemByIndex(int index)
 {
 	ListBox_SetCurSel(handle, index);
@@ -130,6 +139,10 @@ void WinListBox::SelectItemByIndex(int index)
 void WinListBox::SelectItemByData(void* data)
 {
 	SelectItemByIndex(FindIndexByData(data));
+}
+
+void WinListBox::DeleteItemByText(const char* text)
+{
 }
 
 void WinListBox::DeleteItemByIndex(int index)

@@ -28,6 +28,8 @@ public:
 	int  GetCurStringIndex()  override;
 	void Draw() override;
 
+	void SetText(const char* txt) override;
+
 	bool IsHitted(int ms_x, int ms_y) override;
 	void OnFocusLost() override;
 

@@ -79,6 +79,16 @@ void WinDX11ListBox::ChangeItemNameByData(const char* str, void* data)
 	ChangeItemNameByIndex(str, FindIndexByData(data));
 }
 
+const char* WinDX11ListBox::GetSelectedItemText()
+{
+	if (sel_item == -1)
+	{
+		return nullptr;
+	}
+
+	return items[sel_item].text.c_str();
+}
+
 int WinDX11ListBox::GetSelectedItemIndex()
 {
 	return sel_item;
@@ -94,6 +104,18 @@ void* WinDX11ListBox::GetSelectedItemData()
 	return items[sel_item].ptr;
 }
 
+void WinDX11ListBox::SelectItemByText(const char* text)
+{
+	for (int index = 0; index < items.size(); index++)
+	{
+		if (strcmp(items[index].text.c_str(), text))
+		{
+			sel_item = index;
+			break;
+		}
+	}
+}
+
 void WinDX11ListBox::SelectItemByIndex(int index)
 {
 	InnerSelection(index);
@@ -106,6 +128,23 @@ void WinDX11ListBox::SelectItemByData(void* data)
 		if (items[index].ptr == data)
 		{
 			sel_item = index;
+			break;
+		}
+	}
+}
+
+void WinDX11ListBox::DeleteItemByText(const char* text)
+{
+	for (int index = 0; index < items.size(); index++)
+	{
+		if (strcmp(items[index].text.c_str(), text) == 0)
+		{
+			if (sel_item == index)
+			{
+				InnerSelection(-1);
+			}
+
+			items.erase(items.begin() + index);
 			break;
 		}
 	}
@@ -186,7 +225,7 @@ void WinDX11ListBox::OnLeftMouseDown(int ms_x, int ms_y)
 	prev_sel_item = sel_item;
 	sel_item = (int)(((float)ms_y - 3.0f) / 15.0f);
 
-	if (sel_item > items.size() - 1)
+	if (sel_item + 1 > items.size())
 	{
 		sel_item = -1;
 	}

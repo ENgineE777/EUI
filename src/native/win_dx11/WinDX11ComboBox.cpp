@@ -53,7 +53,10 @@ void WinDX11ComboBox::SetCurString(const char* str)
 
 const char* WinDX11ComboBox::GetCurString()
 {
-	Owner()->text = cur_string != -1 ? items[cur_string] : "";;
+	if (cur_string != -1)
+	{
+		Owner()->text = items[cur_string];
+	}
 
 	return Owner()->text.c_str();
 }
@@ -68,7 +71,7 @@ void WinDX11ComboBox::Draw()
 	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 	theme->Draw(is_howered ? "ComboBoxHowered" : "ComboBoxNormal", global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width - 20, owner->height);
-	theme->font.Print(global_x + owner->x + 3, global_y + owner->y + 4, nullptr, cur_string != -1 ? items[cur_string].c_str() : "");
+	theme->font.Print(global_x + owner->x + 3, global_y + owner->y + 4, nullptr, Owner()->text.c_str());
 
 	theme->SetClampBorder(global_x + owner->x, global_y + owner->y, owner->width, owner->height);
 	theme->Draw("ComboBoxDownArrow", global_x + owner->x + owner->width - 20, global_y + owner->y + 3, 15, 15);
@@ -94,6 +97,20 @@ void WinDX11ComboBox::Draw()
 	}
 
 	NativeComboBox::Draw();
+}
+
+void WinDX11ComboBox::SetText(const char* txt)
+{
+	cur_string = -1;
+
+	for (int i = 0; i < items.size(); i++)
+	{
+		if (strcmp(items[i].c_str(), txt) == 0)
+		{
+			cur_string = i;
+			break;
+		}
+	}
 }
 
 bool WinDX11ComboBox::IsHitted(int ms_x, int ms_y)
@@ -144,6 +161,14 @@ void WinDX11ComboBox::OnLeftMouseDown(int ms_x, int ms_y)
 {
 	is_opened = !is_opened;
 
+	if (is_opened)
+	{
+		if (Owner()->listener)
+		{
+			Owner()->listener->OnComboBoxOpened(Owner());
+		}
+	}
+
 	((WinDX11Widget*)owner->GetRoot()->nativeWidget)->over_widget = is_opened ? this : nullptr;
 
 	NativeComboBox::OnLeftMouseDown(ms_x, ms_y);
@@ -155,7 +180,10 @@ void WinDX11ComboBox::OnLeftMouseUp(int ms_x, int ms_y)
 	{
 		cur_string = pre_sel_item;
 
-		Owner()->text = cur_string != -1 ? items[cur_string] : "";
+		if (cur_string != -1)
+		{
+			Owner()->text = items[cur_string];
+		}
 
 		if (Owner()->listener)
 		{

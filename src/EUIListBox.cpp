@@ -52,6 +52,11 @@ void EUIListBox::ChangeItemNameByData(const char* str, void* data)
 	Native()->ChangeItemNameByData(str, data);
 }
 
+const char* EUIListBox::GetSelectedItemText()
+{
+	return Native()->GetSelectedItemText();
+}
+
 int EUIListBox::GetSelectedItemIndex()
 {
 	return Native()->GetSelectedItemIndex();
@@ -62,6 +67,11 @@ void* EUIListBox::GetSelectedItemData()
 	return Native()->GetSelectedItemData();
 }
 
+void EUIListBox::SelectItemByText(const char* text)
+{
+	Native()->SelectItemByText(text);
+}
+
 void EUIListBox::SelectItemByIndex(int index)
 {
 	Native()->SelectItemByIndex(index);
@@ -70,6 +80,11 @@ void EUIListBox::SelectItemByIndex(int index)
 void EUIListBox::SelectItemByData(void* data)
 {
 	Native()->SelectItemByData(data);
+}
+
+void EUIListBox::DeleteItemByText(const char* text)
+{
+	Native()->DeleteItemByText(text);
 }
 
 void EUIListBox::DeleteItemByIndex(int index)
