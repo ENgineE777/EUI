@@ -36,6 +36,11 @@ void WinDX11Categories::OnSrollerPosChange(EUIScrollBar* sender, int pos)
 
 void WinDX11Categories::CalcThumb()
 {
+	if (!scrollbar)
+	{
+		return;
+	}
+
 	overallHeight = 0;
 
 	for (int i = 0; i < (int)Owner()->categories.size(); i++)

@@ -27,16 +27,16 @@ void WinDX11ComboBox::ClearList()
 void WinDX11ComboBox::AddItem(const char* str)
 {
 	items.push_back(str);
-
-	if (items.size() == 1)
-	{
-		cur_string = 0;
-	}
 }
 
 void WinDX11ComboBox::SetCurString(int index)
 {
 	cur_string = index;
+
+	if (index != -1)
+	{
+		Owner()->text = items[cur_string];
+	}
 }
 
 void WinDX11ComboBox::SetCurString(const char* str)
@@ -46,6 +46,8 @@ void WinDX11ComboBox::SetCurString(const char* str)
 		if (strcmp(items[i].c_str(), str) == 0)
 		{
 			cur_string = i;
+			Owner()->text = items[cur_string];
+
 			break;
 		}
 	}
@@ -53,11 +55,6 @@ void WinDX11ComboBox::SetCurString(const char* str)
 
 const char* WinDX11ComboBox::GetCurString()
 {
-	if (cur_string != -1)
-	{
-		Owner()->text = items[cur_string];
-	}
-
 	return Owner()->text.c_str();
 }
 

@@ -29,10 +29,27 @@ VOID CALLBACK WinDX11WidgetTimerProc(HWND hwnd, UINT message, UINT idTimer, DWOR
 
 WinDX11Widget::WinDX11Widget(EUIWidget* set_owner) : NativeWidget(set_owner)
 {
+	CalcGlopalPos();
 }
 
 WinDX11Widget::~WinDX11Widget()
 {
+	WinDX11Widget* root = ((WinDX11Widget*)(owner->GetRoot()->nativeWidget));
+
+	if (root->mouse_over == this)
+	{
+		root->mouse_over = nullptr;
+	}
+
+	if (root->over_widget == this)
+	{
+		root->over_widget = nullptr;
+	}
+
+	if (root->focused_widget == this)
+	{
+		root->focused_widget = nullptr;
+	}
 }
 
 void WinDX11Widget::SetTimer(int tick)

@@ -15,8 +15,6 @@
 
 class WinDX11Widget : public NativeWidget
 {
-protected:
-
 public:
 
 	static int timerID;

@@ -1,5 +1,6 @@
 
 #include "EUICategories.h"
+#include "UTFConv.h"
 
 #ifdef PLATFORM_WIN
 #include "native/win/WinCategories.h"
@@ -45,7 +46,7 @@ NativeCategories* EUICategories::Native()
 
 void EUICategories::AddChild(EUIWidget* child)
 {
-	childs.push_back(child);
+	EUIWidget::AddChild(child);
 
 	if (childs.size() > 1)
 	{
@@ -54,6 +55,42 @@ void EUICategories::AddChild(EUIWidget* child)
 		EUIWidget* tmp = childs[index];
 		childs[index] = childs[index - 1];
 		childs[index - 1] = tmp;
+	}
+}
+
+void EUICategories::DelChild(EUIWidget* child)
+{
+	for (auto& cat : categories)
+	{
+		for (int j = 0; j < (int)cat.childs.size(); j++)
+		{
+			if (cat.childs[j] == child)
+			{
+				cat.childs.erase(cat.childs.begin() + j);
+				cat.childsVis.erase(cat.childsVis.begin() + j);
+				break;
+			}
+		}
+	}
+
+	EUIWidget::DelChild(child);
+
+	Native()->UpdateChildPos();
+	Native()->CalcThumb();
+}
+
+void EUICategories::DeleteChilds()
+{
+	for (int i = 0; i < (int)childs.size(); i++)
+	{
+		if (childs.size() == 1)
+		{
+			break;
+		}
+
+		childs[i]->DeleteChilds();
+		childs[i]->Release();
+		i--;
 	}
 }
 
@@ -87,7 +124,7 @@ void EUICategories::OnChildShow(int index, bool set)
 	Native()->CalcThumb();
 }
 
-void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
+void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget, float abc_sort)
 {
 	Category* category = NULL;
 
@@ -112,5 +149,26 @@ void EUICategories::RegisterChildInCategory(const char* name, EUIWidget* widget)
 	category->childs.push_back(widget);
 	category->childsVis.push_back(widget->visible);
 	
+	if (abc_sort)
+	{
+		for (int i = (int)category->childs.size() - 1; i > 0; i--)
+		{
+			if (UTFConv::CompareABC(category->childs[i]->text.c_str(), category->childs[i - 1]->text.c_str()))
+			{
+				EUIWidget* tmp = category->childs[i - 1];
+				category->childs[i - 1] = category->childs[i];
+				category->childs[i] = tmp;
+
+				bool tmp_bool = category->childsVis[i - 1];
+				category->childsVis[i - 1] = category->childsVis[i];
+				category->childsVis[i] = tmp_bool;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
 	Native()->UpdateChildPos();
 }

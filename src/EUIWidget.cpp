@@ -29,17 +29,13 @@ EUIWidget::EUIWidget(EUIWidget* prnt, const char* txt)
 
 EUIWidget::~EUIWidget()
 {
+	DeleteChilds();
+
 	nativeWidget->Release();
 
 	if (parent)
 	{
 		parent->DelChild(this);
-	}
-
-	for (int i = 0; i < (int)childs.size(); i++)
-	{
-		childs[i]->Release();
-		i--;
 	}
 }
 
@@ -159,11 +155,6 @@ void EUIWidget::DelChild(EUIWidget* child)
 	{
 		if (childs[i] == child)
 		{
-			child->DeleteChilds();
-			
-			delete child->nativeWidget;
-			delete child;
-
 			childs.erase(childs.begin() + i);
 			break;
 		}
@@ -172,12 +163,11 @@ void EUIWidget::DelChild(EUIWidget* child)
 
 void EUIWidget::DeleteChilds()
 {
-	for (auto& child : childs)
+	for (int i = 0; i < (int)childs.size(); i++)
 	{
-		child->DeleteChilds();
-
-		delete child->nativeWidget;
-		delete child;
+		childs[i]->DeleteChilds();
+		childs[i]->Release();
+		i--;
 	}
 
 	childs.clear();
