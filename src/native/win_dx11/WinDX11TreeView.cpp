@@ -470,6 +470,11 @@ void* WinDX11TreeView::GetItemParent(void* item)
 
 	Node* node = (Node*)item;
 
+	if (node->parent && &root_node == node->parent)
+	{
+		return nullptr;
+	}
+
 	return node->parent ? node->parent : nullptr;
 }
 
