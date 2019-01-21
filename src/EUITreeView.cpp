@@ -31,6 +31,11 @@ NativeTreeView* EUITreeView::Native()
 	return (NativeTreeView*)nativeWidget;
 }
 
+void EUITreeView::SetAutodeletePtr(bool set)
+{
+	auto_delete_ptr = set;
+}
+
 void EUITreeView::AddImage(const char* name)
 {
 	Native()->AddImage(name);

@@ -41,6 +41,11 @@ void WinTreeView::Node::DeleteNodeChilds(WinTreeView* tree_view)
 			tree_view->Owner()->listener->OnTreeDeleteItem(tree_view->Owner(), child->item, child->ptr);
 		}
 
+		if (tree_view->Owner()->auto_delete_ptr)
+		{
+			delete child->ptr;
+		}
+
 		delete child;
 	}
 
@@ -448,6 +453,11 @@ void WinTreeView::DeleteItem(void* item)
 		if (Owner()->listener)
 		{
 			Owner()->listener->OnTreeDeleteItem(Owner(), node->item, node->ptr);
+		}
+
+		if (Owner()->auto_delete_ptr)
+		{
+			delete node->ptr;
 		}
 
 		delete node;

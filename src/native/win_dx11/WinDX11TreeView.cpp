@@ -23,6 +23,11 @@ void WinDX11TreeView::Node::DeleteNodeChilds(WinDX11TreeView* tree_view)
 			tree_view->Owner()->listener->OnTreeDeleteItem(tree_view->Owner(), child, child->ptr);
 		}
 
+		if (tree_view->Owner()->auto_delete_ptr)
+		{
+			delete child->ptr;
+		}
+
 		delete child;
 	}
 
@@ -351,6 +356,11 @@ void WinDX11TreeView::DeleteItem(void* item)
 		if (Owner()->listener)
 		{
 			Owner()->listener->OnTreeDeleteItem(Owner(), item, node->ptr);
+		}
+
+		if (Owner()->auto_delete_ptr)
+		{
+			delete node->ptr;
 		}
 
 		delete node;
