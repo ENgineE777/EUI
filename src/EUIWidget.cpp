@@ -49,6 +49,16 @@ int EUIWidget::GetID()
 	return id;
 }
 
+void EUIWidget::SetUserData(void* set_user_data)
+{
+	user_data = set_user_data;
+}
+
+void* EUIWidget::GetUserData()
+{
+	return user_data;
+}
+
 void EUIWidget::SetListener(int set_id, Listener* set_listener, uint32_t flag)
 {
 	SetID(set_id);
