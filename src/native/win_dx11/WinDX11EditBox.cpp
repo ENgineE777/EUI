@@ -37,7 +37,7 @@ void WinDX11EditBox::SetSel(int sel)
 
 void WinDX11EditBox::SetText(const char* txt)
 {
-	start_sel = -1;
+	start_sel = (int)strlen(txt);
 	start_sel_offset = 0;
 	offset = 0;
 
