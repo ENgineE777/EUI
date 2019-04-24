@@ -191,6 +191,16 @@ bool WinDX11Widget::IsTreeView()
 	return false;
 }
 
+void WinDX11Widget::OnTextCopy()
+{
+
+}
+
+void WinDX11Widget::OnTextPaste()
+{
+
+}
+
 void WinDX11Widget::OnKeyDown(int key)
 {
 	if (owner->listener)

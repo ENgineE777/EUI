@@ -37,7 +37,8 @@ WinDX11Font::Glyph* WinDX11Font::GenerateChar(int ch)
 	else
 	{
 		set_glyph.x_offset = 0;
-		set_glyph.x_advance = height * 0.45f;
+		set_glyph.width = height * 0.4f;
+		set_glyph.x_advance = height * 0.4f;
 		set_glyph.skip = 1;
 	}
 
@@ -158,21 +159,22 @@ int WinDX11Font::GetIndex(int pos_x, const char* text)
 		Glyph* set_glyph = GetGlyph(w);
 		if (!set_glyph) continue;
 
-		if (set_glyph->skip == 0)
+		int char_x = (int)(scr_x + set_glyph->x_offset);
+		int char_w = (int)(set_glyph->width * 0.5f);
+
+		if (index == -1 && pos_x <= char_x)
 		{
-			int char_x = (int)(scr_x + set_glyph->x_offset);
-			int char_w = (int)(set_glyph->width * 0.5f);
+			index = i;
+		}
 
-			if (char_x <= pos_x && pos_x <= char_x + char_w)
-			{
-				index = i;
-			}
-			else
-			if (char_x  + char_w <= pos_x && pos_x <= char_x + char_w * 2 + 1)
-			{
-				index = i + 1;
-			}
-
+		if (char_x <= pos_x && pos_x <= char_x + char_w)
+		{
+			index = i;
+		}
+		else
+		if (char_x  + char_w <= pos_x && pos_x <= char_x + char_w * 2 + 1)
+		{
+			index = i + 1;
 		}
 
 		scr_x += set_glyph->x_advance;

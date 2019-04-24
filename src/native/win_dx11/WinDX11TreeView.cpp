@@ -794,7 +794,7 @@ void WinDX11TreeView::OnLeftMouseUp(int ms_x, int ms_y)
 		{
 			if (start_sel == -1)
 			{
-				start_sel = strlen(selected->text.c_str());
+				start_sel = (int)strlen(selected->text.c_str());
 			}
 			else
 			{

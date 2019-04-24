@@ -197,14 +197,32 @@ LRESULT WinDX11Window::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 		}
 		case WM_KEYDOWN:
 		{
-			if (focused_widget)
+			if (wParam == 'V' && GetAsyncKeyState(VK_CONTROL))
 			{
-				focused_widget->OnKeyDown((int)wParam);
+				if (focused_widget)
+				{
+					focused_widget->OnTextPaste();
+				}
 			}
-
-			if (mouse_over && mouse_over->owner->listener)
+			else
+			if (wParam == 'C' && GetAsyncKeyState(VK_CONTROL))
 			{
-				mouse_over->owner->listener->OnKey(mouse_over->owner, (int)wParam);
+				if (focused_widget)
+				{
+					focused_widget->OnTextCopy();
+				}
+			}
+			else
+			{
+				if (focused_widget)
+				{
+					focused_widget->OnKeyDown((int)wParam);
+				}
+
+				if (mouse_over && mouse_over->owner->listener)
+				{
+					mouse_over->owner->listener->OnKey(mouse_over->owner, (int)wParam);
+				}
 			}
 
 			skip_on_char = true;

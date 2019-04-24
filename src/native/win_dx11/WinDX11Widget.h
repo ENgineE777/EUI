@@ -66,6 +66,9 @@ public:
 
 	virtual bool IsTreeView();
 
+	virtual void OnTextCopy();
+	virtual void OnTextPaste();
+
 	virtual void OnKeyDown(int key);
 	virtual void OnCharDown(int key);
 	virtual void OnTimer();
