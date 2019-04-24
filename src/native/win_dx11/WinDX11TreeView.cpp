@@ -723,7 +723,10 @@ void WinDX11TreeView::OnMouseMove(int ms_x, int ms_y)
 {
 	if (mouse_pressed && selected && !drag_on)
 	{
-		StartDrag();
+		if ((ms_x - start_ms_x) * (ms_x - start_ms_x) + (ms_y - start_ms_y) * (ms_y - start_ms_y) > 36)
+		{
+			StartDrag();
+		}
 	}
 	else
 	if (drag_on)
@@ -747,6 +750,9 @@ void WinDX11TreeView::OnLeftMouseDown(int ms_x, int ms_y)
 	prev_selected = selected;
 	selected = nullptr;
 	int selection_y = 3 - (scrollbar->IsVisible() ? scrollbar->GetPosition() : 0);
+
+	start_ms_x = ms_x;
+	start_ms_y = ms_y;
 
 	for (auto& child : root_node.childs)
 	{

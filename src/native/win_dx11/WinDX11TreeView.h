@@ -46,6 +46,9 @@ class WinDX11TreeView : public NativeTreeView
 	int start_sel = -1;
 	bool ms_at_bottom = false;
 	bool ms_at_top = false;
+	int start_ms_x = 0;
+	int start_ms_y = 0;
+	
 	class EUIScrollBar* scrollbar = nullptr;
 
 	Node root_node;
