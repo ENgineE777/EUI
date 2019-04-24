@@ -358,7 +358,7 @@ void WinDX11Theme::SetOutputWnd(WindowData& data, HWND hwnd, int wgt, int hgt)
 
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount = 1;
+	sd.BufferCount = 2;
 	sd.BufferDesc.Width = wgt;
 	sd.BufferDesc.Height = hgt;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -368,6 +368,7 @@ void WinDX11Theme::SetOutputWnd(WindowData& data, HWND hwnd, int wgt, int hgt)
 	sd.OutputWindow = hwnd;
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	sd.Windowed = TRUE;
 
 	factory->CreateSwapChain(pd3dDevice, &sd, &data.swapChain);
@@ -640,6 +641,9 @@ void WinDX11Theme::Present(WindowData& data)
 	}
 
 	data.swapChain->Present(0, 0);
+
+	ID3D11ShaderResourceView* ps[] = { nullptr, nullptr, nullptr };
+	immediateContext->PSSetShaderResources(0, 3, ps);
 }
 
 #endif
