@@ -193,7 +193,8 @@ LRESULT WinWindow::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 						}
 					}
 
-					EUI::wnds.erase(EUI::wnds.begin() + i);
+					EUI::to_delete_wnds.push_back((EUIWindow*)owner);
+
 					break;
 				}
 			}
