@@ -37,6 +37,10 @@ void WinDX11ComboBox::SetCurString(int index)
 	{
 		Owner()->text = items[cur_string];
 	}
+	else
+	{
+		Owner()->text = "";
+	}
 }
 
 void WinDX11ComboBox::SetCurString(const char* str)
