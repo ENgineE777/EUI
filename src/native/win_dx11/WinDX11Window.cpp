@@ -218,11 +218,6 @@ LRESULT WinDX11Window::Proc( HWND hwnd, long msg, WPARAM wParam, LPARAM lParam )
 				{
 					focused_widget->OnKeyDown((int)wParam);
 				}
-
-				if (mouse_over && mouse_over->owner->listener)
-				{
-					mouse_over->owner->listener->OnKey(mouse_over->owner, (int)wParam);
-				}
 			}
 
 			skip_on_char = true;
