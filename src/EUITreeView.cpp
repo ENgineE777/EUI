@@ -86,6 +86,16 @@ void EUITreeView::GetItemText(void* item, std::string& text)
 	Native()->GetItemText(item, text);
 }
 
+bool EUITreeView::IsItemOpened(void* item)
+{
+	return Native()->IsItemOpened(item);
+}
+
+void EUITreeView::SetItemOpen(void* item, bool opened)
+{
+	Native()->SetItemOpen(item, opened);
+}
+
 void* EUITreeView::GetItemPtr(void* item)
 {
 	return Native()->GetItemPtr(item);

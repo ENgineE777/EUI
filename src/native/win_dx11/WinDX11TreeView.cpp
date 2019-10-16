@@ -464,6 +464,28 @@ void WinDX11TreeView::GetItemText(void* item, std::string& text)
 	}
 }
 
+bool WinDX11TreeView::IsItemOpened(void* item)
+{
+	Node* node = (Node*)item;
+
+	if (node)
+	{
+		return node->opened;
+	}
+
+	return false;
+}
+
+void WinDX11TreeView::SetItemOpen(void* item, bool opened)
+{
+	Node* node = (Node*)item;
+
+	if (node)
+	{
+		node->opened = opened;
+	}
+}
+
 void* WinDX11TreeView::GetItemPtr(void* item)
 {
 	Node* node = (Node*)item;

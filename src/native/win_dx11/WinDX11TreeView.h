@@ -78,6 +78,8 @@ public:
 	void* GetSelectedItem() override;
 	void  SelectItem(void* item) override;
 	void  GetItemText(void* item, std::string& text) override;
+	bool  IsItemOpened(void* item) override;
+	void  SetItemOpen(void* item, bool opened) override;
 	void* GetItemPtr(void* item) override;
 	void* GetItemParent(void* item) override;
 	int   GetItemChildCount(void* item) override;
