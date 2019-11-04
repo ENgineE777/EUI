@@ -80,8 +80,12 @@ bool WinDX11EditBox::DeselectEnd()
 
 void WinDX11EditBox::SetText(const char* txt)
 {
+	start_sel_offset = 0;
+
 	NativeEditBox::SetText(txt);
-	SetSel((int)strlen(txt));
+
+	start_sel = -1;
+	end_sel = -1;
 
 	time2callback = -1.0f;
 	Redraw();
@@ -187,7 +191,7 @@ void WinDX11EditBox::OnTextPaste()
 				LPTSTR lptstr = (LPTSTR)GlobalLock(hglb);
 				if (lptstr != NULL)
 				{
-					int len = strlen(lptstr);
+					int len = (int)strlen(lptstr);
 
 					for (int i = 0; i < len; i++)
 					{
