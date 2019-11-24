@@ -178,6 +178,11 @@ bool WinDX11Widget::IsFocused()
 	return is_focused;
 }
 
+bool WinDX11Widget::IsHowered()
+{
+	return is_howered;
+}
+
 void WinDX11Widget::GetMousePos(int& x, int& y)
 {
 	WinDX11Window* root = (WinDX11Window*)owner->GetRoot()->nativeWidget;

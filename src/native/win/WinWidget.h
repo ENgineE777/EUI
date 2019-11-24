@@ -61,6 +61,8 @@ public:
 	virtual void SetFocused();
 	virtual bool IsFocused();
 
+	virtual bool IsHowered();
+
 	void CreateTooltip();
 
 	bool IsHoveredByMouse();

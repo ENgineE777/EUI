@@ -234,6 +234,10 @@ bool WinWidget::IsFocused()
 	return (GetFocus() == handle);
 }
 
+void WinWidget::IsHowered()
+{
+}
+
 void WinWidget::CreateTooltip()
 {
 	if (tooltip_inited)

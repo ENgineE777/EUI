@@ -281,3 +281,8 @@ bool EUIWidget::IsFocused()
 {
 	return nativeWidget->IsFocused();
 }
+
+bool EUIWidget::IsHowered()
+{
+	return nativeWidget->IsHowered();
+}
