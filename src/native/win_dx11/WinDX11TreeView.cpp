@@ -765,6 +765,8 @@ void WinDX11TreeView::OnMouseWheel(int delta)
 	{
 		((WinDX11ScrollBar*)scrollbar->nativeWidget)->ChangeValue(delta);
 	}
+
+	NativeTreeView::OnMouseWheel(delta);
 }
 
 void WinDX11TreeView::OnLeftMouseDown(int ms_x, int ms_y)

@@ -218,6 +218,8 @@ void WinDX11ListBox::OnMouseWheel(int delta)
 	{
 		((WinDX11ScrollBar*)scrollbar->nativeWidget)->ChangeValue(delta);
 	}
+
+	NativeListBox::OnMouseWheel(delta);
 }
 
 void WinDX11ListBox::OnLeftMouseDown(int ms_x, int ms_y)

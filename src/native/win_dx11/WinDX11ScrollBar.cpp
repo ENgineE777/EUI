@@ -201,6 +201,8 @@ void WinDX11ScrollBar::OnTimer()
 void WinDX11ScrollBar::OnMouseWheel(int delta)
 {
 	ChangeValue(delta);
+
+	NativeScrollBar::OnMouseWheel(delta);
 }
 
 void WinDX11ScrollBar::OnMouseMove(int ms_x, int ms_y)

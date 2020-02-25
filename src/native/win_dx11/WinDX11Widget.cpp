@@ -248,7 +248,10 @@ void WinDX11Widget::OnMouseMove(int ms_x, int ms_y)
 
 void WinDX11Widget::OnMouseWheel(int delta)
 {
-
+	if (owner->listener)
+	{
+		owner->listener->OnMouseWheel(owner, delta);
+	}
 }
 
 void WinDX11Widget::OnLeftMouseDown(int ms_x, int ms_y)
