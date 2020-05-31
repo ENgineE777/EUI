@@ -96,7 +96,7 @@ void EUICategories::DeleteChilds()
 
 void EUICategories::OnChildShow(int index, bool set)
 {
-	if (index == (int)childs.size() - 1)
+	if (!auto_size && index == (int)childs.size() - 1)
 	{
 		return;
 	}
